@@ -32,8 +32,8 @@ namespace AlumnoEjemplos.RestrictedGL
             //Cargar vars:
             map = Shared.mediaFolder + "\\Terreno\\Heightmap.jpg";
             textura = Shared.mediaFolder + "\\Terreno\\Mapa.jpg";
-            scaleXZ = 100f;
-            scaleY = 3.5650f;
+            scaleXZ = 10f;
+            scaleY = 0.4f;
 
             //Instanciar HeightMaps:
             heightMaps = new ArrayList();
@@ -43,7 +43,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             //Determinar ubicación de cada uno:
             heightMapsUbic = new Vector3[9];
-            float size = 61;
+            float size = 62;
             float offsetX = -size;
             for (int i = 0; i < 9; i++) {
                 heightMapsUbic[i].X = offsetX;
@@ -77,28 +77,19 @@ namespace AlumnoEjemplos.RestrictedGL
         public void skyBoxInic() {
             //Crear SkyBox:
             skyBox = new TgcSkyBox();
-            skyBox.Center = new Vector3(0, 2500, 0);
-            skyBox.Size = new Vector3(30000, 60000, 15000);
+            skyBox.Center = new Vector3(0, 0, 0);
+            skyBox.Size = new Vector3(9000, 9000, 9000);
 
             //Configurar las texturas para cada una de las 6 caras:
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, Shared.mediaFolder + "\\Terreno\\phobos_up.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, Shared.mediaFolder + "\\Terreno\\phobos_dn.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, Shared.mediaFolder + "\\Terreno\\phobos_lf.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, Shared.mediaFolder + "\\Terreno\\phobos_rt.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, Shared.mediaFolder + "\\Terreno\\SkyTop.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, Shared.mediaFolder + "\\Terreno\\SkyTop.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, Shared.mediaFolder + "\\Terreno\\SkyLeft.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, Shared.mediaFolder + "\\Terreno\\SkyRight.jpg");
             //Los back&front se invierten por usar sistema left-handed...
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, Shared.mediaFolder + "\\Terreno\\phobos_bk.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, Shared.mediaFolder + "\\Terreno\\phobos_ft.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, Shared.mediaFolder + "\\Terreno\\SkyFront.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, Shared.mediaFolder + "\\Terreno\\SkyBack.jpg");
 
             skyBox.updateValues();
-        }
-
-        public void skyBoxUpdate(Vector3 skyCenterNew, Vector3 skySizeNew) {
-            //Actualiza los valores de centro y tamaño del SkyBox:
-            if (!skyBox.Center.Equals(skyCenterNew) || !skyBox.Center.Equals(skySizeNew)) {
-                skyBox.Center = skyCenterNew;
-                skyBox.Size = skySizeNew;
-                skyBox.updateValues();
-            }
         }
 
         public void heightMapRender() {

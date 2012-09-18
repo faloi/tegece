@@ -111,18 +111,12 @@ namespace AlumnoEjemplos.RestrictedGL
 
             //Configurar FPS Camara:
             GuiController.Instance.FpsCamera.Enable = true;
-            GuiController.Instance.FpsCamera.MovementSpeed = 2000f;
-            GuiController.Instance.FpsCamera.JumpSpeed = 2000f;
-            GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 950, 0), new Vector3(1500f, 700f, -1500f));
+            GuiController.Instance.FpsCamera.MovementSpeed = 30f;
+            GuiController.Instance.FpsCamera.JumpSpeed = 30f;
+            GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
 
             //Agregar modificadores:
-            GuiController.Instance.Modifiers.addFloat("centerX", 0f, 10000f, 0);
-            GuiController.Instance.Modifiers.addFloat("centerY", 0f, 10000f, 0);
-            GuiController.Instance.Modifiers.addFloat("centerZ", 0f, 10000f, 0);
-            GuiController.Instance.Modifiers.addFloat("sizeX", 0f, 30000f, 10000f);
-            GuiController.Instance.Modifiers.addFloat("sizeY", 0f, 30000f, 10000f);
-            GuiController.Instance.Modifiers.addFloat("sizeZ", 0f, 30000f, 10000f);
-            GuiController.Instance.Modifiers.addFloat("velcam", 0f, 10000f, 2000f);
+            GuiController.Instance.Modifiers.addFloat("velcam", 0f, 10000f, 30f);
 
             //Agregar uservars de cámara:
             GuiController.Instance.UserVars.addVar("posX");
@@ -164,19 +158,8 @@ namespace AlumnoEjemplos.RestrictedGL
 
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.R)) {
                 //R = Cámara en el origen, mas o menos
-                GuiController.Instance.FpsCamera.setCamera(new Vector3(0,950,0), new Vector3(1500f, 700f, -1500f));
+                GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
             }
-
-            /*//Actualizar SkyBox:
-            Vector3 centerNew = new Vector3(0,0,0);
-            Vector3 sizeNew = new Vector3(0,0,0);
-            centerNew.X = (float)GuiController.Instance.Modifiers["centerX"];
-            centerNew.Y = (float)GuiController.Instance.Modifiers["centerY"];
-            centerNew.Z = (float)GuiController.Instance.Modifiers["centerZ"];
-            sizeNew.X = (float)GuiController.Instance.Modifiers["sizeX"];
-            sizeNew.Y = (float)GuiController.Instance.Modifiers["sizeY"];
-            sizeNew.Z = (float)GuiController.Instance.Modifiers["sizeZ"];
-            terreno.skyBoxUpdate(centerNew, sizeNew);*/
             
             //Actualizar velocidad cámara:
             GuiController.Instance.FpsCamera.MovementSpeed = (float)GuiController.Instance.Modifiers["velcam"];
@@ -192,7 +175,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             //Renderizar:
             terreno.heightMapRender();
-            //terreno.skyBoxRender();
+            terreno.skyBoxRender();
         }
 
         ///<summary>Se llama al cerrar la app. Hacer dispose() de todos los objetos creados</summary>
