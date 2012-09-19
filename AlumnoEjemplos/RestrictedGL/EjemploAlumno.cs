@@ -174,8 +174,7 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.UserVars["viewZ"] = GuiController.Instance.FpsCamera.LookAt.Z.ToString();
 
             //Renderizar:
-            terreno.heightMapRender();
-            terreno.skyBoxRender();
+            terreno.render();
         }
 
         ///<summary>Se llama al cerrar la app. Hacer dispose() de todos los objetos creados</summary>
