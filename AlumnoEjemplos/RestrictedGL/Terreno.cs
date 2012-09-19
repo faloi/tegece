@@ -15,11 +15,15 @@ namespace AlumnoEjemplos.RestrictedGL
 {
     class Terreno
     {
-        ArrayList heightMaps;
-        Vector3[] heightMapsUbic;
-        string map; //path al heightmap
-        string textura; //path a la textura
-        float scaleXZ;
+        private const int MAX_HEIGHT_MAPS = 9;
+
+        List<TgcSimpleTerrain> heightMaps;
+        Vector3[] heightMapsUbication;
+        
+        private readonly string heigthMapPath = Shared.mediaFolder + "\\Terreno\\Heightmap.jpg";
+        private readonly string texturaPath = Shared.mediaFolder + "\\Terreno\\Mapa.jpg";
+        
+        private const float scaleXZ = 10f;
         float scaleY;
         TgcSkyBox skyBox;
 
@@ -31,25 +35,22 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.Modifiers.addFloat("scaleY", 0f, 1f, scaleY);
         }
 
-        public void heightMapInic() {
+        private void heightMapInic() {
             //Cargar vars:
-            map = Shared.mediaFolder + "\\Terreno\\Heightmap.jpg";
-            textura = Shared.mediaFolder + "\\Terreno\\Mapa.jpg";
-            scaleXZ = 10f;
             scaleY = 0.25f;
 
             //Instanciar HeightMaps:
-            heightMaps = new ArrayList();
-            for (int i = 0; i < 9; i++) {
+            heightMaps = new List<TgcSimpleTerrain>();
+            for (int i = 0; i < MAX_HEIGHT_MAPS; i++) {
                 heightMaps.Add(new TgcSimpleTerrain());
             }
 
             //Determinar ubicación de cada uno:
-            heightMapsUbic = new Vector3[9];
-            float size = 62.75f;
-            float offsetX = -size;
-            for (int i = 0; i < 9; i++) {
-                heightMapsUbic[i].X = offsetX;
+            heightMapsUbication = new Vector3[MAX_HEIGHT_MAPS];
+            const float size = 62.75f;
+            var offsetX = -size;
+            for (var i = 0; i < MAX_HEIGHT_MAPS; i++) {
+                heightMapsUbication[i].X = offsetX;
                 if (offsetX == size) {
                     offsetX = -size;
                 } else {
@@ -57,11 +58,11 @@ namespace AlumnoEjemplos.RestrictedGL
                 }
 
                 if (i <= 2) {
-                    heightMapsUbic[i].Z = size;
+                    heightMapsUbication[i].Z = size;
                 } else if (i <= 5) {
-                    heightMapsUbic[i].Z = 0;
+                    heightMapsUbication[i].Z = 0;
                 } else {
-                    heightMapsUbic[i].Z = -size;
+                    heightMapsUbication[i].Z = -size;
                 }
             }
             /*esto crearía una matriz así:
@@ -73,25 +74,28 @@ namespace AlumnoEjemplos.RestrictedGL
             heightMapLoad();
         }
 
-        public void heightMapLoad() {
-            for (int i = 0; i < 9; i++) {
-                TgcSimpleTerrain heightMapActual = (TgcSimpleTerrain) heightMaps[i];
-                heightMapActual.loadHeightmap(map, scaleXZ, scaleY, heightMapsUbic[i]);
-                heightMapActual.loadTexture(textura);
+        private void heightMapLoad() {
+            for (var i = 0; i < MAX_HEIGHT_MAPS; i++) {
+                var heightMapActual = heightMaps[i];
+                heightMapActual.loadHeightmap(heigthMapPath, scaleXZ, scaleY, heightMapsUbication[i]);
+                heightMapActual.loadTexture(texturaPath);
             }
         }
 
-        public void skyBoxInic() {
+        private void skyBoxInic() {
             //Crear SkyBox:
-            skyBox = new TgcSkyBox();
-            skyBox.Center = new Vector3(0, 0, 0);
-            skyBox.Size = new Vector3(9000, 9000, 9000);
+            skyBox = new TgcSkyBox
+             {
+                 Center = new Vector3(0, 0, 0), 
+                 Size = new Vector3(9000, 9000, 9000)
+             };
 
             //Configurar las texturas para cada una de las 6 caras:
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, Shared.mediaFolder + "\\Terreno\\SkyTop.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, Shared.mediaFolder + "\\Terreno\\SkyTop.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, Shared.mediaFolder + "\\Terreno\\SkyLeft.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, Shared.mediaFolder + "\\Terreno\\SkyRight.jpg");
+            
             //Los back&front se invierten por usar sistema left-handed...
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, Shared.mediaFolder + "\\Terreno\\SkyFront.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, Shared.mediaFolder + "\\Terreno\\SkyBack.jpg");
@@ -99,20 +103,21 @@ namespace AlumnoEjemplos.RestrictedGL
             skyBox.updateValues();
         }
 
-        public void comprobarCambios() {
+        private void comprobarCambios() {
             //Compruba cambios en modifiers y actualiza:
-            float scaleYNew = (float) GuiController.Instance.Modifiers["scaleY"];
-            if (scaleY != scaleYNew) {
-                scaleY = scaleYNew;
-                heightMapLoad();
-            }
+            var scaleYNew = (float) GuiController.Instance.Modifiers["scaleY"];
+            
+            if (scaleY == scaleYNew) return;
+            
+            scaleY = scaleYNew;
+            heightMapLoad();
         }
 
         public void render() {
             comprobarCambios();
             
-            for (int i = 0; i < 9; i++) { //renderizar los 9 HeightMaps
-                TgcSimpleTerrain heightMapActual = (TgcSimpleTerrain)heightMaps[i];
+            for (int i = 0; i < MAX_HEIGHT_MAPS; i++) { //renderizar los N HeightMaps
+                var heightMapActual = heightMaps[i];
                 heightMapActual.render();
             }
 
