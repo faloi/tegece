@@ -9,6 +9,7 @@ namespace AlumnoEjemplos.RestrictedGL
     class Terreno
     {
         private const int MAX_HEIGHT_MAPS = 9;
+        private const float SCALE_XZ = 10f;
 
         List<TgcSimpleTerrain> heightMaps;
         Vector3[] heightMapsUbication;
@@ -16,7 +17,6 @@ namespace AlumnoEjemplos.RestrictedGL
         private readonly string heigthMapPath = Shared.mediaFolder + "\\Terreno\\Heightmap.jpg";
         private readonly string texturaPath = Shared.mediaFolder + "\\Terreno\\Mapa.jpg";
         
-        private const float scaleXZ = 10f;
         float scaleY;
         TgcSkyBox skyBox;
 
@@ -71,7 +71,7 @@ namespace AlumnoEjemplos.RestrictedGL
         private void heightMapLoad() {
             for (var i = 0; i < MAX_HEIGHT_MAPS; i++) {
                 var heightMapActual = heightMaps[i];
-                heightMapActual.loadHeightmap(heigthMapPath, scaleXZ, scaleY, heightMapsUbication[i]);
+                heightMapActual.loadHeightmap(heigthMapPath, SCALE_XZ, scaleY, heightMapsUbication[i]);
                 heightMapActual.loadTexture(texturaPath);
             }
         }
@@ -110,7 +110,7 @@ namespace AlumnoEjemplos.RestrictedGL
         public void render() {
             comprobarCambios();
             
-            for (int i = 0; i < MAX_HEIGHT_MAPS; i++) { //renderizar los N HeightMaps
+            for (var i = 0; i < MAX_HEIGHT_MAPS; i++) { //renderizar los N HeightMaps
                 var heightMapActual = heightMaps[i];
                 heightMapActual.render();
             }
