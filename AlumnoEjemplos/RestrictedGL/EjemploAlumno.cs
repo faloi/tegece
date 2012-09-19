@@ -47,7 +47,7 @@ namespace AlumnoEjemplos.RestrictedGL
         /// <summary>Código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.</summary>
         public override void init() {
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
-            Device d3dDevice = GuiController.Instance.D3dDevice; //Device de DirectX para crear primitivas
+            var d3dDevice = GuiController.Instance.D3dDevice; //Device de DirectX para crear primitivas
             #region Tutorial
                 /*
                 //---USER VARS---
@@ -133,7 +133,7 @@ namespace AlumnoEjemplos.RestrictedGL
         ///<summary>Se llama cada vez que hay que refrescar la pantalla</summary>
         ///<param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime) {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = GuiController.Instance.D3dDevice;
             #region Tutorial
                 /*
                 //Obtener valor de UserVar (hay que castear)
