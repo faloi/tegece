@@ -13,7 +13,8 @@ namespace AlumnoEjemplos.RestrictedGL
 {
     struct Shared //datos comunes a todo
     {
-        public static string mediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir + "RestrictedGL\\";
+        public const string NombreGrupo = "RestrictedGL";
+        public static readonly string MediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir + NombreGrupo + "\\";
     }
 
     public class EjemploAlumno : TgcExample
@@ -33,7 +34,7 @@ namespace AlumnoEjemplos.RestrictedGL
             /// Completar nombre del grupo en formato Grupo NN
             /// </summary>
             public override string getName() {
-                return "RestrictedGL";
+                return Shared.NombreGrupo;
             }
 
             /// <summary>

@@ -14,8 +14,8 @@ namespace AlumnoEjemplos.RestrictedGL {
         private List<TgcSimpleTerrain> heightMaps;
         private Vector3[] heightMapsUbication;
 
-        private readonly string heigthMapPath = Shared.mediaFolder + "\\Terreno\\Heightmap.jpg";
-        private readonly string texturaPath = Shared.mediaFolder + "\\Terreno\\Mapa.jpg";
+        private readonly string heigthMapPath = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
+        private readonly string texturaPath = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
 
         private float scaleY;
         private TgcSkyBox skyBox;
@@ -77,14 +77,14 @@ namespace AlumnoEjemplos.RestrictedGL {
                          };
 
             //Configurar las texturas para cada una de las 6 caras:
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, Shared.mediaFolder + "\\Terreno\\SkyTop.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, Shared.mediaFolder + "\\Terreno\\SkyTop.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, Shared.mediaFolder + "\\Terreno\\SkyLeft.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, Shared.mediaFolder + "\\Terreno\\SkyRight.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, Shared.MediaFolder + "\\Terreno\\SkyTop.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, Shared.MediaFolder + "\\Terreno\\SkyTop.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, Shared.MediaFolder + "\\Terreno\\SkyLeft.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, Shared.MediaFolder + "\\Terreno\\SkyRight.jpg");
 
             //Los back&front se invierten por usar sistema left-handed...
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, Shared.mediaFolder + "\\Terreno\\SkyFront.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, Shared.mediaFolder + "\\Terreno\\SkyBack.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, Shared.MediaFolder + "\\Terreno\\SkyFront.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, Shared.MediaFolder + "\\Terreno\\SkyBack.jpg");
 
             skyBox.updateValues();
         }
