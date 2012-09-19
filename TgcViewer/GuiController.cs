@@ -140,7 +140,7 @@ namespace TgcViewer
 
 
             //Cargar ejemplo default
-            TgcExample defaultExample = exampleLoader.getExampleByName("Logo de TGC", "Otros");
+            TgcExample defaultExample = exampleLoader.getExampleByName("RestrictedGL", "AlumnoEjemplos");
             executeExample(defaultExample);
         }
        
