@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Example;
+﻿using System.Collections.Generic;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer;
-using Microsoft.DirectX.Direct3D;
-using System.Drawing;
 using Microsoft.DirectX;
-using TgcViewer.Utils.Modifiers;
-
 using TgcViewer.Utils.Terrain;
-using System.Collections;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
@@ -27,14 +20,15 @@ namespace AlumnoEjemplos.RestrictedGL
         float scaleY;
         TgcSkyBox skyBox;
 
-        public Terreno() {
+        public Terreno()
+        {
             heightMapInic();
             skyBoxInic();
 
             //Crea modifiers para el terreno:
             GuiController.Instance.Modifiers.addFloat("scaleY", 0f, 1f, scaleY);
         }
-
+       
         private void heightMapInic() {
             //Cargar vars:
             scaleY = 0.25f;
@@ -105,7 +99,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
         private void comprobarCambios() {
             //Compruba cambios en modifiers y actualiza:
-            var scaleYNew = (float) GuiController.Instance.Modifiers["scaleY"];
+            var scaleYNew = Modifiers.get<float>("scaleY");
             
             if (scaleY == scaleYNew) return;
             

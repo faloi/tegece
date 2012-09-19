@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer.Example;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
@@ -119,12 +120,14 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.Modifiers.addFloat("velcam", 0f, 10000f, 30f);
 
             //Agregar uservars de cámara:
-            GuiController.Instance.UserVars.addVar("posX");
-            GuiController.Instance.UserVars.addVar("posY");
-            GuiController.Instance.UserVars.addVar("posZ");
-            GuiController.Instance.UserVars.addVar("viewX");
-            GuiController.Instance.UserVars.addVar("viewY");
-            GuiController.Instance.UserVars.addVar("viewZ");
+            UserVars.addMany(
+                "posX", 
+                "posY",
+                "posZ",
+                "viewX",
+                "viewY",
+                "viewZ"
+            );
         }
 
         ///<summary>Se llama cada vez que hay que refrescar la pantalla</summary>
@@ -162,8 +165,9 @@ namespace AlumnoEjemplos.RestrictedGL
             }
             
             //Actualizar velocidad cámara:
-            GuiController.Instance.FpsCamera.MovementSpeed = (float)GuiController.Instance.Modifiers["velcam"];
-            GuiController.Instance.FpsCamera.JumpSpeed = (float)GuiController.Instance.Modifiers["velcam"];
+            GuiController.Instance.FpsCamera.MovementSpeed = 
+            GuiController.Instance.FpsCamera.JumpSpeed = 
+                Modifiers.get<float>("velcam");
             
             //Actualizar uservars:
             GuiController.Instance.UserVars["posX"] = GuiController.Instance.FpsCamera.Position.X.ToString();
