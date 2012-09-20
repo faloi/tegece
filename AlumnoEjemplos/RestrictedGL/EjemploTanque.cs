@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer.Example;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
@@ -20,7 +21,6 @@ namespace AlumnoEjemplos.RestrictedGL
         private TgcMesh tank;
         private bool tankMoving;
         private float moveForward;
-        private float velocityFoward = 100f;
 
         public override string getCategory()
         {
@@ -41,6 +41,21 @@ namespace AlumnoEjemplos.RestrictedGL
 
             Microsoft.DirectX.Direct3D.Device d3DDevice = GuiController.Instance.D3dDevice;
 
+            //Agrego UserVars para la posicion del tanque
+            UserVars.addMany(
+                "posX",
+                "posY",
+                "posZ"
+            );
+
+            //Agrego Modificador de Velocidad de Movimiento
+            GuiController.Instance.Modifiers.addFloat("tankVelocity", 0f, 1000f, 100f);
+
+            //Agrego Modificador de Offset de 3rd Person Camera
+
+            GuiController.Instance.Modifiers.addFloat("cameraOffsetHeight", 0, 300, 200);
+            GuiController.Instance.Modifiers.addFloat("cameraOffsetForward", 0, 400, 300);
+  
             //Carpeta de archivos Media del alumno
             string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
 
@@ -56,7 +71,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             //Seteo la Camara en 3ra Persona
             GuiController.Instance.ThirdPersonCamera.Enable = true;
-            GuiController.Instance.ThirdPersonCamera.setCamera(tank.Position, 200, 300);
+            GuiController.Instance.ThirdPersonCamera.setCamera(tank.Position, Modifiers.get<float>("cameraOffsetHeight"), Modifiers.get<float>("cameraOffsetForward"));
         }
 
         public override void close() {
@@ -67,22 +82,41 @@ namespace AlumnoEjemplos.RestrictedGL
         public override void render(float elapsedTime) {
             TgcD3dInput d3DInput = GuiController.Instance.D3dInput;
             tankMoving = false;
+
+            //Actualizo Modifiers de Camara
+
+            TgcThirdPersonCamera camera = GuiController.Instance.ThirdPersonCamera;
+            camera.OffsetHeight = (float)GuiController.Instance.Modifiers["cameraOffsetHeight"];
+            camera.OffsetForward = (float)GuiController.Instance.Modifiers["cameraOffsetForward"];
+
             //Adelante
             if (d3DInput.keyDown(Key.W))
             {
-                moveForward = -velocityFoward;
+                moveForward = -Modifiers.get<float>("tankVelocity"); 
                 tankMoving = true;
             }
 
             //Atras
-            if (d3DInput.keyDown(Key.S))
-            {
-                moveForward = velocityFoward;
+            if (d3DInput.keyDown(Key.S)) {
+                moveForward = Modifiers.get<float>("tankVelocity");
                 tankMoving = true;
             }
             if(tankMoving) {
+
+                //Muevo el tanque
                 tank.moveOrientedY(elapsedTime*moveForward);
+
+                //Actualizo UserVars del tanque
+                GuiController.Instance.UserVars["posX"] = tank.Position.X.ToString();
+                GuiController.Instance.UserVars["posY"] = tank.Position.Y.ToString();
+                GuiController.Instance.UserVars["posZ"] = tank.Position.Z.ToString();
+               
             }
+
+            //Muevo la camara
+            camera.OffsetForward = tank.Position.Z + Modifiers.get<float>("cameraOffsetForward");
+
+            //Renderizo Objetos de la Escena
             surface.render();
             tank.render();
         }
