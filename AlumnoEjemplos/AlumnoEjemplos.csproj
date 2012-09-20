@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RestrictedGL\EjemploTanque.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\GuiControllerWrapper.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\Modifiers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
