@@ -18,6 +18,9 @@ namespace AlumnoEjemplos.RestrictedGL
     {
         private TgcBox surface;
         private TgcMesh tank;
+        private bool tankMoving;
+        private float moveForward;
+        private float velocityFoward = 100f;
 
         public override string getCategory()
         {
@@ -51,9 +54,9 @@ namespace AlumnoEjemplos.RestrictedGL
             TgcScene scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
             tank = scene.Meshes[0];
 
-            //Seteo la Camara
-            GuiController.Instance.RotCamera.setCamera(new Vector3(10f, 50f, 10f), 150f);
-
+            //Seteo la Camara en 3ra Persona
+            GuiController.Instance.ThirdPersonCamera.Enable = true;
+            GuiController.Instance.ThirdPersonCamera.setCamera(tank.Position, 200, 300);
         }
 
         public override void close() {
@@ -62,6 +65,24 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void render(float elapsedTime) {
+            TgcD3dInput d3DInput = GuiController.Instance.D3dInput;
+            tankMoving = false;
+            //Adelante
+            if (d3DInput.keyDown(Key.W))
+            {
+                moveForward = -velocityFoward;
+                tankMoving = true;
+            }
+
+            //Atras
+            if (d3DInput.keyDown(Key.S))
+            {
+                moveForward = velocityFoward;
+                tankMoving = true;
+            }
+            if(tankMoving) {
+                tank.moveOrientedY(elapsedTime*moveForward);
+            }
             surface.render();
             tank.render();
         }
