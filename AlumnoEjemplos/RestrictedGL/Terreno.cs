@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
-using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.Terrain;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
-namespace AlumnoEjemplos.RestrictedGL {
-    public class Terreno {
+namespace AlumnoEjemplos.RestrictedGL
+{
+    public class Terreno
+    {
         //Datos del HeightMap:
         private List<TgcSimpleTerrain> heightMaps;
         private Vector3[] heightMapsUbication;
@@ -52,7 +54,7 @@ namespace AlumnoEjemplos.RestrictedGL {
                 else if (i <= 5) heightMapsUbication[i].Z = 0;
                 else heightMapsUbication[i].Z = -DISTANCE;
             }
-            /*esto crearía una matriz así:
+            /* esto crearía una matriz así: (plano XZ)
              * xxx
              * xxx
              * xxx
