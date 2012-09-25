@@ -4,25 +4,14 @@ using System.Text;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer.Example;
 using TgcViewer;
-using Microsoft.DirectX.Direct3D;
-using System.Drawing;
-using Microsoft.DirectX;
-using TgcViewer.Utils.Modifiers;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.Input;
-using Microsoft.DirectX.DirectInput;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
-    public class EjemploTanque : TgcExample
-    {
-        private TgcBox surface;
-        private TgcMesh tank;
-        private bool tankMoving;
-        private bool tankRotating;
-        private float linearMovement;
-        private float rotationMovement;
+    public class EjemploTanque : TgcExample {
+
+        private TankTerrain terrain;
+        private Tank tank;
 
         public override string getCategory()
         {
@@ -40,8 +29,9 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void init() {
-
-            Microsoft.DirectX.Direct3D.Device d3DDevice = GuiController.Instance.D3dDevice;
+            //Instancio Elementos del Contexto
+            tank = new Tank();
+            terrain = new TankTerrain();
 
             //Agrego UserVars para la posicion del tanque
             UserVars.addMany(
@@ -49,6 +39,8 @@ namespace AlumnoEjemplos.RestrictedGL
                 "posY",
                 "posZ"
             );
+            //Agrego Modificador para Mostrar BoundingBox
+            GuiController.Instance.Modifiers.addBoolean("showBoundingBox", "Bouding Box", false);
 
             //Agrego Modificador de Velocidad de Movimiento
             GuiController.Instance.Modifiers.addFloat("tankVelocity", 0f, 1000f, 100f);
@@ -63,13 +55,9 @@ namespace AlumnoEjemplos.RestrictedGL
 
 
             //Cargo la superficie y su textura
-            TgcTexture surfaceTexture = TgcTexture.createTexture(d3DDevice, alumnoMediaFolder + "RestrictedGL\\#TankExample\\Textures\\tierra.jpg");
-            surface = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(500, 0, 500), surfaceTexture);
-
+            terrain.init(alumnoMediaFolder);
             //Cargo el Tanque
-            TgcSceneLoader loader = new TgcSceneLoader();
-            TgcScene scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-            tank = scene.Meshes[0];
+            tank.init(alumnoMediaFolder);
 
             //Seteo la Camara en 3ra Persona
             GuiController.Instance.ThirdPersonCamera.Enable = true;
@@ -77,66 +65,22 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void close() {
-            surface.dispose();
+            terrain.dispose();
             tank.dispose();
         }
 
         public override void render(float elapsedTime) {
-            TgcD3dInput d3DInput = GuiController.Instance.D3dInput;
-            tankMoving = false;
-            tankRotating = false;
+                     
             //Actualizo Modifiers de Camara
 
             TgcThirdPersonCamera camera = GuiController.Instance.ThirdPersonCamera;
             camera.OffsetHeight = (float)GuiController.Instance.Modifiers["cameraOffsetHeight"];
             camera.OffsetForward = (float)GuiController.Instance.Modifiers["cameraOffsetForward"];
 
-            //Adelante
-            if (d3DInput.keyDown(Key.W))
-            {
-                linearMovement = -Modifiers.get<float>("tankVelocity"); 
-                tankMoving = true;
-            }
-
-            //Atras
-            if (d3DInput.keyDown(Key.S)) {
-                linearMovement = Modifiers.get<float>("tankVelocity");
-                tankMoving = true;
-            }
-            //Derecha
-            if (d3DInput.keyDown(Key.D))
-            {
-                rotationMovement = Modifiers.get<float>("tankVelocity");
-                tankRotating = true;
-            }
-            //Izquierda
-            if (d3DInput.keyDown(Key.A))
-            {
-                rotationMovement = - Modifiers.get<float>("tankVelocity");
-                tankRotating = true;
-            }
-            if(tankMoving) {
-
-                //Muevo el tanque
-                tank.moveOrientedY(elapsedTime*linearMovement);
-
-               
-            }
-            if (tankRotating) {
-                float rotAngle = Geometry.DegreeToRadian( rotationMovement * elapsedTime);
-                tank.rotateY(rotAngle);
-                GuiController.Instance.ThirdPersonCamera.rotateY(rotAngle);
-            }
-            //Actualizo UserVars del tanque
-            GuiController.Instance.UserVars["posX"] = tank.Position.X.ToString();
-            GuiController.Instance.UserVars["posY"] = tank.Position.Y.ToString();
-            GuiController.Instance.UserVars["posZ"] = tank.Position.Z.ToString();
-            //Muevo la camara
-            camera.OffsetForward = tank.Position.Z + Modifiers.get<float>("cameraOffsetForward");
-
+          
             //Renderizo Objetos de la Escena
-            surface.render();
-            tank.render();
+            terrain.render();
+            tank.render(elapsedTime);
         }
     }
 }

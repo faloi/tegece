@@ -74,6 +74,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\UserVars.cs" />
     <Compile Include="RestrictedGL\Terrain.cs" />
+    <Compile Include="RestrictedGL\Tank.cs" />
+    <Compile Include="RestrictedGL\TankTerrain.cs" />
+    <Compile Include="RestrictedGL\Terreno.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
     <Compile Include="RestrictedGL\Terrain\Temp.cs" />
     <Compile Include="RestrictedGL\Terrain\Triangle.cs" />
