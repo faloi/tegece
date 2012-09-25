@@ -20,7 +20,9 @@ namespace AlumnoEjemplos.RestrictedGL
         private TgcBox surface;
         private TgcMesh tank;
         private bool tankMoving;
-        private float moveForward;
+        private bool tankRotating;
+        private float linearMovement;
+        private float rotationMovement;
 
         public override string getCategory()
         {
@@ -82,7 +84,7 @@ namespace AlumnoEjemplos.RestrictedGL
         public override void render(float elapsedTime) {
             TgcD3dInput d3DInput = GuiController.Instance.D3dInput;
             tankMoving = false;
-
+            tankRotating = false;
             //Actualizo Modifiers de Camara
 
             TgcThirdPersonCamera camera = GuiController.Instance.ThirdPersonCamera;
@@ -92,27 +94,43 @@ namespace AlumnoEjemplos.RestrictedGL
             //Adelante
             if (d3DInput.keyDown(Key.W))
             {
-                moveForward = -Modifiers.get<float>("tankVelocity"); 
+                linearMovement = -Modifiers.get<float>("tankVelocity"); 
                 tankMoving = true;
             }
 
             //Atras
             if (d3DInput.keyDown(Key.S)) {
-                moveForward = Modifiers.get<float>("tankVelocity");
+                linearMovement = Modifiers.get<float>("tankVelocity");
                 tankMoving = true;
+            }
+            //Derecha
+            if (d3DInput.keyDown(Key.D))
+            {
+                rotationMovement = Modifiers.get<float>("tankVelocity");
+                tankRotating = true;
+            }
+            //Izquierda
+            if (d3DInput.keyDown(Key.A))
+            {
+                rotationMovement = - Modifiers.get<float>("tankVelocity");
+                tankRotating = true;
             }
             if(tankMoving) {
 
                 //Muevo el tanque
-                tank.moveOrientedY(elapsedTime*moveForward);
+                tank.moveOrientedY(elapsedTime*linearMovement);
 
-                //Actualizo UserVars del tanque
-                GuiController.Instance.UserVars["posX"] = tank.Position.X.ToString();
-                GuiController.Instance.UserVars["posY"] = tank.Position.Y.ToString();
-                GuiController.Instance.UserVars["posZ"] = tank.Position.Z.ToString();
                
             }
-
+            if (tankRotating) {
+                float rotAngle = Geometry.DegreeToRadian( rotationMovement * elapsedTime);
+                tank.rotateY(rotAngle);
+                GuiController.Instance.ThirdPersonCamera.rotateY(rotAngle);
+            }
+            //Actualizo UserVars del tanque
+            GuiController.Instance.UserVars["posX"] = tank.Position.X.ToString();
+            GuiController.Instance.UserVars["posY"] = tank.Position.Y.ToString();
+            GuiController.Instance.UserVars["posZ"] = tank.Position.Z.ToString();
             //Muevo la camara
             camera.OffsetForward = tank.Position.Z + Modifiers.get<float>("cameraOffsetForward");
 
