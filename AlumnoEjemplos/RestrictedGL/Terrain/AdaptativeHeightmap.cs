@@ -8,15 +8,12 @@ using TgcViewer;
 using TgcViewer.Utils;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
-using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
     public class AdaptativeHeightmap : IRenderObject
     {
         TgcFrustum frustum;
-        float scaleXZ; //[!]VER QUE HACER ACA
-        float scaleY;
         List<Triangle> triangleList;
         List<int> indicesList;
         VertexBuffer vbTerrain;
@@ -24,37 +21,41 @@ namespace AlumnoEjemplos.RestrictedGL
         Texture terrainTexture;
         int totalVertices;
 
-        int[,] heightmapData; //valor de y para cada (x,z)
+        int[,] heightmapData; //valor de y para cada (x,z) <- la matriz debe ser cuadrada
         public int[,] HeightmapData {
             get { return heightmapData; }
         }
-        private bool enabled; //si se renderiza o no
+        bool enabled; //si se renderiza o no
         public bool Enabled {
             get { return enabled; }
             set { enabled = value; }
         }
-        private Vector3 center; //centro de la malla
-        public Vector3 Center {
-            get { return center; }
-        }
-        private bool alphaBlendEnable;
+        bool alphaBlendEnable;
         public bool AlphaBlendEnable {
             get { return alphaBlendEnable; }
             set { alphaBlendEnable = value; }
         }
+        Vector3 position; //posición de la esquina (se arma en X+ y Z+)
+        public Vector3 Position { //centro de la malla
+            get { return position + new Vector3(heightmapData.GetLength(0) * scaleXZ / 2, position.Y, heightmapData.GetLength(0) * scaleXZ / 2); }
+        }
+        float scaleXZ; //factor de escala a lo largo
+        float scaleY; //factor de escala de altura
+        float threshold;
+        public float Threshold {
+            get { return threshold; }
+            set { threshold = value; }
+        }
 
         public AdaptativeHeightmap() {
-            //[!] Cambiar Guicontroller.instance.d3dDevice por algo mas corto, sacar los modifiers y uservars de aca
             enabled = true;
             alphaBlendEnable = false;
             frustum = new TgcFrustum();
-
-            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, 0.6f);
+            threshold = 1f;
         }
 
         public void loadHeightmap(string heightmapPath, float scaleXZ, float scaleY, Vector3 center) {
             Device d3dDevice = GuiController.Instance.D3dDevice;
-            this.center = center; //[!]Implementar posición, por ahora se crea en (0,0,0)
             this.scaleXZ = scaleXZ;
             this.scaleY = scaleY;
 
@@ -72,19 +73,20 @@ namespace AlumnoEjemplos.RestrictedGL
             int width = heightmapData.GetLength(0);
             int length = heightmapData.GetLength(1);
 
+            //Convertir de centro a esquina:
+            this.position = center - new Vector3(width * scaleXZ / 2, position.Y, length * scaleXZ/ 2);
+
             //Crear vértices
             CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
-            //int[] terrainIndices = createTerrainIndices();
-            //terrainVertices = generateNormalsForTriangleStrip(terrainVertices, terrainIndices);
 
             //Bajar vértices al VertexBuffer
             vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
             vbTerrain.SetData(terrainVertices, 0, LockFlags.None);
 
             //Crear los dos triángulos root, el piso
-            int terrainSize = 64;
-            Triangle leftTriangle = new Triangle(null, new Vector2(0, 0), new Vector2(terrainSize, 0), new Vector2(0, terrainSize), heightmapData);
-            Triangle rightTriangle = new Triangle(null, new Vector2(terrainSize, terrainSize), new Vector2(0, terrainSize), new Vector2(terrainSize, 0), heightmapData);
+            float terrainSize = width - 1;
+            Triangle leftTriangle = new Triangle(null, new Vector2(0, 0), new Vector2(terrainSize, 0), new Vector2(0, terrainSize), heightmapData, scaleXZ, scaleY, this);
+            Triangle rightTriangle = new Triangle(null, new Vector2(terrainSize, terrainSize), new Vector2(0, terrainSize), new Vector2(terrainSize, 0), heightmapData, scaleXZ, scaleY, this);
             leftTriangle.addNeighs(null, null, rightTriangle);
             rightTriangle.addNeighs(null, null, leftTriangle);
 
@@ -106,10 +108,10 @@ namespace AlumnoEjemplos.RestrictedGL
             //Cargar los valores en una matriz
             Bitmap bitmap = (Bitmap)Bitmap.FromFile(path);
             int width = bitmap.Size.Width;
-            int height = bitmap.Size.Height;
-            int[,] heightmap = new int[width + 1, height + 1];
+            int length = bitmap.Size.Height;
+            int[,] heightmap = new int[width + 1, length + 1];
             for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
+                for (int j = 0; j < length; j++) {
                     //(j, i) invertido para primero barrer filas y despues columnas
                     Color pixel = bitmap.GetPixel(j, i);
                     float intensity = pixel.R * 0.299f + pixel.G * 0.587f + pixel.B * 0.114f;
@@ -129,13 +131,14 @@ namespace AlumnoEjemplos.RestrictedGL
         protected CustomVertex.PositionNormalTextured[] createTerrainVertices(int totalVertices) {
             //Devuelve un array con posición, normal (fija), y coord. de textura de cada vértice
             int width = heightmapData.GetLength(0);
-            int height = heightmapData.GetLength(1);
-            CustomVertex.PositionNormalTextured[] terrainVertices = new CustomVertex.PositionNormalTextured[width * height];
+            int length = heightmapData.GetLength(1);
+            CustomVertex.PositionNormalTextured[] terrainVertices = new CustomVertex.PositionNormalTextured[width * length];
 
             int i = 0;
-            for (int z = 0; z < height; z++) {
+            for (int z = 0; z < length; z++) {
                 for (int x = 0; x < width; x++) {
-                    Vector3 position = new Vector3(x, heightmapData[x, z], z);
+                    //Vector3 position = new Vector3(x, heightmapData[x, z], z);
+                    Vector3 position = new Vector3(this.position.X + x * scaleXZ, this.position.Y + heightmapData[x, z] * scaleY, this.position.Z + z * scaleXZ);
                     Vector3 normal = new Vector3(0, 0, 1);
                     Vector2 texCoord = new Vector2((float)x / 30.0f, (float)z / 30.0f);
 
@@ -147,13 +150,15 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         private void updateTriangles() {
+            Device d3dDevice = GuiController.Instance.D3dDevice;
+
             List<Triangle> splitList = new List<Triangle>(); //triángulos que deben ser divididos
             List<Triangle> mergeList = new List<Triangle>(); //triángulos padres de dos que se unieron
             List<Triangle> remainderList = new List<Triangle>(); //triángulos que no deben ser divididos
             List<Triangle> leftoverList = new List<Triangle>(); //triángulos que quedan
             List<Triangle> newTriangleList = new List<Triangle>(triangleList.Count); //triángulos ya divididos
 
-            Matrix worldViewProjectionMatrix = GuiController.Instance.D3dDevice.Transform.View * GuiController.Instance.D3dDevice.Transform.Projection;
+            Matrix worldViewProjectionMatrix = d3dDevice.Transform.View * d3dDevice.Transform.Projection;
 
             foreach (Triangle t in triangleList) //agregar triángulos a dividir
                 t.createSplitList(ref splitList, ref remainderList, ref worldViewProjectionMatrix, ref frustum);
@@ -176,24 +181,26 @@ namespace AlumnoEjemplos.RestrictedGL
 
         private void updateIndexBuffer() {
             //Actualiza el Index Buffer pidiendole a cada triángulo que por favor agregue sus índice a la lista
+            Device d3dDevice = GuiController.Instance.D3dDevice;
+
             indicesList.Clear();
             foreach (Triangle t in triangleList)
                 t.addIndices(ref indicesList);
 
             if (ibTerrain.SizeInBytes / sizeof(int) < indicesList.Count) {
                 ibTerrain.Dispose(); //si hay que agregar índices los cargamos de nuevo
-                ibTerrain = new IndexBuffer(typeof(int), totalVertices, GuiController.Instance.D3dDevice, Usage.WriteOnly, Pool.Default);
+                ibTerrain = new IndexBuffer(typeof(int), totalVertices, d3dDevice, Usage.WriteOnly, Pool.Default);
             }
             ibTerrain.SetData(indicesList.ToArray(), 0, LockFlags.None);
         }
 
         public void loadTexture(string path) {
             //Dispose textura anterior, si habia
+            Device d3dDevice = GuiController.Instance.D3dDevice;
+
             if (terrainTexture != null && !terrainTexture.Disposed) {
                 terrainTexture.Dispose();
             }
-
-            Device d3dDevice = GuiController.Instance.D3dDevice;
 
             //Rotar e invertir textura
             Bitmap b = (Bitmap)Bitmap.FromFile(path);
@@ -221,10 +228,6 @@ namespace AlumnoEjemplos.RestrictedGL
             d3dDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, totalVertices, 0, totalVertices / 3);
 
             d3dDevice.Indices = null;
-        }
-
-        public Vector3 Position {
-            get { return center; }
         }
 
         public void dispose() {

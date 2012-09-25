@@ -12,6 +12,7 @@ namespace AlumnoEjemplos.RestrictedGL
         private AdaptativeHeightmap heightMap;
         private const float SCALE_XZ = 10f;
         private float scaleY = 0.25f;
+        private float threshold = 0.15f;
         private readonly string pathHeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
         private readonly string pathTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
 
@@ -30,6 +31,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             //Crea modifiers para el terreno:
             GuiController.Instance.Modifiers.addFloat("Scale Y", 0f, 1f, scaleY);
+            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, threshold);
         }
 
         private void heightMapInic() {
@@ -41,6 +43,7 @@ namespace AlumnoEjemplos.RestrictedGL
         private void heightMapLoad() {
             heightMap.loadHeightmap(pathHeightMap, SCALE_XZ, scaleY, new Vector3(0,0,0));
             heightMap.loadTexture(pathTexture);
+            heightMap.Threshold = threshold;
         }
 
         private void skyBoxInic() {
@@ -67,10 +70,15 @@ namespace AlumnoEjemplos.RestrictedGL
         private void updateValues() {
             //Compruba cambios en modifiers y actualiza:
             var scaleYNew = Modifiers.get<float>("Scale Y");
-            if (scaleY == scaleYNew) return;
-
-            scaleY = scaleYNew;
-            heightMapLoad();
+            var thresholdNew = Modifiers.get<float>("ROAM Threshold");
+            if (scaleY != scaleYNew) {
+                scaleY = scaleYNew;
+                heightMapLoad();
+            }
+            if (threshold != thresholdNew) {
+                threshold = thresholdNew;
+                heightMap.Threshold = threshold;
+            }
         }
 
         public void render() {

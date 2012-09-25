@@ -8,7 +8,6 @@ using TgcViewer;
 using TgcViewer.Utils;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
-using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
@@ -31,25 +30,28 @@ namespace AlumnoEjemplos.RestrictedGL
 
         public bool splitted = false;
         public bool addedToMergeList = false;
+        AdaptativeHeightmap map; //Mapa al que pertenecen (para obtener el threshold)
 
-        public Triangle(Triangle parent, Vector2 tPoint, Vector2 lPoint, Vector2 rPoint, int[,] heightData) {
+        public Triangle(Triangle parent, Vector2 tPoint, Vector2 lPoint, Vector2 rPoint, int[,] heightData, float scaleXZ, float scaleY, AdaptativeHeightmap map) {
             //Crea el triángulo
+            this.map = map;
+
             int resolution = heightData.GetLength(0);
             tInd = (int)(tPoint.X + tPoint.Y * resolution);
             lInd = (int)(lPoint.X + lPoint.Y * resolution);
             rInd = (int)(rPoint.X + rPoint.Y * resolution);
 
-            lPos = new Vector3(lPoint.X, heightData[(int)lPoint.X, (int)lPoint.Y], lPoint.Y);
+            lPos = new Vector3(map.Position.X + lPoint.X * scaleXZ, map.Position.Y + heightData[(int)lPoint.X, (int)lPoint.Y] * scaleY, map.Position.Z + lPoint.Y * scaleXZ);
             //centro: promedio de cada componente
             Vector2 center = new Vector2((lPoint.X + rPoint.X) / 2, (lPoint.Y + rPoint.Y) / 2);
-            centerPos = new Vector3(center.X, heightData[(int)center.X, (int)center.Y], center.Y);
+            centerPos = new Vector3(map.Position.X + center.X * scaleXZ, map.Position.Y + heightData[(int)center.X, (int)center.Y] * scaleY, map.Position.Z + center.Y * scaleXZ);
 
             this.parent = parent;
             //Splitea el triángulo hasta que queden triángulos medianamente chicos
             //(para dejar el árbol armado con la mayor calidad posible)
             if (Vector2Distance(lPoint, tPoint) > 1) {
-                lChild = new Triangle(this, center, tPoint, lPoint, heightData);
-                rChild = new Triangle(this, center, rPoint, tPoint, heightData);
+                lChild = new Triangle(this, center, tPoint, lPoint, heightData, scaleXZ, scaleY, map);
+                rChild = new Triangle(this, center, rPoint, tPoint, heightData, scaleXZ, scaleY, map);
             }
         }
 
@@ -198,8 +200,7 @@ namespace AlumnoEjemplos.RestrictedGL
                 Vector2 screenDifference = new Vector2(difference.X, difference.Y);
 
                 //(menos tolerancia => más calidad)
-                float threshold = (float)GuiController.Instance.Modifiers["ROAM Threshold"];
-                if (screenDifference.Length() > threshold)
+                if (screenDifference.Length() > map.Threshold)
                     shouldSplit = true;
             }
 

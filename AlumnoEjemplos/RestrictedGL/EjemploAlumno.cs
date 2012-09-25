@@ -119,10 +119,7 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
 
             //Agregar modificadores:
-            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 30f);
-            GuiController.Instance.Modifiers.addFloat("posX", -10000f, 10000f, 0f);
-            GuiController.Instance.Modifiers.addFloat("posY", -10000f, 10000f, 0f);
-            GuiController.Instance.Modifiers.addFloat("posZ", -10000f, 10000f, 0f);
+            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 100f);
             //Agregar uservars de cámara:
             UserVars.addMany(
                 "posX", 
@@ -165,8 +162,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.R)) {
                 //R = Cámara en el origen, más o menos
-                //GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
-                GuiController.Instance.FpsCamera.setCamera(new Vector3(Modifiers.get<float>("posX"), Modifiers.get<float>("posY"), Modifiers.get<float>("posZ")), new Vector3(490f, 128f, -10f));
+                GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
             }
             
             //Actualizar velocidad cámara:
