@@ -67,14 +67,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RestrictedGL\AdaptativeHeightmap.cs" />
+    <Compile Include="RestrictedGL\Terrain\AdaptativeHeightmap.cs" />
     <Compile Include="RestrictedGL\EjemploTanque.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\GuiControllerWrapper.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\Modifiers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\UserVars.cs" />
-    <Compile Include="RestrictedGL\Terreno.cs" />
+    <Compile Include="RestrictedGL\Terrain.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
+    <Compile Include="RestrictedGL\Terrain\Temp.cs" />
+    <Compile Include="RestrictedGL\Terrain\Triangle.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgcViewer\TgcViewer.csproj">

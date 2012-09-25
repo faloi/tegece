@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
     public class EjemploAlumno : TgcExample
     {
-        Terreno terreno;
+        Terrain terrain;
 
         #region Descripciones
             /// <summary>
@@ -109,7 +109,7 @@ namespace AlumnoEjemplos.RestrictedGL
             #endregion
 
             //Inicializar terreno:
-            terreno = new Terreno();
+            terrain = new Terrain();
 
             //Configurar FPS Camara:
             GuiController.Instance.FpsCamera.Enable = true;
@@ -179,7 +179,7 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.UserVars["viewZ"] = GuiController.Instance.FpsCamera.LookAt.Z.ToString();
 
             //Renderizar:
-            terreno.render();
+            terrain.render();
         }
 
         ///<summary>Se llama al cerrar la app. Hacer dispose() de todos los objetos creados</summary>
