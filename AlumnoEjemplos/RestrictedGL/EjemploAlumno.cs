@@ -6,6 +6,7 @@ using TgcViewer;
 using TgcViewer.Example;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using TgcViewer.Utils;
 using TgcViewer.Utils.Modifiers;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
@@ -118,8 +119,10 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
 
             //Agregar modificadores:
-            GuiController.Instance.Modifiers.addFloat("velcam", 0f, 10000f, 30f);
-
+            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 30f);
+            GuiController.Instance.Modifiers.addFloat("posX", -10000f, 10000f, 0f);
+            GuiController.Instance.Modifiers.addFloat("posY", -10000f, 10000f, 0f);
+            GuiController.Instance.Modifiers.addFloat("posZ", -10000f, 10000f, 0f);
             //Agregar uservars de cámara:
             UserVars.addMany(
                 "posX", 
@@ -161,14 +164,15 @@ namespace AlumnoEjemplos.RestrictedGL
             #endregion
 
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.R)) {
-                //R = Cámara en el origen, mas o menos
-                GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
+                //R = Cámara en el origen, más o menos
+                //GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
+                GuiController.Instance.FpsCamera.setCamera(new Vector3(Modifiers.get<float>("posX"), Modifiers.get<float>("posY"), Modifiers.get<float>("posZ")), new Vector3(490f, 128f, -10f));
             }
             
             //Actualizar velocidad cámara:
             GuiController.Instance.FpsCamera.MovementSpeed = 
-            GuiController.Instance.FpsCamera.JumpSpeed = 
-                Modifiers.get<float>("velcam");
+            GuiController.Instance.FpsCamera.JumpSpeed =
+                Modifiers.get<float>("Cam Velocity");
             
             //Actualizar uservars:
             GuiController.Instance.UserVars["posX"] = GuiController.Instance.FpsCamera.Position.X.ToString();

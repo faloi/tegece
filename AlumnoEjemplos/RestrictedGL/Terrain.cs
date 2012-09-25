@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.RestrictedGL
             skyBoxInic();
 
             //Crea modifiers para el terreno:
-            GuiController.Instance.Modifiers.addFloat("scaleY", 0f, 1f, scaleY);
+            GuiController.Instance.Modifiers.addFloat("Scale Y", 0f, 1f, scaleY);
         }
 
         private void heightMapInic() {
@@ -66,7 +66,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
         private void updateValues() {
             //Compruba cambios en modifiers y actualiza:
-            var scaleYNew = Modifiers.get<float>("scaleY");
+            var scaleYNew = Modifiers.get<float>("Scale Y");
             if (scaleY == scaleYNew) return;
 
             scaleY = scaleYNew;

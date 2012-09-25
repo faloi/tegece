@@ -8,11 +8,13 @@ using TgcViewer;
 using TgcViewer.Utils;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
     public class AdaptativeHeightmap : IRenderObject
     {
+        TgcFrustum frustum;
         float scaleXZ; //[!]VER QUE HACER ACA
         float scaleY;
         List<Triangle> triangleList;
@@ -42,8 +44,12 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public AdaptativeHeightmap() {
+            //[!] Cambiar Guicontroller.instance.d3dDevice por algo mas corto, sacar los modifiers y uservars de aca
             enabled = true;
             alphaBlendEnable = false;
+            frustum = new TgcFrustum();
+
+            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, 0.6f);
         }
 
         public void loadHeightmap(string heightmapPath, float scaleXZ, float scaleY, Vector3 center) {
@@ -79,8 +85,8 @@ namespace AlumnoEjemplos.RestrictedGL
             int terrainSize = 64;
             Triangle leftTriangle = new Triangle(null, new Vector2(0, 0), new Vector2(terrainSize, 0), new Vector2(0, terrainSize), heightmapData);
             Triangle rightTriangle = new Triangle(null, new Vector2(terrainSize, terrainSize), new Vector2(0, terrainSize), new Vector2(terrainSize, 0), heightmapData);
-            leftTriangle.AddNeighs(null, null, rightTriangle);
-            rightTriangle.AddNeighs(null, null, leftTriangle);
+            leftTriangle.addNeighs(null, null, rightTriangle);
+            rightTriangle.addNeighs(null, null, leftTriangle);
 
             //Inicializar listas de triángulos e índices
             triangleList = new List<Triangle>();
@@ -88,7 +94,7 @@ namespace AlumnoEjemplos.RestrictedGL
             triangleList.Add(rightTriangle);
             indicesList = new List<int>();
             foreach (Triangle t in triangleList) {
-                t.AddIndices(ref indicesList);
+                t.addIndices(ref indicesList);
             }
 
             //Bajar índices al IndexBuffer
@@ -147,27 +153,38 @@ namespace AlumnoEjemplos.RestrictedGL
             List<Triangle> leftoverList = new List<Triangle>(); //triángulos que quedan
             List<Triangle> newTriangleList = new List<Triangle>(triangleList.Count); //triángulos ya divididos
 
-            /*Matrix worldViewProjectionMatrix = Matrix.Identity * GuiController.Instance.FpsCamera.ViewMatrix * GuiController.Instance.FpsCamera.ProjectionMatrix;
-            
-            BoundingFrustum cameraFrustum = new BoundingFrustum(worldViewProjectionMatrix);
+            Matrix worldViewProjectionMatrix = GuiController.Instance.D3dDevice.Transform.View * GuiController.Instance.D3dDevice.Transform.Projection;
 
             foreach (Triangle t in triangleList) //agregar triángulos a dividir
-                t.createSplitList(ref splitList, ref remainderList, ref worldViewProjectionMatrix, ref cameraFrustum);
+                t.createSplitList(ref splitList, ref remainderList, ref worldViewProjectionMatrix, ref frustum);
 
             foreach (Triangle t in splitList) //agregar los ya divididos en newTriangleList (lista definitiva)
                 t.processSplitList(ref newTriangleList);
 
             foreach (Triangle t in remainderList) //agregar los que se tengan que unir en la mergeList
-                t.createMergeList(ref mergeList, ref leftoverList, ref worldViewProjectionMatrix, ref cameraFrustum);
+                t.createMergeList(ref mergeList, ref leftoverList, ref worldViewProjectionMatrix, ref frustum);
 
             foreach (Triangle t in mergeList) //agregar los de la mergeList a la newTriangleList
-                t.processMergeList(ref newTriangleList, ref worldViewProjectionMatrix, ref cameraFrustum);
+                t.processMergeList(ref newTriangleList, ref worldViewProjectionMatrix, ref frustum);
 
             foreach (Triangle t in leftoverList) //procesar los que quedan dependiendo si se dividieron o no
-                t.processLeftovers(ref newTriangleList);*/
+                t.processLeftovers(ref newTriangleList);
 
             triangleList = newTriangleList;
             triangleList.TrimExcess();
+        }
+
+        private void updateIndexBuffer() {
+            //Actualiza el Index Buffer pidiendole a cada triángulo que por favor agregue sus índice a la lista
+            indicesList.Clear();
+            foreach (Triangle t in triangleList)
+                t.addIndices(ref indicesList);
+
+            if (ibTerrain.SizeInBytes / sizeof(int) < indicesList.Count) {
+                ibTerrain.Dispose(); //si hay que agregar índices los cargamos de nuevo
+                ibTerrain = new IndexBuffer(typeof(int), totalVertices, GuiController.Instance.D3dDevice, Usage.WriteOnly, Pool.Default);
+            }
+            ibTerrain.SetData(indicesList.ToArray(), 0, LockFlags.None);
         }
 
         public void loadTexture(string path) {
@@ -189,6 +206,10 @@ namespace AlumnoEjemplos.RestrictedGL
 
             Device d3dDevice = GuiController.Instance.D3dDevice;
             d3dDevice.Transform.World = Matrix.Identity;
+            frustum.updateVolume(d3dDevice.Transform.View, d3dDevice.Transform.Projection);
+
+            updateTriangles();
+            updateIndexBuffer();
 
             d3dDevice.SetTexture(0, terrainTexture);
             d3dDevice.SetTexture(1, null);
