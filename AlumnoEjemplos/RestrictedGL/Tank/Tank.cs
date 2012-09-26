@@ -1,4 +1,5 @@
-﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+﻿using System;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using AlumnoEjemplos.RestrictedGL.Interfaces;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
@@ -15,7 +16,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         Right
     }
 
-    public class Tank : IAlumnoRenderObject {
+    public class Tank : IAlumnoRenderObject, ITransformObject {
 
         private TgcMesh mesh;
         
@@ -23,8 +24,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
-
-        public Vector3 position { get; set; }
         
         private float calculateSpeed(Direction direction) {
             var speed = Modifiers.get<float>("tankVelocity");
@@ -60,21 +59,14 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.rotate(Direction.Left);
 
             if (this.isMoving)
-                mesh.moveOrientedY(elapsedTime * this.linearSpeed);
+                this.moveOrientedY(elapsedTime * this.linearSpeed);
 
             if (this.isRotating) {
                 var rotAngle = Geometry.DegreeToRadian(elapsedTime * this.rotationSpeed);
-                mesh.rotateY(rotAngle);
-                GuiController.Instance.ThirdPersonCamera.rotateY(rotAngle);
+                this.rotateY(rotAngle);                
             }
 
             this.mesh.render();
-        }
-
-        private void updatePositionVars() {
-            UserVars.set("posX", this.mesh.Position.X);
-            UserVars.set("posY", this.mesh.Position.Y);
-            UserVars.set("posZ", this.mesh.Position.Z);
         }
 
         public void init(string alumnoMediaFolder) {
@@ -86,11 +78,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public void render(float elapsedTime) {
             this.moveAndRotate(elapsedTime);
-            this.updatePositionVars();
 
             var camera = GuiController.Instance.ThirdPersonCamera;
-            camera.Target = mesh.Position;
-            camera.OffsetForward = mesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
+            camera.Target = this.mesh.Position;
+            camera.OffsetForward = this.mesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
 
             var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
             if (showBoundingBox)
@@ -100,5 +91,47 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public void dispose() {
             this.mesh.dispose();
         }
+
+        #region Implementation of ITransformObject
+
+        public Matrix Transform { get; set; }
+        public bool AutoTransformEnable { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; }
+        public Vector3 Scale { get; set; }
+        
+        public void move(Vector3 v) {
+            UserVars.set("posX", v.X);
+            UserVars.set("posY", v.Y);
+            UserVars.set("posZ", v.Z);
+        }
+
+        public void moveOrientedY(float movement) {
+            this.mesh.moveOrientedY(movement);
+            this.move(this.mesh.Position);
+        }
+
+        public void rotateY(float angle) {
+            this.mesh.rotateY(angle);
+            GuiController.Instance.ThirdPersonCamera.rotateY(angle);
+        }
+
+        public void move(float x, float y, float z) {
+            throw new NotImplementedException();
+        }
+        
+        public void getPosition(Vector3 pos) {
+            throw new NotImplementedException();
+        }
+
+        public void rotateX(float angle) {
+            throw new NotImplementedException();
+        }
+
+        public void rotateZ(float angle) {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }
