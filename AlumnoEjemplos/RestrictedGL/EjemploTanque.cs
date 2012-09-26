@@ -29,58 +29,38 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void init() {
-            //Instancio Elementos del Contexto
-            tank = new Tank();
-            terrain = new TankTerrain();
+            this.tank = new Tank();
+            this.terrain = new TankTerrain();
 
-            //Agrego UserVars para la posicion del tanque
-            UserVars.addMany(
-                "posX",
-                "posY",
-                "posZ"
-            );
-            //Agrego Modificador para Mostrar BoundingBox
+            UserVars.addMany("posX", "posY", "posZ");
+
             GuiController.Instance.Modifiers.addBoolean("showBoundingBox", "Bouding Box", false);
-
-            //Agrego Modificador de Velocidad de Movimiento
             GuiController.Instance.Modifiers.addFloat("tankVelocity", 0f, 1000f, 100f);
-
-            //Agrego Modificador de Offset de 3rd Person Camera
 
             GuiController.Instance.Modifiers.addFloat("cameraOffsetHeight", 0, 300, 200);
             GuiController.Instance.Modifiers.addFloat("cameraOffsetForward", 0, 400, 300);
   
-            //Carpeta de archivos Media del alumno
-            string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
+            var alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
 
+            this.terrain.init(alumnoMediaFolder);
+            this.tank.init(alumnoMediaFolder);
 
-            //Cargo la superficie y su textura
-            terrain.init(alumnoMediaFolder);
-            //Cargo el Tanque
-            tank.init(alumnoMediaFolder);
-
-            //Seteo la Camara en 3ra Persona
             GuiController.Instance.ThirdPersonCamera.Enable = true;
-            GuiController.Instance.ThirdPersonCamera.setCamera(tank.Position, Modifiers.get<float>("cameraOffsetHeight"), Modifiers.get<float>("cameraOffsetForward"));
+            GuiController.Instance.ThirdPersonCamera.setCamera(tank.position, Modifiers.get<float>("cameraOffsetHeight"), Modifiers.get<float>("cameraOffsetForward"));
         }
 
         public override void close() {
-            terrain.dispose();
-            tank.dispose();
+            this.terrain.dispose();
+            this.tank.dispose();
         }
 
         public override void render(float elapsedTime) {
-                     
-            //Actualizo Modifiers de Camara
-
-            TgcThirdPersonCamera camera = GuiController.Instance.ThirdPersonCamera;
-            camera.OffsetHeight = (float)GuiController.Instance.Modifiers["cameraOffsetHeight"];
-            camera.OffsetForward = (float)GuiController.Instance.Modifiers["cameraOffsetForward"];
-
+            var camera = GuiController.Instance.ThirdPersonCamera;
+            camera.OffsetHeight = Modifiers.get<float>("cameraOffsetHeight");
+            camera.OffsetForward = Modifiers.get<float>("cameraOffsetForward");
           
-            //Renderizo Objetos de la Escena
-            terrain.render();
-            tank.render(elapsedTime);
+            this.terrain.render();
+            this.tank.render(elapsedTime);
         }
     }
 }

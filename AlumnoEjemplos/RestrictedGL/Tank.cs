@@ -1,87 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
 using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 
-namespace AlumnoEjemplos.RestrictedGL{
-    class Tank{
+namespace AlumnoEjemplos.RestrictedGL {
+    
+    enum Direction {
+        Forward,
+        Backward,
+        Left,
+        Right
+    }
+
+    public class Tank {
+
         private TgcMesh tankMesh;
-        private bool moving;
-        private bool rotating;
-        private float linearMovement;
-        private float rotationMovement;
-        public Vector3 Position { set; get; }
+        private bool isMoving;
+        private bool isRotating;
+        private float linearSpeed;
+        private float rotationSpeed;
+        public Vector3 position { set; get; }
         
-        public void init(string alumnoMediaFolder) {
-            TgcSceneLoader loader = new TgcSceneLoader();
-            TgcScene scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-            tankMesh = scene.Meshes[0];
+        private float calculateSpeed(Direction direction) {
+            var speed = Modifiers.get<float>("tankVelocity");
+
+            return direction == Direction.Backward || direction == Direction.Right
+               ? speed
+               : -speed;
         }
 
-        public void render(float elapsedTime){
-            TgcD3dInput d3DInput = GuiController.Instance.D3dInput;
+        private void move(Direction direction) {
+            this.linearSpeed = calculateSpeed(direction);
+            this.isMoving = true;
+        }
 
-            moving = false;
-            rotating = false;
-            //Adelante
+        private void rotate(Direction direction) {
+            this.rotationSpeed = calculateSpeed(direction);
+            this.isRotating = true;
+        }
+
+        private void moveAndRotate(float elapsedTime) {
+            var d3DInput = GuiController.Instance.D3dInput;
+
+            this.isMoving = false;
+            this.isRotating = false;
+
             if (d3DInput.keyDown(Key.W))
-            {
-                linearMovement = -Modifiers.get<float>("tankVelocity");
-                moving = true;
-            }
-
-            //Atras
+                this.move(Direction.Forward);
             if (d3DInput.keyDown(Key.S))
-            {
-                linearMovement = Modifiers.get<float>("tankVelocity");
-                moving = true;
-            }
-            //Derecha
+                this.move(Direction.Backward);
             if (d3DInput.keyDown(Key.D))
-            {
-                rotationMovement = Modifiers.get<float>("tankVelocity");
-                rotating = true;
-            }
-            //Izquierda
+                this.rotate(Direction.Right);
             if (d3DInput.keyDown(Key.A))
-            {
-                rotationMovement = -Modifiers.get<float>("tankVelocity");
-                rotating = true;
-            }
-            if (moving)
-            {
-                //Muevo el tanque
-                tankMesh.moveOrientedY(elapsedTime * linearMovement);
-            }
-            if (rotating)
-            {
-                float rotAngle = Geometry.DegreeToRadian(rotationMovement * elapsedTime);
+                this.rotate(Direction.Left);
+
+            if (this.isMoving)
+                tankMesh.moveOrientedY(elapsedTime * this.linearSpeed);
+
+            if (this.isRotating) {
+                var rotAngle = Geometry.DegreeToRadian(elapsedTime * this.rotationSpeed);
                 tankMesh.rotateY(rotAngle);
                 GuiController.Instance.ThirdPersonCamera.rotateY(rotAngle);
             }
-            //Actualizo UserVars del tanque
-            GuiController.Instance.UserVars["posX"] = tankMesh.Position.X.ToString();
-            GuiController.Instance.UserVars["posY"] = tankMesh.Position.Y.ToString();
-            GuiController.Instance.UserVars["posZ"] = tankMesh.Position.Z.ToString();
 
-            //Muevo la camara
-            TgcThirdPersonCamera camera = GuiController.Instance.ThirdPersonCamera;
+            tankMesh.render();
+        }
+
+        public void init(string alumnoMediaFolder) {
+            var loader = new TgcSceneLoader();
+            var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
+            tankMesh = scene.Meshes[0];
+        }
+
+        public void render(float elapsedTime) {
+            this.moveAndRotate(elapsedTime);
+
+            UserVars.set("posX", tankMesh.Position.X);
+            UserVars.set("posY", tankMesh.Position.Y);
+            UserVars.set("posZ", tankMesh.Position.Z);
+
+            var camera = GuiController.Instance.ThirdPersonCamera;
             camera.Target = tankMesh.Position;
             camera.OffsetForward = tankMesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
 
-            //Renderizo el Mesh
-            tankMesh.render();
-
-            bool showBoundingBox = (bool) GuiController.Instance.Modifiers["showBoundingBox"];
-            if(showBoundingBox)
+            var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
+            if (showBoundingBox)
                 tankMesh.BoundingBox.render();
         }
+
         public void dispose() {
             tankMesh.dispose();
         }
