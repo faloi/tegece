@@ -12,5 +12,9 @@
             foreach (var key in keys)
                 UserVars.add(key);
         }
+
+        public static void set(string key, object value) {
+            Gui.UserVars.setValue(key, value);
+        }
     }
 }
