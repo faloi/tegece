@@ -1,6 +1,5 @@
 ﻿using System;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
-using AlumnoEjemplos.RestrictedGL.Interfaces;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
@@ -10,7 +9,7 @@ using Microsoft.DirectX.DirectInput;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     
-    enum Direction {
+    internal enum Direction {
         Forward,
         Backward,
         Left,

@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using AlumnoEjemplos.RestrictedGL.GuiWrappers;
-using AlumnoEjemplos.RestrictedGL.Interfaces;
+﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using AlumnoEjemplos.RestrictedGL.Tank;
 using Microsoft.DirectX;
 using TgcViewer.Example;
 using TgcViewer;
-using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
