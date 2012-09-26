@@ -114,12 +114,12 @@ namespace AlumnoEjemplos.RestrictedGL
 
             //Configurar FPS Camara:
             GuiController.Instance.FpsCamera.Enable = true;
-            GuiController.Instance.FpsCamera.MovementSpeed = 30f;
-            GuiController.Instance.FpsCamera.JumpSpeed = 30f;
+            GuiController.Instance.FpsCamera.MovementSpeed = 50f;
+            GuiController.Instance.FpsCamera.JumpSpeed = 50f;
             GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 65, 0), new Vector3(490f, 128f, -10f));
 
             //Agregar modificadores:
-            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 100f);
+            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 50f);
             //Agregar uservars de cámara:
             UserVars.addMany(
                 "posX", 
