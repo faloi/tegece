@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RestrictedGL\Interfaces\IAlumnoRenderObject.cs" />
     <Compile Include="RestrictedGL\Terrain\AdaptativeHeightmap.cs" />
     <Compile Include="RestrictedGL\EjemploTanque.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\GuiControllerWrapper.cs" />

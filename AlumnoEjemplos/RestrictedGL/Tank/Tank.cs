@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+using AlumnoEjemplos.RestrictedGL.Interfaces;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
@@ -14,14 +15,16 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         Right
     }
 
-    public class Tank {
+    public class Tank : IAlumnoRenderObject {
 
-        private TgcMesh tankMesh;
+        private TgcMesh mesh;
+        
         private bool isMoving;
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
-        public Vector3 position { set; get; }
+
+        public Vector3 position { get; set; }
         
         private float calculateSpeed(Direction direction) {
             var speed = Modifiers.get<float>("tankVelocity");
@@ -57,41 +60,45 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.rotate(Direction.Left);
 
             if (this.isMoving)
-                tankMesh.moveOrientedY(elapsedTime * this.linearSpeed);
+                mesh.moveOrientedY(elapsedTime * this.linearSpeed);
 
             if (this.isRotating) {
                 var rotAngle = Geometry.DegreeToRadian(elapsedTime * this.rotationSpeed);
-                tankMesh.rotateY(rotAngle);
+                mesh.rotateY(rotAngle);
                 GuiController.Instance.ThirdPersonCamera.rotateY(rotAngle);
             }
 
-            tankMesh.render();
+            this.mesh.render();
+        }
+
+        private void updatePositionVars() {
+            UserVars.set("posX", this.mesh.Position.X);
+            UserVars.set("posY", this.mesh.Position.Y);
+            UserVars.set("posZ", this.mesh.Position.Z);
         }
 
         public void init(string alumnoMediaFolder) {
             var loader = new TgcSceneLoader();
             var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-            tankMesh = scene.Meshes[0];
+            
+            this.mesh = scene.Meshes[0];
         }
 
         public void render(float elapsedTime) {
             this.moveAndRotate(elapsedTime);
-
-            UserVars.set("posX", tankMesh.Position.X);
-            UserVars.set("posY", tankMesh.Position.Y);
-            UserVars.set("posZ", tankMesh.Position.Z);
+            this.updatePositionVars();
 
             var camera = GuiController.Instance.ThirdPersonCamera;
-            camera.Target = tankMesh.Position;
-            camera.OffsetForward = tankMesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
+            camera.Target = mesh.Position;
+            camera.OffsetForward = mesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
 
             var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
             if (showBoundingBox)
-                tankMesh.BoundingBox.render();
+                mesh.BoundingBox.render();
         }
 
         public void dispose() {
-            tankMesh.dispose();
+            this.mesh.dispose();
         }
     }
 }

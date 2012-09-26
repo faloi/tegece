@@ -1,34 +1,41 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+using AlumnoEjemplos.RestrictedGL.Interfaces;
+using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.TgcGeometry;
 
-namespace AlumnoEjemplos.RestrictedGL.Tank{
-    class TankTerrain{
+namespace AlumnoEjemplos.RestrictedGL.Tank {
+    
+    class TankTerrain : IAlumnoRenderObject {
+        
         private TgcBox surface;
         private TgcMesh tree;
+        
         public void init(string alumnoMediaFolder){
-            //Cargo Superficie
-            Microsoft.DirectX.Direct3D.Device d3DDevice = GuiController.Instance.D3dDevice;
-            TgcTexture surfaceTexture = TgcTexture.createTexture(d3DDevice, alumnoMediaFolder + "RestrictedGL\\#TankExample\\Textures\\tierra.jpg");
-            surface = TgcBox.fromSize(new Vector3(0, 0, 0),new Vector3(500, 0, 500), surfaceTexture);
-            //Cargo Arbol
-            TgcSceneLoader loader = new TgcSceneLoader();
-            TgcScene scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-            tree = scene.Meshes[1];
+            var d3DDevice = GuiController.Instance.D3dDevice;
+            var surfaceTexture = TgcTexture.createTexture(d3DDevice, alumnoMediaFolder + "RestrictedGL\\#TankExample\\Textures\\tierra.jpg");
+            this.surface = TgcBox.fromSize(new Vector3(0, 0, 0),new Vector3(500, 0, 500), surfaceTexture);
 
+            var loader = new TgcSceneLoader();
+            var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
+            this.tree = scene.Meshes[1];
         }
-        public void render() {
+
+        public void render(float elapsedTime) {
             surface.render();
             tree.render();
-            bool showBoundingBox = (bool)GuiController.Instance.Modifiers["showBoundingBox"];
+            
+            var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
             if (showBoundingBox) {
                 tree.BoundingBox.render();
                 surface.BoundingBox.render();
             }
         }
+    
         public void dispose() {
             surface.dispose();
         }
     }
+
 }
