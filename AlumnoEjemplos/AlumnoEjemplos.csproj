@@ -79,6 +79,7 @@
     <Compile Include="RestrictedGL\Tank\TankTerrain.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
     <Compile Include="RestrictedGL\Terrain\Triangle.cs" />
+    <Compile Include="RestrictedGL\Utils\Randomizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgcViewer\TgcViewer.csproj">

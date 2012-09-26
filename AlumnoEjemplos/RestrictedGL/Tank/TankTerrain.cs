@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
-using AlumnoEjemplos.RestrictedGL.Interfaces;
 using AlumnoEjemplos.RestrictedGL.Utils;
 using Microsoft.DirectX;
 using TgcViewer;
@@ -9,11 +8,11 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
-    
-    class TankTerrain : IAlumnoRenderObject {
+
+    class TankTerrain : IRenderObject {
         
         private TgcBox surface;
-        private List<TgcMesh> trees;
+        public List<TgcMesh> trees;
 
         const int SURFACE_SIZE = 500;
 
@@ -47,10 +46,30 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.createTrees(alumnoMediaFolder);
         }
 
-        public void render(float elapsedTime) {
-            surface.render();
-            
+        public bool isOutOfBounds(TgcBoundingBox boundingBox) {
+            var result = TgcCollisionUtils.classifyBoxBox(boundingBox, this.surface.BoundingBox);
+            return result != TgcCollisionUtils.BoxBoxResult.Atravesando;
+        }
+
+        public bool isCollidingWith(TgcBoundingBox boundingBox) {
+            foreach (var obstaculo in this.trees) 
+                if (areColliding(boundingBox, obstaculo)) return true;
+
+            return false;
+        }
+
+        private static bool areColliding(TgcBoundingBox boundingBox, TgcMesh obstaculo) {
+            var result = TgcCollisionUtils.classifyBoxBox(boundingBox, obstaculo.BoundingBox);
+            return result == TgcCollisionUtils.BoxBoxResult.Adentro || result == TgcCollisionUtils.BoxBoxResult.Atravesando;
+        }
+
+        public void render() {
             var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
+            
+            surface.render();
+            if (showBoundingBox)
+                surface.BoundingBox.render();
+            
             foreach (var tree in trees) {
                 tree.render();
                 if (showBoundingBox)
@@ -63,5 +82,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             surface.dispose();
             trees.ForEach(t => t.dispose());
         }
+
+        public bool AlphaBlendEnable { get; set; }
     }   
 }

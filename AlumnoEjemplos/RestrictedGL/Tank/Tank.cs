@@ -4,6 +4,7 @@ using AlumnoEjemplos.RestrictedGL.Interfaces;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
+using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX.DirectInput;
 
@@ -16,7 +17,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         Right
     }
 
-    public class Tank : IAlumnoRenderObject, ITransformObject {
+    public class Tank : IRenderObject, ITransformObject {
+
+        public TgcBoundingBox BoundingBox
+        {
+            get { return this.mesh.BoundingBox; }
+        } 
 
         private TgcMesh mesh;
         
@@ -43,7 +49,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.isRotating = true;
         }
 
-        private void moveAndRotate(float elapsedTime) {
+        public void moveAndRotate(float elapsedTime) {
             var d3DInput = GuiController.Instance.D3dInput;
 
             this.isMoving = false;
@@ -65,8 +71,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 var rotAngle = Geometry.DegreeToRadian(elapsedTime * this.rotationSpeed);
                 this.rotateY(rotAngle);                
             }
-
-            this.mesh.render();
         }
 
         public void init(string alumnoMediaFolder) {
@@ -76,8 +80,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.mesh = scene.Meshes[0];
         }
 
-        public void render(float elapsedTime) {
-            this.moveAndRotate(elapsedTime);
+        public void render() {
+            this.mesh.render();
 
             var camera = GuiController.Instance.ThirdPersonCamera;
             camera.Target = this.mesh.Position;
@@ -92,11 +96,18 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.mesh.dispose();
         }
 
+        public bool AlphaBlendEnable { get; set; }
+
         #region Implementation of ITransformObject
 
         public Matrix Transform { get; set; }
         public bool AutoTransformEnable { get; set; }
-        public Vector3 Position { get; set; }
+        
+        public Vector3 Position {
+            get { return this.mesh.Position; }
+            set { this.mesh.Position = value; }
+        }
+
         public Vector3 Rotation { get; set; }
         public Vector3 Scale { get; set; }
         

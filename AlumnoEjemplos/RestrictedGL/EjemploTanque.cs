@@ -5,12 +5,14 @@ using AlumnoEjemplos.RestrictedGL.Tank;
 using Microsoft.DirectX;
 using TgcViewer.Example;
 using TgcViewer;
+using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
     public class EjemploTanque : TgcExample {
 
-        private List<IAlumnoRenderObject> objectsToRender;
+        private Tank.Tank tank;
+        private TankTerrain terrain;
 
         private void setUpCamera()
         {
@@ -46,10 +48,13 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void init() {
-            this.objectsToRender = new List<IAlumnoRenderObject> { new Tank.Tank(), new TankTerrain() };
+            this.tank = new Tank.Tank();
+            this.terrain = new TankTerrain();
             
             var alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
-            this.objectsToRender.ForEach(o => o.init(alumnoMediaFolder));
+            
+            this.terrain.init(alumnoMediaFolder);
+            this.tank.init(alumnoMediaFolder);
 
             UserVars.addMany("posX", "posY", "posZ");
 
@@ -58,7 +63,8 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void close() {
-            this.objectsToRender.ForEach(o => o.dispose());
+            tank.dispose();
+            terrain.dispose();
         }
 
         public override void render(float elapsedTime) {
@@ -66,7 +72,16 @@ namespace AlumnoEjemplos.RestrictedGL
             camera.OffsetHeight = Modifiers.get<float>("cameraOffsetHeight");
             camera.OffsetForward = Modifiers.get<float>("cameraOffsetForward");
 
-            this.objectsToRender.ForEach(o => o.render(elapsedTime));
+            var lastPosition = tank.Position;
+            this.tank.moveAndRotate(elapsedTime);
+
+            var collide = terrain.isOutOfBounds(tank.BoundingBox) || terrain.isCollidingWith(tank.BoundingBox);
+
+            if (collide)
+                this.tank.Position = lastPosition;
+
+            terrain.render();
+            tank.render();
         }
     }
 }
