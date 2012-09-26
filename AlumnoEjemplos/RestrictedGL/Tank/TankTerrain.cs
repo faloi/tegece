@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.TgcGeometry;
 
-namespace AlumnoEjemplos.RestrictedGL{
+namespace AlumnoEjemplos.RestrictedGL.Tank{
     class TankTerrain{
         private TgcBox surface;
         private TgcMesh tree;

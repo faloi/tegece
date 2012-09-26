@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+using AlumnoEjemplos.RestrictedGL.Tank;
 using TgcViewer.Example;
 using TgcViewer;
-using TgcViewer.Utils.Input;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
     public class EjemploTanque : TgcExample {
 
         private TankTerrain terrain;
-        private Tank tank;
+        private Tank.Tank tank;
 
         public override string getCategory()
         {
@@ -29,7 +26,7 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void init() {
-            this.tank = new Tank();
+            this.tank = new Tank.Tank();
             this.terrain = new TankTerrain();
 
             UserVars.addMany("posX", "posY", "posZ");

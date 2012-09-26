@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{659DA3D0-B324-45DF-83B0-7AE04280ADC1}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -74,8 +74,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\UserVars.cs" />
     <Compile Include="RestrictedGL\Terrain.cs" />
-    <Compile Include="RestrictedGL\Tank.cs" />
-    <Compile Include="RestrictedGL\TankTerrain.cs" />
+    <Compile Include="RestrictedGL\Tank\Tank.cs" />
+    <Compile Include="RestrictedGL\Tank\TankTerrain.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
     <Compile Include="RestrictedGL\Terrain\Triangle.cs" />
   </ItemGroup>

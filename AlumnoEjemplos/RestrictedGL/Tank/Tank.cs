@@ -5,7 +5,7 @@ using Microsoft.DirectX;
 using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX.DirectInput;
 
-namespace AlumnoEjemplos.RestrictedGL {
+namespace AlumnoEjemplos.RestrictedGL.Tank {
     
     enum Direction {
         Forward,
