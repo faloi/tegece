@@ -9,7 +9,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private const float SKYBOX_DEPTH = 9000f;
         private readonly List<IRenderObject> components;
 
-        private const int HEIGHTMAP_SIZE = 64;
+        private const int HEIGHTMAP_SIZE = 128;
         private const float INITIAL_SCALE_XZ = 20f;
         private const float INITIAL_SCALE_Y = 0.8f;
         private const float INITIAL_THRESHOLD = 0.075f;
@@ -17,12 +17,16 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private const int TREES_COUNT = 100;
 
         public Terrain() {
+            var adaptativeHeightmap = new AdaptativeHeightmap(INITIAL_SCALE_XZ, INITIAL_SCALE_Y, INITIAL_THRESHOLD);
+            
             this.components = new List<IRenderObject> {
-               new AdaptativeHeightmap(INITIAL_SCALE_XZ, INITIAL_SCALE_Y, INITIAL_THRESHOLD),
+               adaptativeHeightmap,
                new SkyBox(new Vector3(0, 0, 0), new Vector3(SKYBOX_DEPTH, SKYBOX_DEPTH, SKYBOX_DEPTH))
             };
 
-            var trees = TreeFactory.createTrees(TREES_COUNT, HEIGHTMAP_SIZE * Convert.ToInt32(INITIAL_SCALE_XZ));
+            var trees =  new TreeFactory(INITIAL_SCALE_XZ, INITIAL_SCALE_Y)
+                .createTrees(TREES_COUNT, HEIGHTMAP_SIZE / 2, adaptativeHeightmap.HeightmapData);
+            
             this.components.AddRange(trees);
         }
 
