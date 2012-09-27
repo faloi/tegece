@@ -17,7 +17,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         Right
     }
 
-    public class Tank : IRenderObject, ITransformObject {
+    public class Tank : ITransformObject {
 
         public TgcBoundingBox BoundingBox
         {
@@ -90,12 +90,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.mesh = scene.Meshes[0];
         }
 
-        public void render() {
+        public void render(float elapsedTime)
+        {
             this.mesh.render();
 
             if (missilesShooted!=null){
                 foreach (var missile in missilesShooted) {
-                    missile.render();
+                    missile.render(elapsedTime);
                 }
             }
 
