@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
@@ -29,6 +30,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
+        private List<Missile> missilesShooted;
         
         private float calculateSpeed(Direction direction) {
             var speed = Modifiers.get<float>("tankVelocity");
@@ -36,6 +38,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             return direction == Direction.Backward || direction == Direction.Right
                ? speed
                : -speed;
+        }
+
+        private void shoot() {
+            if(this.missilesShooted==null)
+                this.missilesShooted = new List<Missile>();
+            Missile newMissile = new Missile(this.mesh.Position);
+            this.missilesShooted.Add(newMissile);
         }
 
         private void move(Direction direction) {
@@ -62,6 +71,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.rotate(Direction.Right);
             if (d3DInput.keyDown(Key.A))
                 this.rotate(Direction.Left);
+            if (d3DInput.keyDown(Key.Space))
+                this.shoot();
 
             if (this.isMoving)
                 this.moveOrientedY(elapsedTime * this.linearSpeed);
@@ -81,6 +92,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public void render() {
             this.mesh.render();
+
+            if (missilesShooted!=null){
+                foreach (var missile in missilesShooted) {
+                    missile.render();
+                }
+            }
 
             var camera = GuiController.Instance.ThirdPersonCamera;
             camera.Target = this.mesh.Position;
