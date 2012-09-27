@@ -10,8 +10,8 @@ namespace AlumnoEjemplos.RestrictedGL
     {
         //Datos del HeightMap:
         private AdaptativeHeightmap heightMap;
-        private const float SCALE_XZ = 10f;
-        private float scaleY = 0.4f;
+        private const float SCALE_XZ = 20f;
+        private float scaleY = 0.8f;
         private float threshold = 0.075f;
         private readonly string pathHeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
         private readonly string pathTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
@@ -19,10 +19,10 @@ namespace AlumnoEjemplos.RestrictedGL
             get { return heightMap.HeightmapData; }
         }
         public float ScaleXZ {
-            get { return SCALE_XZ; }
+            get { return heightMap.ScaleXZ; }
         }
         public float ScaleY {
-            get { return scaleY; }
+            get { return heightMap.ScaleY; }
         }
 
         //Datos del SkyBox:

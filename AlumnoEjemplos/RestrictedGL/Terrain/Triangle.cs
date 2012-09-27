@@ -23,7 +23,15 @@ namespace AlumnoEjemplos.RestrictedGL
 
         Vector3 lPos;
         Vector3 centerPos;
-
+        Vector3 rPos {
+            get {
+                Vector2 centerPos2d = new Vector2((centerPos.X - map.Position.X) / map.ScaleXZ, (centerPos.Z - map.Position.Z) / map.ScaleXZ);
+                Vector2 lPos2d = new Vector2((lPos.X - map.Position.X) / map.ScaleXZ, (lPos.Z - map.Position.Z) / map.ScaleXZ);
+                Vector2 rPos2d = new Vector2(centerPos2d.X * 2 - lPos2d.X, centerPos2d.Y * 2 - lPos2d.Y);
+                Vector3 rPos3d = new Vector3(map.Position.X + rPos2d.X * map.ScaleXZ, map.Position.Y + map.HeightmapData[(int)rPos2d.X, (int)rPos2d.Y], map.Position.Z + rPos2d.Y * map.ScaleXZ);
+                return rPos3d;
+            }
+        }
         int tInd;
         int lInd;
         int rInd;
@@ -32,26 +40,26 @@ namespace AlumnoEjemplos.RestrictedGL
         public bool addedToMergeList = false;
         AdaptativeHeightmap map; //Mapa al que pertenecen (para obtener el threshold)
 
-        public Triangle(Triangle parent, Vector2 tPoint, Vector2 lPoint, Vector2 rPoint, int[,] heightData, float scaleXZ, float scaleY, AdaptativeHeightmap map) {
+        public Triangle(Triangle parent, Vector2 tPoint, Vector2 lPoint, Vector2 rPoint, AdaptativeHeightmap map) {
             //Crea el triángulo
             this.map = map;
 
-            int resolution = heightData.GetLength(0);
+            int resolution = map.HeightmapData.GetLength(0);
             tInd = (int)(tPoint.X + tPoint.Y * resolution);
             lInd = (int)(lPoint.X + lPoint.Y * resolution);
             rInd = (int)(rPoint.X + rPoint.Y * resolution);
 
-            lPos = new Vector3(map.Position.X + lPoint.X * scaleXZ, map.Position.Y + heightData[(int)lPoint.X, (int)lPoint.Y] * scaleY, map.Position.Z + lPoint.Y * scaleXZ);
+            lPos = new Vector3(map.Position.X + lPoint.X * map.ScaleXZ, map.Position.Y + map.HeightmapData[(int)lPoint.X, (int)lPoint.Y] * map.ScaleY, map.Position.Z + lPoint.Y * map.ScaleXZ);
             //centro: promedio de cada componente
             Vector2 center = new Vector2((lPoint.X + rPoint.X) / 2, (lPoint.Y + rPoint.Y) / 2);
-            centerPos = new Vector3(map.Position.X + center.X * scaleXZ, map.Position.Y + heightData[(int)center.X, (int)center.Y] * scaleY, map.Position.Z + center.Y * scaleXZ);
+            centerPos = new Vector3(map.Position.X + center.X * map.ScaleXZ, map.Position.Y + map.HeightmapData[(int)center.X, (int)center.Y] * map.ScaleY, map.Position.Z + center.Y * map.ScaleXZ);
 
             this.parent = parent;
             //Splitea el triángulo hasta que queden triángulos medianamente chicos
             //(para dejar el árbol armado con la mayor calidad posible)
             if (Vector2Distance(lPoint, tPoint) > 1) {
-                lChild = new Triangle(this, center, tPoint, lPoint, heightData, scaleXZ, scaleY, map);
-                rChild = new Triangle(this, center, rPoint, tPoint, heightData, scaleXZ, scaleY, map);
+                lChild = new Triangle(this, center, tPoint, lPoint, map);
+                rChild = new Triangle(this, center, rPoint, tPoint, map);
             }
         }
 
@@ -191,11 +199,13 @@ namespace AlumnoEjemplos.RestrictedGL
              *distancia es más grande. Si supera un threshold se considera suficiente para dividirlo.
             */
             bool shouldSplit = false;
-            if (TgcCollisionUtils.testPointFrustum(bf, centerPos) || TgcCollisionUtils.testPointFrustum(bf, lPos)) {
+            if (TgcCollisionUtils.testPointFrustum(bf, centerPos) //si colisiona con center, left, o right...
+                || TgcCollisionUtils.testPointFrustum(bf, lPos)
+                || TgcCollisionUtils.testPointFrustum(bf, rPos)) {
                 Vector4 lScreenPos = Vector4.Transform(new Vector4(lPos.X, lPos.Y, lPos.Z, 1), wvp);
                 Vector4 aScreenPos = Vector4.Transform(new Vector4(centerPos.X, centerPos.Y, centerPos.Z, 1), wvp);
-                lScreenPos = lScreenPos * (1/lScreenPos.W);
-                aScreenPos = aScreenPos * (1/aScreenPos.W);
+                lScreenPos = lScreenPos * (1 / lScreenPos.W);
+                aScreenPos = aScreenPos * (1 / aScreenPos.W);
 
                 Vector4 difference = lScreenPos - aScreenPos;
                 Vector2 screenDifference = new Vector2(difference.X, difference.Y);

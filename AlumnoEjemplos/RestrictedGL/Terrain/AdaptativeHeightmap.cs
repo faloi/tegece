@@ -37,10 +37,19 @@ namespace AlumnoEjemplos.RestrictedGL
         }
         Vector3 position; //posición de la esquina (se arma en X+ y Z+)
         public Vector3 Position { //centro de la malla
+            get { return position; }
+        }
+        public Vector3 Center { //centro de la malla
             get { return position + new Vector3(heightmapData.GetLength(0) * scaleXZ / 2, position.Y, heightmapData.GetLength(0) * scaleXZ / 2); }
         }
         float scaleXZ; //factor de escala a lo largo
+        public float ScaleXZ {
+            get { return scaleXZ; }
+        }
         float scaleY; //factor de escala de altura
+        public float ScaleY {
+            get { return scaleY; }
+        }
         float threshold;
         public float Threshold {
             get { return threshold; }
@@ -85,8 +94,8 @@ namespace AlumnoEjemplos.RestrictedGL
 
             //Crear los dos triángulos root, el piso
             float terrainSize = width - 1;
-            Triangle leftTriangle = new Triangle(null, new Vector2(0, 0), new Vector2(terrainSize, 0), new Vector2(0, terrainSize), heightmapData, scaleXZ, scaleY, this);
-            Triangle rightTriangle = new Triangle(null, new Vector2(terrainSize, terrainSize), new Vector2(0, terrainSize), new Vector2(terrainSize, 0), heightmapData, scaleXZ, scaleY, this);
+            Triangle leftTriangle = new Triangle(null, new Vector2(0, 0), new Vector2(terrainSize, 0), new Vector2(0, terrainSize), this);
+            Triangle rightTriangle = new Triangle(null, new Vector2(terrainSize, terrainSize), new Vector2(0, terrainSize), new Vector2(terrainSize, 0), this);
             leftTriangle.addNeighs(null, null, rightTriangle);
             rightTriangle.addNeighs(null, null, leftTriangle);
 
