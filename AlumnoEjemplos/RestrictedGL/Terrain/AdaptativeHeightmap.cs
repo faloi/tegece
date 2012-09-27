@@ -17,10 +17,6 @@ namespace AlumnoEjemplos.RestrictedGL
         private static readonly string PathHeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
         private static readonly string PathTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
 
-        private const float INITIAL_SCALE_XZ = 20f;
-        private const float INITIAL_SCALE_Y = 0.8f;
-        private const float INITIAL_THRESHOLD = 0.075f;
-
         TgcFrustum frustum;
         List<Triangle> triangleList;
         List<int> indicesList;
@@ -40,26 +36,27 @@ namespace AlumnoEjemplos.RestrictedGL
         public float ScaleY { get; private set; }
         public float Threshold { get; set; }
 
-        public AdaptativeHeightmap() {
+        public AdaptativeHeightmap(float initialScaleXz, float initialScaleY, float initialThreshold) {
             this.Enabled = true;
             this.AlphaBlendEnable = false;
             this.frustum = new TgcFrustum();
 
-            this.Threshold = INITIAL_THRESHOLD;
-            this.ScaleY = INITIAL_SCALE_Y;
+            this.Threshold = initialThreshold;
+            this.ScaleY = initialScaleY;
+            this.ScaleXZ = initialScaleXz;
 
             this.initialLoad();
-            this.createModifiers();
+            this.createModifiers(initialScaleY, initialThreshold);
         }
 
         private void initialLoad() {
-            this.loadHeightmap(PathHeightMap, INITIAL_SCALE_XZ, this.ScaleY, new Vector3(0, 0, 0));
+            this.loadHeightmap(PathHeightMap, this.ScaleXZ, this.ScaleY, new Vector3(0, 0, 0));
             this.loadTexture(PathTexture);            
         }
 
-        private void createModifiers() {
-            GuiController.Instance.Modifiers.addFloat("Scale Y", 0f, 1f, INITIAL_SCALE_Y);
-            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, INITIAL_THRESHOLD);
+        private void createModifiers(float initialScaleY, float initialThreshold) {
+            GuiController.Instance.Modifiers.addFloat("Scale Y", 0f, 1f, initialScaleY);
+            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, initialThreshold);            
         }
 
         public void updateValues() {
