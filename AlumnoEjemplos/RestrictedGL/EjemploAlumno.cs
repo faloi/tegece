@@ -58,7 +58,7 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.FpsCamera.JumpSpeed = 100f;
             GuiController.Instance.FpsCamera.setCamera(new Vector3(-100, 100, 0), new Vector3(490f, 128f, -10f));
 
-            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 100f);
+            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 500f);
 
             UserVars.addMany(
                 "posX", 
