@@ -29,7 +29,9 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
                 var offsetX = randomizer.getNext();
                 var offsetZ = randomizer.getNext();
-                var offsetY = yValues[offsetX + maxRadius, offsetZ + maxRadius];
+
+                var adjust = (int) (maxRadius + treeSize / this.scaleXZ);
+                var offsetY = yValues[offsetX + adjust, offsetZ + adjust];
 
                 instance.move(offsetX * this.scaleXZ, offsetY * this.scaleY, offsetZ * this.scaleXZ);
                 
