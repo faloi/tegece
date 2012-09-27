@@ -36,7 +36,7 @@ namespace AlumnoEjemplos.RestrictedGL
             set { alphaBlendEnable = value; }
         }
         Vector3 position; //posición de la esquina (se arma en X+ y Z+)
-        public Vector3 Position { //centro de la malla
+        public Vector3 Position {
             get { return position; }
         }
         public Vector3 Center { //centro de la malla
