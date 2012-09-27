@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TgcViewer;
@@ -13,6 +14,13 @@ namespace AlumnoEjemplos.RestrictedGL
 {
     public class AdaptativeHeightmap : IRenderObject
     {
+        private static readonly string PathHeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
+        private static readonly string PathTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
+
+        private const float INITIAL_SCALE_XZ = 20f;
+        private const float INITIAL_SCALE_Y = 0.8f;
+        private const float INITIAL_THRESHOLD = 0.075f;
+
         TgcFrustum frustum;
         List<Triangle> triangleList;
         List<int> indicesList;
@@ -21,52 +29,54 @@ namespace AlumnoEjemplos.RestrictedGL
         Texture terrainTexture;
         int totalVertices;
 
-        int[,] heightmapData; //valor de y para cada (x,z) <- la matriz debe ser cuadrada
-        public int[,] HeightmapData {
-            get { return heightmapData; }
-        }
-        bool enabled; //si se renderiza o no
-        public bool Enabled {
-            get { return enabled; }
-            set { enabled = value; }
-        }
-        bool alphaBlendEnable;
-        public bool AlphaBlendEnable {
-            get { return alphaBlendEnable; }
-            set { alphaBlendEnable = value; }
-        }
-        Vector3 position; //posición de la esquina (se arma en X+ y Z+)
-        public Vector3 Position {
-            get { return position; }
-        }
+        public int[,] HeightmapData { get; private set; }
+        public bool Enabled { get; set; }
+        public bool AlphaBlendEnable { get; set; }
+        public Vector3 Position { get; private set; }
         public Vector3 Center { //centro de la malla
-            get { return position + new Vector3(heightmapData.GetLength(0) * scaleXZ / 2, position.Y, heightmapData.GetLength(0) * scaleXZ / 2); }
+            get { return Position + new Vector3(HeightmapData.GetLength(0) * ScaleXZ / 2, Position.Y, HeightmapData.GetLength(0) * ScaleXZ / 2); }
         }
-        float scaleXZ; //factor de escala a lo largo
-        public float ScaleXZ {
-            get { return scaleXZ; }
-        }
-        float scaleY; //factor de escala de altura
-        public float ScaleY {
-            get { return scaleY; }
-        }
-        float threshold;
-        public float Threshold {
-            get { return threshold; }
-            set { threshold = value; }
-        }
+        public float ScaleXZ { get; private set; }
+        public float ScaleY { get; private set; }
+        public float Threshold { get; set; }
 
         public AdaptativeHeightmap() {
-            enabled = true;
-            alphaBlendEnable = false;
-            frustum = new TgcFrustum();
-            threshold = 1f;
+            this.Enabled = true;
+            this.AlphaBlendEnable = false;
+            this.frustum = new TgcFrustum();
+
+            this.Threshold = INITIAL_THRESHOLD;
+            this.ScaleY = INITIAL_SCALE_Y;
+
+            this.initialLoad();
+            this.createModifiers();
+        }
+
+        private void initialLoad() {
+            this.loadHeightmap(PathHeightMap, INITIAL_SCALE_XZ, this.ScaleY, new Vector3(0, 0, 0));
+            this.loadTexture(PathTexture);            
+        }
+
+        private void createModifiers() {
+            GuiController.Instance.Modifiers.addFloat("Scale Y", 0f, 1f, INITIAL_SCALE_Y);
+            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, INITIAL_THRESHOLD);
+        }
+
+        public void updateValues() {
+            var scaleYNew = Modifiers.get<float>("Scale Y");
+            if (this.ScaleY != scaleYNew) {
+                this.ScaleY = scaleYNew;
+                this.initialLoad();
+            }
+
+            this.Threshold = Modifiers.get<float>("ROAM Threshold");
         }
 
         public void loadHeightmap(string heightmapPath, float scaleXZ, float scaleY, Vector3 center) {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-            this.scaleXZ = scaleXZ;
-            this.scaleY = scaleY;
+            var d3dDevice = GuiController.Instance.D3dDevice;
+            
+            this.ScaleXZ = scaleXZ;
+            this.ScaleY = scaleY;
 
             //Dispose de vb y ib si había
             if (vbTerrain != null && !vbTerrain.Disposed) {
@@ -77,13 +87,13 @@ namespace AlumnoEjemplos.RestrictedGL
             }
 
             //Cargar heightmap
-            heightmapData = loadHeightmapValues(d3dDevice, heightmapPath);
-            totalVertices = 2 * 3 * (heightmapData.GetLength(0) - 1) * (heightmapData.GetLength(1) - 1); //por cada puntito tengo dos triángulos de 3 vértices
-            int width = heightmapData.GetLength(0);
-            int length = heightmapData.GetLength(1);
+            HeightmapData = loadHeightmapValues(d3dDevice, heightmapPath);
+            totalVertices = 2 * 3 * (HeightmapData.GetLength(0) - 1) * (HeightmapData.GetLength(1) - 1); //por cada puntito tengo dos triángulos de 3 vértices
+            int width = HeightmapData.GetLength(0);
+            int length = HeightmapData.GetLength(1);
 
             //Convertir de centro a esquina:
-            this.position = center - new Vector3(width * scaleXZ / 2, position.Y, length * scaleXZ/ 2);
+            this.Position = center - new Vector3(width * scaleXZ / 2, Position.Y, length * scaleXZ/ 2);
 
             //Crear vértices
             CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
@@ -139,15 +149,15 @@ namespace AlumnoEjemplos.RestrictedGL
 
         protected CustomVertex.PositionNormalTextured[] createTerrainVertices(int totalVertices) {
             //Devuelve un array con posición, normal (fija), y coord. de textura de cada vértice
-            int width = heightmapData.GetLength(0);
-            int length = heightmapData.GetLength(1);
+            int width = HeightmapData.GetLength(0);
+            int length = HeightmapData.GetLength(1);
             CustomVertex.PositionNormalTextured[] terrainVertices = new CustomVertex.PositionNormalTextured[width * length];
 
             int i = 0;
             for (int z = 0; z < length; z++) {
                 for (int x = 0; x < width; x++) {
                     //Vector3 position = new Vector3(x, heightmapData[x, z], z);
-                    Vector3 position = new Vector3(this.position.X + x * scaleXZ, this.position.Y + heightmapData[x, z] * scaleY, this.position.Z + z * scaleXZ);
+                    Vector3 position = new Vector3(this.Position.X + x * ScaleXZ, this.Position.Y + HeightmapData[x, z] * ScaleY, this.Position.Z + z * ScaleXZ);
                     Vector3 normal = new Vector3(0, 0, 1);
                     Vector2 texCoord = new Vector2((float)x / 30.0f, (float)z / 30.0f);
 
@@ -218,7 +228,9 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public void render() {
-            if (!enabled) return;
+            if (!Enabled) return;
+
+            this.updateValues();
 
             Device d3dDevice = GuiController.Instance.D3dDevice;
             d3dDevice.Transform.World = Matrix.Identity;
