@@ -225,7 +225,7 @@ namespace AlumnoEjemplos.RestrictedGL
             d3dDevice.VertexFormat = CustomVertex.PositionNormalTextured.Format;
             d3dDevice.Indices = ibTerrain;
             d3dDevice.SetStreamSource(0, vbTerrain, 0);
-            d3dDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, totalVertices, 0, totalVertices / 3);
+            d3dDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, totalVertices, 0, indicesList.Count / 3);
 
             d3dDevice.Indices = null;
         }

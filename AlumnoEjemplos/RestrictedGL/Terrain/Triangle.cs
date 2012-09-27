@@ -184,13 +184,14 @@ namespace AlumnoEjemplos.RestrictedGL
                 toDrawList.Add(this);
         }
 
-        public bool shouldSplit(ref Matrix wvp, ref TgcFrustum bf) {
-            /*Determina si un triángulo debe dividirse o no, midiendo la distancia
+        public bool shouldSplit(ref Matrix wvp, ref TgcFrustum bf) { //[!]Cambiar para que los cambios no sean tan bruscos
+            /*
+             * Determina si un triángulo debe dividirse o no, midiendo la distancia
              *(screen distance) entre su left point y su center point. Cerca del frustum, esta
              *distancia es más grande. Si supera un threshold se considera suficiente para dividirlo.
             */
             bool shouldSplit = false;
-            if (TgcCollisionUtils.testPointFrustum(bf, centerPos)) {
+            if (TgcCollisionUtils.testPointFrustum(bf, centerPos) || TgcCollisionUtils.testPointFrustum(bf, lPos)) {
                 Vector4 lScreenPos = Vector4.Transform(new Vector4(lPos.X, lPos.Y, lPos.Z, 1), wvp);
                 Vector4 aScreenPos = Vector4.Transform(new Vector4(centerPos.X, centerPos.Y, centerPos.Z, 1), wvp);
                 lScreenPos = lScreenPos * (1/lScreenPos.W);

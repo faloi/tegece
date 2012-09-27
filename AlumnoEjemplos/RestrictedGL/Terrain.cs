@@ -10,11 +10,20 @@ namespace AlumnoEjemplos.RestrictedGL
     {
         //Datos del HeightMap:
         private AdaptativeHeightmap heightMap;
-        private const float SCALE_XZ = 1f; //10f [!]
-        private float scaleY = 0.4f; //0.25f [!]
+        private const float SCALE_XZ = 10f;
+        private float scaleY = 0.4f;
         private float threshold = 0.075f;
         private readonly string pathHeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
         private readonly string pathTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
+        public int[,] HeightMapData {
+            get { return heightMap.HeightmapData; }
+        }
+        public float ScaleXZ {
+            get { return SCALE_XZ; }
+        }
+        public float ScaleY {
+            get { return scaleY; }
+        }
 
         //Datos del SkyBox:
         private TgcSkyBox skyBox;
