@@ -78,6 +78,7 @@
     <Compile Include="RestrictedGL\Tank\TankTerrain.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
     <Compile Include="RestrictedGL\Terrain\SkyBox.cs" />
+    <Compile Include="RestrictedGL\Terrain\TreeFactory.cs" />
     <Compile Include="RestrictedGL\Terrain\Triangle.cs" />
     <Compile Include="RestrictedGL\Utils\Randomizer.cs" />
   </ItemGroup>
