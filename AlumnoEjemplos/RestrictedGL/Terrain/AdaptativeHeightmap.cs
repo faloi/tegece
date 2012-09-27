@@ -50,7 +50,7 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         private void initialLoad() {
-            this.loadHeightmap(PathHeightMap, this.ScaleXZ, this.ScaleY, new Vector3(0, 0, 0));
+            this.loadHeightmap(PathHeightMap, new Vector3(0, 0, 0));
             this.loadTexture(PathTexture);            
         }
 
@@ -69,11 +69,8 @@ namespace AlumnoEjemplos.RestrictedGL
             this.Threshold = Modifiers.get<float>("ROAM Threshold");
         }
 
-        public void loadHeightmap(string heightmapPath, float scaleXZ, float scaleY, Vector3 center) {
+        public void loadHeightmap(string heightmapPath, Vector3 center) {
             var d3dDevice = GuiController.Instance.D3dDevice;
-            
-            this.ScaleXZ = scaleXZ;
-            this.ScaleY = scaleY;
 
             //Dispose de vb y ib si había
             if (vbTerrain != null && !vbTerrain.Disposed) {
@@ -90,7 +87,7 @@ namespace AlumnoEjemplos.RestrictedGL
             int length = HeightmapData.GetLength(1);
 
             //Convertir de centro a esquina:
-            this.Position = center - new Vector3(width * scaleXZ / 2, Position.Y, length * scaleXZ/ 2);
+            this.Position = center - new Vector3(width * this.ScaleXZ / 2, Position.Y, length * this.ScaleXZ / 2);
 
             //Crear vértices
             CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
