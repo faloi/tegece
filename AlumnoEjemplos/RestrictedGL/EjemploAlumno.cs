@@ -15,6 +15,7 @@ namespace AlumnoEjemplos.RestrictedGL
     public class EjemploAlumno : TgcExample
     {
         private Terrain.Terrain terrain;
+        private Tank.Tank tank;
 
         #region Descripciones
             /// <summary>
@@ -53,6 +54,9 @@ namespace AlumnoEjemplos.RestrictedGL
         public override void init() {
             this.terrain = new Terrain.Terrain();
 
+            var tankY = this.terrain.HeightmapData[64, 64] * 0.8f;
+            this.tank = new Tank.Tank(new Vector3(0, tankY + 15, 0));
+
             GuiController.Instance.FpsCamera.Enable = true;
             GuiController.Instance.FpsCamera.MovementSpeed = 100f;
             GuiController.Instance.FpsCamera.JumpSpeed = 100f;
@@ -83,7 +87,9 @@ namespace AlumnoEjemplos.RestrictedGL
                 Modifiers.get<float>("Cam Velocity");
             
             this.updateUserVars();
+            
             this.terrain.render();
+            this.tank.render(elapsedTime);
         }
 
         ///<summary>Se llama al cerrar la app. Hacer dispose() de todos los objetos creados</summary>
