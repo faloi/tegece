@@ -18,16 +18,16 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
         public Terrain() {
             var adaptativeHeightmap = new AdaptativeHeightmap(INITIAL_SCALE_XZ, INITIAL_SCALE_Y, INITIAL_THRESHOLD);
-            
+
+            var treeFactory = new TreeFactory(INITIAL_SCALE_XZ, INITIAL_SCALE_Y);
+            treeFactory.createTrees(TREES_COUNT, HEIGHTMAP_SIZE / 2, adaptativeHeightmap.HeightmapData);
+
             this.components = new List<IRenderObject> {
                adaptativeHeightmap,
+               treeFactory,
                new SkyBox(new Vector3(0, 0, 0), new Vector3(SKYBOX_DEPTH, SKYBOX_DEPTH, SKYBOX_DEPTH))
             };
 
-            var trees =  new TreeFactory(INITIAL_SCALE_XZ, INITIAL_SCALE_Y)
-                .createTrees(TREES_COUNT, HEIGHTMAP_SIZE / 2, adaptativeHeightmap.HeightmapData);
-            
-            this.components.AddRange(trees);
         }
 
         public void render() {

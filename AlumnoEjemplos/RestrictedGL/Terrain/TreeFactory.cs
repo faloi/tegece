@@ -5,16 +5,24 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Terrain
 {
-    public class TreeFactory {
+    public class TreeFactory : IRenderObject {
         private readonly float scaleXZ;
         private readonly float scaleY;
+        
+        private readonly List<TgcMesh> trees;
 
         public TreeFactory(float scaleXZ, float scaleY) {
             this.scaleXZ = scaleXZ;
             this.scaleY = scaleY;
+
+            this.trees = new List<TgcMesh>();
         }
 
-        public IEnumerable<IRenderObject> createTrees(int count, int maxRadius, int [,] yValues) {
+        private void addTree(TgcMesh instance) {
+            this.trees.Add(instance);
+        }
+
+        public void createTrees(int count, int maxRadius, int [,] yValues) {
             var loader = new TgcSceneLoader();
             var scene = loader.loadSceneFromFile(Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
 
@@ -34,9 +42,19 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
                 var offsetY = yValues[offsetX + adjust, offsetZ + adjust];
 
                 instance.move(offsetX * this.scaleXZ, offsetY * this.scaleY, offsetZ * this.scaleXZ);
-                
-                yield return instance;
+
+                this.addTree(instance);
             }
         }
+
+        public void render() {
+            this.trees.ForEach(t => t.render());
+        }
+
+        public void dispose() {
+            this.trees.ForEach(t => t.dispose());
+        }
+
+        public bool AlphaBlendEnable { get; set; }
     }
 }
