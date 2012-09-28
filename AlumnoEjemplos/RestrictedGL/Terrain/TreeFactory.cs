@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AlumnoEjemplos.RestrictedGL.Utils;
+using Microsoft.DirectX;
 using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Terrain
@@ -23,27 +24,21 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         }
 
         public void createTrees(int count, int maxRadius, int [,] yValues) {
-            var loader = new TgcSceneLoader();
-            var scene = loader.loadSceneFromFile(Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-
-            var originalTree = scene.Meshes[1];
-            var treeSize = Convert.ToInt32(originalTree.BoundingBox.calculateSize().X);
-
-            var maxValue = (int) (maxRadius - 2 * treeSize / this.scaleXZ);
-            var randomizer = new Randomizer(0, maxValue);
+            var treeSize = Tree.baseSize;
+            var maxValue = (int) (maxRadius - 2 * Tree.baseSize / this.scaleXZ);
+            var randomizer = new Randomizer(10, maxValue);
 
             for (var i = 1; i < count; i++) {
-                var instance = originalTree.createMeshInstance(originalTree.Name + i);
-
                 var offsetX = randomizer.getNext();
                 var offsetZ = randomizer.getNext();
 
                 var adjust = (int) (maxRadius + treeSize / this.scaleXZ);
                 var offsetY = yValues[offsetX + adjust, offsetZ + adjust];
 
-                instance.move(offsetX * this.scaleXZ, offsetY * this.scaleY, offsetZ * this.scaleXZ);
-
-                this.addTree(instance);
+                var initialPosition = new Vector3(offsetX * this.scaleXZ, offsetY * this.scaleY, offsetZ * this.scaleXZ);
+                var newTree = Tree.create(initialPosition);
+                
+                this.addTree(newTree);
             }
         }
 

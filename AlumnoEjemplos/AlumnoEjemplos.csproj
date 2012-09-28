@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{659DA3D0-B324-45DF-83B0-7AE04280ADC1}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -79,6 +79,7 @@
     <Compile Include="RestrictedGL\Tank\TankTerrain.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
     <Compile Include="RestrictedGL\Terrain\SkyBox.cs" />
+    <Compile Include="RestrictedGL\Terrain\Tree.cs" />
     <Compile Include="RestrictedGL\Terrain\TreeFactory.cs" />
     <Compile Include="RestrictedGL\Terrain\Triangle.cs" />
     <Compile Include="RestrictedGL\Utils\Randomizer.cs" />
