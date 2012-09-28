@@ -45,13 +45,12 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public override void init() {
-            this.tank = new Tank.Tank();
+            this.tank = new Tank.Tank(new Vector3(0, 0, 0));
             this.terrain = new TankTerrain();
             
             var alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
             
             this.terrain.init(alumnoMediaFolder);
-            this.tank.init(alumnoMediaFolder);
 
             UserVars.addMany("posX", "posY", "posZ");
 

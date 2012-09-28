@@ -24,14 +24,16 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             get { return this.mesh.BoundingBox; }
         } 
 
-        private TgcMesh mesh;
+        private readonly TgcMesh mesh;
         
         private bool isMoving;
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
-        private List<Missile> missilesShooted;
         
+        private readonly List<Missile> missilesShooted;
+        private readonly Vector3 scale = new Vector3(3, 3, 3);
+
         private float calculateSpeed(Direction direction) {
             var speed = Modifiers.get<float>("tankVelocity");
 
@@ -41,9 +43,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void shoot() {
-            if(this.missilesShooted==null)
-                this.missilesShooted = new List<Missile>();
-            Missile newMissile = new Missile(this.mesh.Position);
+            var newMissile = new Missile(this.mesh.Position);
             this.missilesShooted.Add(newMissile);
         }
 
@@ -55,6 +55,16 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private void rotate(Direction direction) {
             this.rotationSpeed = calculateSpeed(direction);
             this.isRotating = true;
+        }
+
+        public Tank(Vector3 initialPosition) {
+            var scene = new TgcSceneLoader().loadSceneFromFile(Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
+            
+            this.mesh = scene.Meshes[0];
+            this.mesh.move(initialPosition);
+            this.mesh.Scale = this.scale;
+
+            this.missilesShooted = new List<Missile>();
         }
 
         public void moveAndRotate(float elapsedTime) {
@@ -83,30 +93,21 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
         }
 
-        public void init(string alumnoMediaFolder) {
-            var loader = new TgcSceneLoader();
-            var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-            
-            this.mesh = scene.Meshes[0];
-        }
-
         public void render(float elapsedTime)
         {
             this.mesh.render();
 
-            if (missilesShooted!=null){
-                foreach (var missile in missilesShooted) {
-                    missile.render(elapsedTime);
-                }
+            foreach (var missile in missilesShooted) {
+                missile.render(elapsedTime);
             }
 
-            var camera = GuiController.Instance.ThirdPersonCamera;
-            camera.Target = this.mesh.Position;
-            camera.OffsetForward = this.mesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
+            //var camera = GuiController.Instance.ThirdPersonCamera;
+            //camera.Target = this.mesh.Position;
+            //camera.OffsetForward = this.mesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
 
-            var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
-            if (showBoundingBox)
-                mesh.BoundingBox.render();
+            //var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
+            //if (showBoundingBox)
+            //    mesh.BoundingBox.render();
         }
 
         public void dispose() {
