@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 
@@ -9,8 +10,10 @@ public class Missile : ITransformObject
     private float flightTime;
     private TgcMesh mesh;
     private Vector3 currentVelocity;
-    private Vector3 currentPosition;  
-    private Vector3 gravity = new Vector3(0,-0.5f,0);
+    private Vector3 currentPosition;
+    private float shootAngle;
+    private const float GRAVITY = 4.2f;
+
 
     public Matrix Transform { get; set; }
     public bool AutoTransformEnable { get; set; }
@@ -18,28 +21,37 @@ public class Missile : ITransformObject
     public Vector3 Rotation { get; set; }
     public Vector3 Scale { get; set; }
     
-    public Missile(Vector3 tankPosition) {
+    public Missile(Vector3 tankPosition,float currentAngle) {
 
         var alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
         var loader = new TgcSceneLoader();
         var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
 
         this.mesh = scene.Meshes[2];
-        this.currentVelocity = new Vector3(0,0,0);
+        this.currentVelocity = new Vector3(50,50,50);
         this.currentPosition = new Vector3(tankPosition.X, tankPosition.Y + 5, tankPosition.Z);
+        this.shootAngle = Geometry.DegreeToRadian(currentAngle);
         this.isExploded = false;
     }
 
+    //Velocidad en X y en Z son CONSTANTES (no hay gravedad), solo cambia en Y
     private void calcVelocity(float elapsedTime) {
-        //V = V0 + A*dt
-        var initialVelocity = (this.currentVelocity == new Vector3(0, 0, 0)) ? currentVelocity : new Vector3(2, 0, 2);
-        currentVelocity = initialVelocity + gravity * this.flightTime;
+        this.currentVelocity.Y += GRAVITY*elapsedTime;
     }
 
     private void calcPosition(float elapsedTime) {
-        //X = X0 + V*dt + (A*dt^2)/2
         var initialPosition = this.currentPosition;
-        currentPosition = initialPosition + currentVelocity * this.flightTime + (gravity * (this.flightTime * this.flightTime));
+        //Formulas sacadas de http://ingciv-sandrus.blogspot.com.ar/2008/05/tiro-parablico-en-tres-dimensiones.html
+        //Alfa es el angulo Verticual, supongo que es 45 degree (seria tipo la inclinacion en la que esta el cañon respecto el eje XZ)
+        //Beta es el angulo Horizontal
+        //x(t) = xo + v cos (alfa) * cos(beta) * t
+        currentPosition.X = (float) (currentPosition.X + this.currentVelocity.X*Math.Cos(Geometry.DegreeToRadian(45))*Math.Cos(this.shootAngle)*this.flightTime);
+        //y(t) = Zo + v sen (alfa) * t - gt^2 /2
+        currentPosition.Y = (float) (currentPosition.Y + this.currentVelocity.Y*Math.Sin(Geometry.DegreeToRadian(45))*this.flightTime -
+                                     (GRAVITY*Math.Pow(this.flightTime,2))*0.5);
+        //z(t) = yo + v cos (alfa) * sen(beta) * t
+        currentPosition.Z = (float) (currentPosition.Z +
+                                     this.currentVelocity.Z*Math.Cos(Geometry.DegreeToRadian(45))*Math.Sin(this.shootAngle)*this.flightTime);
     }
 
     public void move(Vector3 v) {
@@ -66,7 +78,6 @@ public class Missile : ITransformObject
 
     public void render(float elapsedTime) {
         this.flightTime += elapsedTime;
-        this.calcVelocity(elapsedTime);
         this.calcPosition(elapsedTime);
         this.move(this.currentPosition);
         this.mesh.render();

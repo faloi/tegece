@@ -30,7 +30,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
-        
+        private float currentAngle;
+
         private readonly List<Missile> missilesShooted;
         private readonly Vector3 scale = new Vector3(3, 3, 3);
 
@@ -43,7 +44,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void shoot() {
-            var newMissile = new Missile(this.mesh.Position);
+            var newMissile = new Missile(this.mesh.Position,this.currentAngle);
             this.missilesShooted.Add(newMissile);
         }
 
@@ -88,7 +89,9 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.moveOrientedY(elapsedTime * this.linearSpeed);
 
             if (this.isRotating) {
-                var rotAngle = Geometry.DegreeToRadian(elapsedTime * this.rotationSpeed);
+                currentAngle += elapsedTime*this.rotationSpeed;
+ 
+                var rotAngle = Geometry.DegreeToRadian(currentAngle);
                 this.rotateY(rotAngle);                
             }
         }
