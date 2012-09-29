@@ -12,7 +12,7 @@ public class Missile : ITransformObject
     private Vector3 currentVelocity;
     private Vector3 currentPosition;
     private float shootAngle;
-    private const float GRAVITY = 4.2f;
+    private const float GRAVITY = -0.125f;
 
 
     public Matrix Transform { get; set; }
@@ -28,7 +28,8 @@ public class Missile : ITransformObject
         var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
 
         this.mesh = scene.Meshes[2];
-        this.currentVelocity = new Vector3(50,50,50);
+        //Tengo que settiar la velocidad Inicial
+        this.currentVelocity = new Vector3(0,2,0);
         this.currentPosition = new Vector3(tankPosition.X, tankPosition.Y + 5, tankPosition.Z);
         this.shootAngle = Geometry.DegreeToRadian(currentAngle);
         this.isExploded = false;
@@ -78,6 +79,7 @@ public class Missile : ITransformObject
 
     public void render(float elapsedTime) {
         this.flightTime += elapsedTime;
+        this.calcVelocity(elapsedTime);
         this.calcPosition(elapsedTime);
         this.move(this.currentPosition);
         this.mesh.render();
