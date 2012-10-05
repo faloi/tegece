@@ -14,9 +14,6 @@ namespace AlumnoEjemplos.RestrictedGL
 {
     public class AdaptativeHeightmap : IRenderObject
     {
-        private static readonly string PathHeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
-        private static readonly string PathTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
-
         TgcFrustum frustum;
         List<Triangle> triangleList;
         List<int> indicesList;
@@ -24,10 +21,10 @@ namespace AlumnoEjemplos.RestrictedGL
         IndexBuffer ibTerrain;
         Texture terrainTexture;
         int totalVertices;
+        string lastHeightmapPath;
 
         public int[,] HeightmapData { get; private set; }
         public bool Enabled { get; set; }
-        public bool AlphaBlendEnable { get; set; }
         public Vector3 Position { get; private set; }
         public Vector3 Center { //centro de la malla
             get { return Position + new Vector3(HeightmapData.GetLength(0) * ScaleXZ / 2, Position.Y, HeightmapData.GetLength(0) * ScaleXZ / 2); }
@@ -36,37 +33,14 @@ namespace AlumnoEjemplos.RestrictedGL
         public float ScaleY { get; private set; }
         public float Threshold { get; set; }
 
-        public AdaptativeHeightmap(float initialScaleXz, float initialScaleY, float initialThreshold) {
+        public AdaptativeHeightmap(float initialScaleXZ, float initialScaleY, float initialThreshold) {
             this.Enabled = true;
             this.AlphaBlendEnable = false;
             this.frustum = new TgcFrustum();
 
             this.Threshold = initialThreshold;
             this.ScaleY = initialScaleY;
-            this.ScaleXZ = initialScaleXz;
-
-            this.initialLoad();
-            this.createModifiers(initialScaleY, initialThreshold);
-        }
-
-        private void initialLoad() {
-            this.loadHeightmap(PathHeightMap, new Vector3(0, 0, 0));
-            this.loadTexture(PathTexture);            
-        }
-
-        private void createModifiers(float initialScaleY, float initialThreshold) {
-            GuiController.Instance.Modifiers.addFloat("Scale Y", 0f, 1f, initialScaleY);
-            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, initialThreshold);            
-        }
-
-        public void updateValues() {
-            var scaleYNew = Modifiers.get<float>("Scale Y");
-            if (this.ScaleY != scaleYNew) {
-                this.ScaleY = scaleYNew;
-                this.initialLoad();
-            }
-
-            this.Threshold = Modifiers.get<float>("ROAM Threshold");
+            this.ScaleXZ = initialScaleXZ;
         }
 
         public void loadHeightmap(string heightmapPath, Vector3 center) {
@@ -81,6 +55,7 @@ namespace AlumnoEjemplos.RestrictedGL
             }
 
             //Cargar heightmap
+            lastHeightmapPath = heightmapPath;
             HeightmapData = loadHeightmapValues(d3dDevice, heightmapPath);
             totalVertices = 2 * 3 * (HeightmapData.GetLength(0) - 1) * (HeightmapData.GetLength(1) - 1); //por cada puntito tengo dos triángulos de 3 vértices
             int width = HeightmapData.GetLength(0);
@@ -141,6 +116,27 @@ namespace AlumnoEjemplos.RestrictedGL
             return heightmap;
         }
 
+        public void loadTexture(string path) {
+            //Dispose textura anterior, si habia
+            Device d3dDevice = GuiController.Instance.D3dDevice;
+
+            if (terrainTexture != null && !terrainTexture.Disposed) {
+                terrainTexture.Dispose();
+            }
+
+            //Rotar e invertir textura
+            Bitmap b = (Bitmap)Bitmap.FromFile(path);
+            b.RotateFlip(RotateFlipType.Rotate90FlipX);
+            terrainTexture = Texture.FromBitmap(d3dDevice, b, Usage.None, Pool.Managed);
+        }
+
+        public void scaleMap(float scaleXZ, float scaleY) {
+            //Recarga el mapa con valores nuevos de escala
+            this.ScaleXZ = scaleXZ;
+            this.ScaleY = scaleY;
+            loadHeightmap(this.lastHeightmapPath, this.Center);
+        }
+
         protected CustomVertex.PositionNormalTextured[] createTerrainVertices(int totalVertices) {
             //Devuelve un array con posición, normal (fija), y coord. de textura de cada vértice
             int width = HeightmapData.GetLength(0);
@@ -150,7 +146,6 @@ namespace AlumnoEjemplos.RestrictedGL
             int i = 0;
             for (int z = 0; z < length; z++) {
                 for (int x = 0; x < width; x++) {
-                    //Vector3 position = new Vector3(x, heightmapData[x, z], z);
                     Vector3 position = new Vector3(this.Position.X + x * ScaleXZ, this.Position.Y + HeightmapData[x, z] * ScaleY, this.Position.Z + z * ScaleXZ);
                     Vector3 normal = new Vector3(0, 0, 1);
                     Vector2 texCoord = new Vector2((float)x / 30.0f, (float)z / 30.0f);
@@ -162,7 +157,7 @@ namespace AlumnoEjemplos.RestrictedGL
             return terrainVertices;
         }
 
-        private void updateTriangles() {
+        protected void updateTriangles() {
             Device d3dDevice = GuiController.Instance.D3dDevice;
 
             List<Triangle> splitList = new List<Triangle>(); //triángulos que deben ser divididos
@@ -192,7 +187,7 @@ namespace AlumnoEjemplos.RestrictedGL
             triangleList.TrimExcess();
         }
 
-        private void updateIndexBuffer() {
+        protected void updateIndexBuffer() {
             //Actualiza el Index Buffer pidiendole a cada triángulo que por favor agregue sus índice a la lista
             Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -207,24 +202,8 @@ namespace AlumnoEjemplos.RestrictedGL
             ibTerrain.SetData(indicesList.ToArray(), 0, LockFlags.None);
         }
 
-        public void loadTexture(string path) {
-            //Dispose textura anterior, si habia
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-
-            if (terrainTexture != null && !terrainTexture.Disposed) {
-                terrainTexture.Dispose();
-            }
-
-            //Rotar e invertir textura
-            Bitmap b = (Bitmap)Bitmap.FromFile(path);
-            b.RotateFlip(RotateFlipType.Rotate90FlipX);
-            terrainTexture = Texture.FromBitmap(d3dDevice, b, Usage.None, Pool.Managed);
-        }
-
         public void render() {
             if (!Enabled) return;
-
-            this.updateValues();
 
             Device d3dDevice = GuiController.Instance.D3dDevice;
             d3dDevice.Transform.World = Matrix.Identity;
@@ -257,5 +236,7 @@ namespace AlumnoEjemplos.RestrictedGL
                 terrainTexture.Dispose();
             }
         }
+
+        public bool AlphaBlendEnable { get; set; }
     }
 }
