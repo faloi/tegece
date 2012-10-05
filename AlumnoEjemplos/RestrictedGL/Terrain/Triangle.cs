@@ -13,17 +13,17 @@ namespace AlumnoEjemplos.RestrictedGL
 {
     public class Triangle
     {
-        Triangle lNeigh;
-        Triangle rNeigh;
-        Triangle bNeigh;
+        private Triangle lNeigh;
+        private Triangle rNeigh;
+        private Triangle bNeigh;
 
-        Triangle parent;
-        Triangle lChild;
-        Triangle rChild;
+        private Triangle parent;
+        private Triangle lChild;
+        private Triangle rChild;
 
-        Vector3 lPos;
-        Vector3 centerPos;
-        Vector3 rPos {
+        private Vector3 lPos;
+        private Vector3 centerPos;
+        private Vector3 rPos {
             get {
                 Vector2 centerPos2d = new Vector2((centerPos.X - map.Position.X) / map.ScaleXZ, (centerPos.Z - map.Position.Z) / map.ScaleXZ);
                 Vector2 lPos2d = new Vector2((lPos.X - map.Position.X) / map.ScaleXZ, (lPos.Z - map.Position.Z) / map.ScaleXZ);
@@ -32,34 +32,34 @@ namespace AlumnoEjemplos.RestrictedGL
                 return rPos3d;
             }
         }
-        int tInd;
-        int lInd;
-        int rInd;
+        private int tInd;
+        private int lInd;
+        private int rInd;
 
         public bool splitted = false;
         public bool addedToMergeList = false;
-        AdaptativeHeightmap map; //Mapa al que pertenecen (para obtener el threshold)
+        private AdaptativeHeightmap map; //Mapa al que pertenecen (para obtener el threshold)
 
         public Triangle(Triangle parent, Vector2 tPoint, Vector2 lPoint, Vector2 rPoint, AdaptativeHeightmap map) {
             //Crea el triángulo
             this.map = map;
 
             int resolution = map.HeightmapData.GetLength(0);
-            tInd = (int)(tPoint.X + tPoint.Y * resolution);
-            lInd = (int)(lPoint.X + lPoint.Y * resolution);
-            rInd = (int)(rPoint.X + rPoint.Y * resolution);
+            this.tInd = (int)(tPoint.X + tPoint.Y * resolution);
+            this.lInd = (int)(lPoint.X + lPoint.Y * resolution);
+            this.rInd = (int)(rPoint.X + rPoint.Y * resolution);
 
-            lPos = new Vector3(map.Position.X + lPoint.X * map.ScaleXZ, map.Position.Y + map.HeightmapData[(int)lPoint.X, (int)lPoint.Y] * map.ScaleY, map.Position.Z + lPoint.Y * map.ScaleXZ);
+            this.lPos = new Vector3(map.Position.X + lPoint.X * map.ScaleXZ, map.Position.Y + map.HeightmapData[(int)lPoint.X, (int)lPoint.Y] * map.ScaleY, map.Position.Z + lPoint.Y * map.ScaleXZ);
             //centro: promedio de cada componente
             Vector2 center = new Vector2((lPoint.X + rPoint.X) / 2, (lPoint.Y + rPoint.Y) / 2);
-            centerPos = new Vector3(map.Position.X + center.X * map.ScaleXZ, map.Position.Y + map.HeightmapData[(int)center.X, (int)center.Y] * map.ScaleY, map.Position.Z + center.Y * map.ScaleXZ);
+            this.centerPos = new Vector3(map.Position.X + center.X * map.ScaleXZ, map.Position.Y + map.HeightmapData[(int)center.X, (int)center.Y] * map.ScaleY, map.Position.Z + center.Y * map.ScaleXZ);
 
             this.parent = parent;
             //Splitea el triángulo hasta que queden triángulos medianamente chicos
             //(para dejar el árbol armado con la mayor calidad posible)
             if (Vector2Distance(lPoint, tPoint) > 1) {
-                lChild = new Triangle(this, center, tPoint, lPoint, map);
-                rChild = new Triangle(this, center, rPoint, tPoint, map);
+                this.lChild = new Triangle(this, center, tPoint, lPoint, map);
+                this.rChild = new Triangle(this, center, rPoint, tPoint, map);
             }
         }
 
@@ -91,7 +91,7 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public void createSplitList(ref List<Triangle> splitList, ref List<Triangle> remainderList, ref Matrix wvp, ref TgcFrustum bf) {
-            addedToMergeList = false; //este flag se resetea acá ya que se llama por cada render
+            this.addedToMergeList = false; //este flag se resetea acá ya que se llama por cada render
 
             bool hasSplit = false;
             if ((lChild != null) && (!splitted)) { //si todavía no se dividió
@@ -182,7 +182,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
         public void processMergeList(ref List<Triangle> toDrawList, ref Matrix wvp, ref TgcFrustum bf) {
             //Los triángulos que se unen simplemente avisan que no están divididos y se agregan a la lista
-            splitted = false;
+            this.splitted = false;
             toDrawList.Add(this);
         }
 

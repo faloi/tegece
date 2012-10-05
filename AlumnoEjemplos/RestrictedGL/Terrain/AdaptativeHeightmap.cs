@@ -14,14 +14,14 @@ namespace AlumnoEjemplos.RestrictedGL
 {
     public class AdaptativeHeightmap : IRenderObject
     {
-        TgcFrustum frustum;
-        List<Triangle> triangleList;
-        List<int> indicesList;
-        VertexBuffer vbTerrain;
-        IndexBuffer ibTerrain;
-        Texture terrainTexture;
-        int totalVertices;
-        string lastHeightmapPath;
+        private TgcFrustum frustum;
+        private List<Triangle> triangleList;
+        private List<int> indicesList;
+        private VertexBuffer vbTerrain;
+        private IndexBuffer ibTerrain;
+        private Texture terrainTexture;
+        private int totalVertices;
+        private string lastHeightmapPath;
 
         public int[,] HeightmapData { get; private set; }
         public bool Enabled { get; set; }
@@ -62,13 +62,13 @@ namespace AlumnoEjemplos.RestrictedGL
             int length = HeightmapData.GetLength(1);
 
             //Convertir de centro a esquina:
-            this.Position = center - new Vector3(width * this.ScaleXZ / 2, Position.Y, length * this.ScaleXZ / 2);
+            this.Position = center - new Vector3(width * ScaleXZ / 2, Position.Y, length * ScaleXZ / 2);
 
             //Crear vértices
             CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
 
             //Bajar vértices al VertexBuffer
-            vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
+            this.vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
             vbTerrain.SetData(terrainVertices, 0, LockFlags.None);
 
             //Crear los dos triángulos root, el piso
@@ -79,16 +79,16 @@ namespace AlumnoEjemplos.RestrictedGL
             rightTriangle.addNeighs(null, null, leftTriangle);
 
             //Inicializar listas de triángulos e índices
-            triangleList = new List<Triangle>();
+            this.triangleList = new List<Triangle>();
             triangleList.Add(leftTriangle);
             triangleList.Add(rightTriangle);
-            indicesList = new List<int>();
+            this.indicesList = new List<int>();
             foreach (Triangle t in triangleList) {
                 t.addIndices(ref indicesList);
             }
 
             //Bajar índices al IndexBuffer
-            ibTerrain = new IndexBuffer(typeof(int), totalVertices, d3dDevice, Usage.WriteOnly, Pool.Default);
+            this.ibTerrain = new IndexBuffer(typeof(int), totalVertices, d3dDevice, Usage.WriteOnly, Pool.Default);
             ibTerrain.SetData(indicesList.ToArray(), 0, LockFlags.None);
         }
 
@@ -134,7 +134,7 @@ namespace AlumnoEjemplos.RestrictedGL
             //Recarga el mapa con valores nuevos de escala
             this.ScaleXZ = scaleXZ;
             this.ScaleY = scaleY;
-            loadHeightmap(this.lastHeightmapPath, this.Center);
+            loadHeightmap(lastHeightmapPath, Center);
         }
 
         protected CustomVertex.PositionNormalTextured[] createTerrainVertices(int totalVertices) {
@@ -146,7 +146,7 @@ namespace AlumnoEjemplos.RestrictedGL
             int i = 0;
             for (int z = 0; z < length; z++) {
                 for (int x = 0; x < width; x++) {
-                    Vector3 position = new Vector3(this.Position.X + x * ScaleXZ, this.Position.Y + HeightmapData[x, z] * ScaleY, this.Position.Z + z * ScaleXZ);
+                    Vector3 position = new Vector3(Position.X + x * ScaleXZ, Position.Y + HeightmapData[x, z] * ScaleY, Position.Z + z * ScaleXZ);
                     Vector3 normal = new Vector3(0, 0, 1);
                     Vector2 texCoord = new Vector2((float)x / 30.0f, (float)z / 30.0f);
 

@@ -14,7 +14,6 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private static readonly string PathHeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
         private static readonly string PathTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
         private const float SKYBOX_DEPTH = 9000f;
-        private const int HEIGHTMAP_SIZE = 128;
         private const float INITIAL_SCALE_XZ = 20f;
         private const float INITIAL_SCALE_Y = 0.8f;
         private const float INITIAL_THRESHOLD = 0.075f;
@@ -23,6 +22,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         public int[,] HeightmapData { get { return this.adaptativeHeightmap.HeightmapData; } }
         public float ScaleXZ { get { return this.adaptativeHeightmap.ScaleXZ; } }
         public float ScaleY { get { return this.adaptativeHeightmap.ScaleXZ; } }
+        private int HeightmapSize { get { return this.HeightmapData.GetLength(0); } }
 
         public Terrain() {
             this.adaptativeHeightmap = new AdaptativeHeightmap(INITIAL_SCALE_XZ, INITIAL_SCALE_Y, INITIAL_THRESHOLD);
@@ -30,10 +30,10 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             this.adaptativeHeightmap.loadTexture(PathTexture);
 
             var treeFactory = new TreeFactory(INITIAL_SCALE_XZ, INITIAL_SCALE_Y);
-            treeFactory.createTrees(TREES_COUNT, HEIGHTMAP_SIZE / 2, adaptativeHeightmap.HeightmapData);
+            treeFactory.createTrees(TREES_COUNT, HeightmapSize / 2, adaptativeHeightmap.HeightmapData);
 
             this.components = new List<IRenderObject> {
-               this.adaptativeHeightmap,
+               adaptativeHeightmap,
                treeFactory,
                new SkyBox(new Vector3(0, 0, 0), new Vector3(SKYBOX_DEPTH, SKYBOX_DEPTH, SKYBOX_DEPTH))
             };
