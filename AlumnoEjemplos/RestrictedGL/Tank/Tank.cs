@@ -30,7 +30,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
-        private float currentAngle;
 
         private readonly List<Missile> missilesShooted;
         private readonly Vector3 scale = new Vector3(3, 3, 3);
@@ -44,8 +43,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void shoot() {
-            var newMissile = new Missile(this.mesh.Position,this.currentAngle);
-            this.missilesShooted.Add(newMissile);
+         //   var newMissile = new Missile(this.mesh.Position,this.currentAngle);
+         //   this.missilesShooted.Add(newMissile);
         }
 
         private void move(Direction direction) {
@@ -63,6 +62,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             
             this.mesh = scene.Meshes[0];
             this.mesh.move(initialPosition);
+
             this.mesh.Scale = this.scale;
 
             this.missilesShooted = new List<Missile>();
@@ -85,14 +85,16 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             if (d3DInput.keyDown(Key.Space))
                 this.shoot();
 
-            if (this.isMoving)
-                this.moveOrientedY(elapsedTime * this.linearSpeed);
-
+            var camera = GuiController.Instance.ThirdPersonCamera;
+            
+            if (this.isMoving) {
+                this.moveOrientedY(elapsedTime*this.linearSpeed);
+                camera.Target = this.mesh.Position;
+            }
             if (this.isRotating) {
-                currentAngle += elapsedTime*this.rotationSpeed;
- 
-                var rotAngle = Geometry.DegreeToRadian(currentAngle);
-                this.rotateY(rotAngle);                
+                var rotAngle = Geometry.DegreeToRadian(rotationSpeed * elapsedTime);
+                this.mesh.rotateY(rotAngle);
+                camera.rotateY(rotAngle);
             }
         }
 
@@ -103,10 +105,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             foreach (var missile in missilesShooted) {
                 missile.render(elapsedTime);
             }
-
-            //var camera = GuiController.Instance.ThirdPersonCamera;
-            //camera.Target = this.mesh.Position;
-            //camera.OffsetForward = this.mesh.Position.Z + Modifiers.get<float>("cameraOffsetForward");
 
             //var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
             //if (showBoundingBox)

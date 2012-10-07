@@ -13,7 +13,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         
         private TgcBox surface;
 
-        const int SURFACE_SIZE = 500;
+        const int SURFACE_SIZE = 3000;
 
         private void createTrees(string alumnoMediaFolder) {
             var loader = new TgcSceneLoader();

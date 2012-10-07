@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{990E714F-7FF2-4A87-86B1-E5FC8D4C2F4C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -132,10 +132,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Utils\MaxPlugins\TgcKeyFrameExporter.ms" />
-    <None Include="Utils\MaxPlugins\MaxScriptUtils.ms" />
-    <None Include="Utils\MaxPlugins\TgcSceneExporter.ms" />
-    <None Include="Utils\MaxPlugins\TgcSkeletalAnimationExporter.ms" />
+    <None Include="Utils\Modifiers\MaxPlugins\TgcKeyFrameExporter.ms" />
+    <None Include="Utils\Modifiers\MaxPlugins\MaxScriptUtils.ms" />
+    <None Include="Utils\Modifiers\MaxPlugins\TgcSceneExporter.ms" />
+    <None Include="Utils\Modifiers\MaxPlugins\TgcSkeletalAnimationExporter.ms" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
