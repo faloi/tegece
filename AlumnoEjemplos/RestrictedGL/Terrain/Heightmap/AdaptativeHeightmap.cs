@@ -61,7 +61,7 @@ namespace AlumnoEjemplos.RestrictedGL
             int width = HeightmapData.GetLength(0);
             int length = HeightmapData.GetLength(1);
 
-            //Convertir de centro a esquina:
+            //Convertir de centro a esquina
             this.Position = center - new Vector3(width * ScaleXZ / 2, Position.Y, length * ScaleXZ / 2);
 
             //Crear vértices

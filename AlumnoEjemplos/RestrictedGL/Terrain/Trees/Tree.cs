@@ -9,8 +9,8 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private static readonly Vector3 scale = new Vector3(3, 4.5f, 3);
 
         private static void createBaseTree() {
-            var scene = new TgcSceneLoader().loadSceneFromFile(Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-            baseTree = scene.Meshes[1];
+            var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
+            baseTree = (TgcMesh) scene.Meshes[1];
         }
 
         public static TgcMesh create(Vector3 initialPosition) {
