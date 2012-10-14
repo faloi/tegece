@@ -81,6 +81,10 @@ namespace AlumnoEjemplos.RestrictedGL
                 //R = Cámara en el origen, más o menos
                 GuiController.Instance.FpsCamera.setCamera(new Vector3(-100, 100, 0), new Vector3(490f, 128f, -10f));
             }
+            if (GuiController.Instance.D3dInput.keyDown(Key.T)) {
+                //T = Deformar parte del terreno actual
+                terrain.deform(GuiController.Instance.FpsCamera.Position.X, GuiController.Instance.FpsCamera.Position.Z, 150, 1, 1);
+            }
             
             GuiController.Instance.FpsCamera.MovementSpeed = 
             GuiController.Instance.FpsCamera.JumpSpeed =

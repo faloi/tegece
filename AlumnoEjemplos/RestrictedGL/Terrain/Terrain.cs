@@ -12,19 +12,17 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private readonly AdaptativeHeightmap adaptativeHeightmap;
 
         private const float SKYBOX_DEPTH = 9000f;
-        private const float INITIAL_SCALE_XZ = 20f;
-        private const float INITIAL_SCALE_Y = 0.8f;
         private const float INITIAL_THRESHOLD = 0.075f;
         private const int TREES_COUNT = 30;
 
         public int[,] HeightmapData { get { return this.adaptativeHeightmap.HeightmapData; } }
-        public float ScaleXZ { get { return this.adaptativeHeightmap.ScaleXZ; } }
-        public float ScaleY { get { return this.adaptativeHeightmap.ScaleY; } }
+        public readonly float ScaleXZ = 20f;
+        public readonly float ScaleY = 0.8f;
         private int HeightmapSize { get { return this.HeightmapData.GetLength(0); } }
 
         public Terrain() {
             //Cargar heightmap
-            this.adaptativeHeightmap = new AdaptativeHeightmap(INITIAL_SCALE_XZ, INITIAL_SCALE_Y, INITIAL_THRESHOLD);
+            this.adaptativeHeightmap = new AdaptativeHeightmap(ScaleXZ, ScaleY, INITIAL_THRESHOLD);
             this.adaptativeHeightmap.loadHeightmap(Path.HeightMap, new Vector3(0, 0, 0));
             this.adaptativeHeightmap.loadTexture(Path.Texture);
 
@@ -42,18 +40,23 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         }
 
         private void createModifiers() {
-            GuiController.Instance.Modifiers.addFloat("Scale Y", 0f, 1f, INITIAL_SCALE_Y);
             GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, INITIAL_THRESHOLD);
         }
 
         private void updateModifiers() {
-            //Genera los cambios provocados por los Modifiers
-            var scaleYNew = Modifiers.get<float>("Scale Y");
-            if (this.adaptativeHeightmap.ScaleY != scaleYNew) {
-                this.adaptativeHeightmap.scaleMap(this.ScaleXZ, scaleYNew);
-            }
-
             this.adaptativeHeightmap.Threshold = Modifiers.get<float>("ROAM Threshold");
+        }
+
+        public void deform(float x, float z, float radius, int power, int count) {
+            //Deforma el heightmap en (x,z) creando un agujero de un radio
+            //con una determinada "potencia" (qué tan profundo se hace el agujero)
+            int realX = (int) (x / ScaleXZ);
+            int realZ = (int) (z / ScaleXZ);
+            realX = realX + HeightmapSize / 2;
+            realZ = realZ + HeightmapSize / 2;
+            int realRadius = (int)(radius / ScaleXZ);
+
+            adaptativeHeightmap.deform(realX, realZ, realRadius, power, count);
         }
 
         public void render() {

@@ -80,7 +80,6 @@
     <Compile Include="RestrictedGL\Tank\TankTerrain.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
     <Compile Include="RestrictedGL\Terrain\SkyBox.cs" />
-    <Compile Include="RestrictedGL\Terrain\TgcMeshAndGridPos.cs" />
     <Compile Include="RestrictedGL\Terrain\Trees\Tree.cs" />
     <Compile Include="RestrictedGL\Terrain\Trees\TreeFactory.cs" />
     <Compile Include="RestrictedGL\Terrain\Heightmap\Triangle.cs" />

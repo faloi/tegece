@@ -137,6 +137,88 @@ namespace AlumnoEjemplos.RestrictedGL
             loadHeightmap(lastHeightmapPath, Center);
         }
 
+        public void deform(int x, int z, int radius, int power, int count) {
+            //Deforma el heightmap en (x,z) creando un agujero de un radio
+            //con una determinada "potencia" (qué tan profundo se hace el agujero)
+            Device d3dDevice = GuiController.Instance.D3dDevice;
+            int length = HeightmapData.GetLength(0);
+            int maxVal = length - 1;
+
+            //Se dibujan tantos círculos como el radio indique (uno adentro del otro)
+            //aumentando la potencia al estar más cerca del centro
+            for (int c = 0; c < count; c++) {
+                int internalRadius = radius;
+                double angle = 0;
+                for (float i = 1f; i <= radius; i++) {
+                    angle = 0;
+                    while (angle < 2 * Math.PI) {
+                        int posX = (int)Math.Round(x + (internalRadius * Math.Cos(angle)));
+                        int posZ = (int)Math.Round(z + (internalRadius * Math.Sin(angle)));
+
+                        if (posX >= 0 && posX <= maxVal && posZ >= 0 && posZ <= maxVal) {
+                            HeightmapData[posX, posZ] -= (int)Math.Round(power * (i / radius));
+                            //GuiController.Instance.Logger.log("estoy restando " + (power * (i / radius)).ToString() + ", power es " + power.ToString() + ", i es " + i.ToString() + ", radius es " + radius.ToString());
+                        }
+
+                        angle += 0.1;
+                    }
+                    internalRadius--;
+                }
+            }
+
+            CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
+            this.vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
+            vbTerrain.SetData(terrainVertices, 0, LockFlags.None);
+
+            /*
+            int[,] a = new int[15, 15];
+            for (int i = 0; i < 15; i++) for (int j = 0; j < 15; j++) a[i, j] = 200;
+            int length = 15;
+            int maxPos = length - 1;
+            string matrix;
+
+            matrix = "";
+            for (int j = 0; j < length; j++) {
+                for (int i = 0; i < length; i++) {
+                    matrix = matrix + " " + a[i, j];
+                }
+                matrix = matrix + "\n";
+            }
+            GuiController.Instance.Logger.log(matrix);
+            
+            radius = 4;
+            power = 10;
+            x = 5;
+            z = 5;
+            int val = 150;
+            double angle = 0;
+
+            int internalRadius = radius;
+            for (int ii = 0; ii < radius; ii++) {
+                angle = 0;
+                while (angle < 2 * Math.PI) {
+                    int posX = (int)Math.Round(x + (internalRadius * Math.Cos(angle)));
+                    int posZ = (int) Math.Round(z + (internalRadius * Math.Sin(angle)));
+
+                    a[posX, posZ] = val;
+
+                    angle += 0.1;
+                }
+                val--;
+                internalRadius--;
+            }
+
+            string matrix = "";
+            for (int j = z - radius; j < z+radius; j++) {
+                for (int i = x-radius; i < x+radius; i++) {
+                    matrix = matrix + " " + HeightmapData[i, j];
+                }
+                matrix = matrix + "\n";
+            }
+            GuiController.Instance.Logger.log(matrix);
+            */
+        }
+
         protected CustomVertex.PositionNormalTextured[] createTerrainVertices(int totalVertices) {
             //Devuelve un array con posición, normal (fija), y coord. de textura de cada vértice
             int width = HeightmapData.GetLength(0);
