@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using AlumnoEjemplos.RestrictedGL.GuiWrappers;
-using AlumnoEjemplos.RestrictedGL.Utils;
+﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;

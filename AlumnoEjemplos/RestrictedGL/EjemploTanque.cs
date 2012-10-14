@@ -52,7 +52,8 @@ namespace AlumnoEjemplos.RestrictedGL
             
             this.terrain.init(alumnoMediaFolder);
 
-            UserVars.addMany("posX", "posY", "posZ");
+            new UserVars()
+                .addMany("posX", "posY", "posZ");
 
             this.addModifiers();
             this.setUpCamera();

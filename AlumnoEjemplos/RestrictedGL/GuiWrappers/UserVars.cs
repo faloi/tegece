@@ -2,19 +2,18 @@
 {
     class UserVars : GuiControllerWrapper
     {
-        public static void add(string key)
-        {
+        public void add(string key) {
             Gui.UserVars.addVar(key);
         }
 
-        public static void addMany(params string[] keys)
-        {
+        public void addMany(params string[] keys) {
             foreach (var key in keys)
-                UserVars.add(key);
+                this.add(key);
         }
 
-        public static void set(string key, object value) {
+        public UserVars set(string key, object value) {
             Gui.UserVars.setValue(key, value);
+            return this;
         }
     }
 }

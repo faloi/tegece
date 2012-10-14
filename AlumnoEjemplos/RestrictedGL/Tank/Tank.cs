@@ -22,8 +22,9 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public TgcBoundingBox BoundingBox
         {
             get { return this.mesh.BoundingBox; }
-        } 
+        }
 
+        private readonly UserVars userVars;
         private readonly TgcMesh mesh;
         
         private bool isMoving;
@@ -58,11 +59,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         public Tank(Vector3 initialPosition) {
+            this.userVars = new UserVars();
+            
             var scene = new TgcSceneLoader().loadSceneFromFile(Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
             
             this.mesh = scene.Meshes[0];
             this.mesh.move(initialPosition);
-
             this.mesh.Scale = this.scale;
 
             this.missilesShooted = new List<Missile>();
@@ -131,9 +133,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public Vector3 Scale { get; set; }
         
         public void move(Vector3 v) {
-            UserVars.set("posX", v.X);
-            UserVars.set("posY", v.Y);
-            UserVars.set("posZ", v.Z);
+            this.userVars
+                .set("posX", v.X)
+                .set("posY", v.Y)
+                .set("posZ", v.Z);
         }
 
         public void moveOrientedY(float movement) {

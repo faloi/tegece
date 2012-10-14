@@ -20,6 +20,12 @@ namespace AlumnoEjemplos.RestrictedGL
         private const float SCALE_Y = 2f;
         private const float SCALE_XZ = 50f;
 
+        private readonly UserVars userVars;
+        
+        public EjemploAlumno() {
+            this.userVars = new UserVars();
+        }
+
         #region Descripciones
             /// <summary>
             /// Categoría a la que pertenece el ejemplo.
@@ -45,12 +51,12 @@ namespace AlumnoEjemplos.RestrictedGL
         #endregion
 
         private void updateUserVars() {
-            UserVars.set("posX", GuiController.Instance.FpsCamera.Position.X);
-            UserVars.set("posY", GuiController.Instance.FpsCamera.Position.Y);
-            UserVars.set("posZ", GuiController.Instance.FpsCamera.Position.Z);
-            UserVars.set("viewX", GuiController.Instance.FpsCamera.LookAt.X);
-            UserVars.set("viewY", GuiController.Instance.FpsCamera.LookAt.Y);
-            UserVars.set("viewZ", GuiController.Instance.FpsCamera.LookAt.Z);
+            this.userVars
+                .set("posX", GuiController.Instance.FpsCamera.Position.X)
+                .set("posY", GuiController.Instance.FpsCamera.Position.Y)
+                .set("viewX", GuiController.Instance.FpsCamera.LookAt.X)
+                .set("viewY", GuiController.Instance.FpsCamera.LookAt.Y)
+                .set("viewZ", GuiController.Instance.FpsCamera.LookAt.Z);
         }
 
         /// <summary>Código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.</summary>
@@ -67,7 +73,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 500f);
 
-            UserVars.addMany(
+            this.userVars.addMany(
                 "posX", 
                 "posY",
                 "posZ",
