@@ -16,13 +16,17 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private const int TREES_COUNT = 30;
 
         public int[,] HeightmapData { get { return this.adaptativeHeightmap.HeightmapData; } }
-        public readonly float ScaleXZ = 20f;
-        public readonly float ScaleY = 0.8f;
+        public readonly float ScaleXZ;
+        public readonly float ScaleY;
+
         private int HeightmapSize { get { return this.HeightmapData.GetLength(0); } }
 
-        public Terrain() {
+        public Terrain(float scaleXZ, float scaleY) {
             //Cargar heightmap
-            this.adaptativeHeightmap = new AdaptativeHeightmap(ScaleXZ, ScaleY, INITIAL_THRESHOLD);
+            this.ScaleXZ = scaleXZ;
+            this.ScaleY = scaleY;
+            
+            this.adaptativeHeightmap = new AdaptativeHeightmap(this.ScaleXZ, this.ScaleY, INITIAL_THRESHOLD);
             this.adaptativeHeightmap.loadHeightmap(Path.HeightMap, new Vector3(0, 0, 0));
             this.adaptativeHeightmap.loadTexture(Path.Texture);
 

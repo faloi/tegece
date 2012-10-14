@@ -17,6 +17,9 @@ namespace AlumnoEjemplos.RestrictedGL
         private Terrain.Terrain terrain;
         private Tank.Tank tank;
 
+        private const float SCALE_Y = 2f;
+        private const float SCALE_XZ = 50f;
+
         #region Descripciones
             /// <summary>
             /// Categoría a la que pertenece el ejemplo.
@@ -52,9 +55,9 @@ namespace AlumnoEjemplos.RestrictedGL
 
         /// <summary>Código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.</summary>
         public override void init() {
-            this.terrain = new Terrain.Terrain();
+            this.terrain = new Terrain.Terrain(SCALE_XZ, SCALE_Y);
 
-            var tankY = this.terrain.HeightmapData[64, 64] * 0.8f;
+            var tankY = this.terrain.HeightmapData[64, 64] * SCALE_Y;
             this.tank = new Tank.Tank(new Vector3(0, tankY + 15, 0));
 
             GuiController.Instance.FpsCamera.Enable = true;
