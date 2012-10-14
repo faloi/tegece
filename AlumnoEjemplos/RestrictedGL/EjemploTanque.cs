@@ -72,9 +72,9 @@ namespace AlumnoEjemplos.RestrictedGL
             var lastPosition = tank.Position;
             this.tank.moveAndRotate(elapsedTime);
 
-            var collide = terrain.isOutOfBounds(tank.BoundingBox) || terrain.isCollidingWith(tank.BoundingBox);
+            var tankCollide = terrain.isOutOfBounds(tank.BoundingBox) || terrain.isCollidingWith(tank.BoundingBox);
 
-            if (collide)
+            if (tankCollide)
                 this.tank.Position = lastPosition;
 
             terrain.render();

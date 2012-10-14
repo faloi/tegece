@@ -32,7 +32,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private float linearSpeed;
         private float rotationSpeed;
 
-        private readonly List<Missile> missilesShooted;
+        public List<Missile> missilesShooted { get; set; }
         private readonly Vector3 scale = new Vector3(3, 3, 3);
 
         private float calculateSpeed(Direction direction) {
@@ -44,8 +44,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void shoot() {
-         //   var newMissile = new Missile(this.mesh.Position,this.currentAngle);
-         //   this.missilesShooted.Add(newMissile);
+            var newMissile = new Missile(this.mesh.Position,this.mesh.Rotation);
+            this.missilesShooted.Add(newMissile);
         }
 
         private void move(Direction direction) {
@@ -108,9 +108,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 missile.render(elapsedTime);
             }
 
-            //var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
-            //if (showBoundingBox)
-            //    mesh.BoundingBox.render();
         }
 
         public void dispose() {
