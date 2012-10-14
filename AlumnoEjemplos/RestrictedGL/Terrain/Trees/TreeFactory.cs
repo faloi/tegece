@@ -8,7 +8,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 {
     public class TreeFactory : IRenderObject
     {
-        Terrain terrain;
+        private readonly Terrain terrain;
         private readonly List<TgcMesh> trees;
 
         public TreeFactory(Terrain terrain) {
@@ -30,7 +30,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
                 var offsetZ = randomizer.getNext();
 
                 var adjust = (int)(maxRadius + treeSize / terrain.ScaleXZ);
-                var offsetY = terrain.HeightmapData[offsetX + adjust, offsetZ + adjust];
+                var offsetY = terrain.heightmapData[offsetX + adjust, offsetZ + adjust];
 
                 var initialPosition = new Vector3(offsetX * terrain.ScaleXZ, offsetY * terrain.ScaleY, offsetZ * terrain.ScaleXZ);
                 var newTree = Tree.create(initialPosition);

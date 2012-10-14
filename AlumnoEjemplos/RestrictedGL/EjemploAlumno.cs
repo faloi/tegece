@@ -63,7 +63,7 @@ namespace AlumnoEjemplos.RestrictedGL
         public override void init() {
             this.terrain = new Terrain.Terrain(SCALE_XZ, SCALE_Y);
 
-            var tankY = this.terrain.HeightmapData[64, 64] * SCALE_Y;
+            var tankY = this.terrain.heightmapData[64, 64] * SCALE_Y;
             this.tank = new Tank.Tank(new Vector3(0, tankY + 15, 0));
 
             GuiController.Instance.FpsCamera.Enable = true;

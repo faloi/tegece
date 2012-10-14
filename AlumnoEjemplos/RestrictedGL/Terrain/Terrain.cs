@@ -10,15 +10,17 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private readonly List<IRenderObject> components;
         private readonly AdaptativeHeightmap adaptativeHeightmap;
 
-        private const float SKYBOX_DEPTH = 9000f;
         private const float INITIAL_THRESHOLD = 0.075f;
         private const int TREES_COUNT = 30;
 
-        public int[,] HeightmapData { get { return this.adaptativeHeightmap.HeightmapData; } }
+        public int[,] heightmapData { get { return this.adaptativeHeightmap.HeightmapData; } }
         public readonly float ScaleXZ;
         public readonly float ScaleY;
 
-        private int HeightmapSize { get { return this.HeightmapData.GetLength(0); } }
+        private int heightmapSize { get { return this.heightmapData.GetLength(0); } }
+        private float heightmapSizeScaled {
+            get { return this.heightmapSize * this.ScaleXZ; }
+        }
 
         public Terrain(float scaleXZ, float scaleY) {
             //Cargar heightmap
@@ -31,15 +33,15 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
             //Crear TREES_COUNT pinos de forma random a lo largo del tererno
             var treeFactory = new TreeFactory(this);
-            treeFactory.createTrees(TREES_COUNT, HeightmapSize / 2);
+            treeFactory.createTrees(TREES_COUNT, this.heightmapSize / 2);
 
             this.components = new List<IRenderObject> { //lista de componentes a renderizar
                adaptativeHeightmap,
                treeFactory,
-               new SkyBox(new Vector3(0, 0, 0), new Vector3(SKYBOX_DEPTH, SKYBOX_DEPTH, SKYBOX_DEPTH))
+               new SkyBox(new Vector3(0, 0, 0), new Vector3(this.heightmapSizeScaled, this.heightmapSizeScaled, this.heightmapSizeScaled))
             };
 
-            createModifiers();
+            this.createModifiers();
         }
 
         private void createModifiers() {
@@ -53,17 +55,15 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         public void deform(float x, float z, float radius, int power, int count) {
             //Deforma el heightmap en (x,z) creando un agujero de un radio
             //con una determinada "potencia" (qué tan profundo se hace el agujero)
-            int realX = (int) (x / ScaleXZ);
-            int realZ = (int) (z / ScaleXZ);
-            realX = realX + HeightmapSize / 2;
-            realZ = realZ + HeightmapSize / 2;
-            int realRadius = (int)(radius / ScaleXZ);
+            var realX = (int) (x / this.ScaleXZ) + this.heightmapSize / 2;
+            var realZ = (int) (z / this.ScaleXZ) + this.heightmapSize / 2;
+            var realRadius = (int)(radius / this.ScaleXZ);
 
-            adaptativeHeightmap.deform(realX, realZ, realRadius, power, count);
+            this.adaptativeHeightmap.deform(realX, realZ, realRadius, power, count);
         }
 
         public void render() {
-            updateModifiers();
+            this.updateModifiers();
             this.components.ForEach(o => o.render());
         }
 
