@@ -82,12 +82,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         }
 
         private void deformIfCollidingWith(Missile missile) {
-            var missileY = (int) missile.Position.Y;
-
-            if (missileY < 0)
-                return;
-
-            if (this.getYValueFor(missile.Position.X, missile.Position.Z) == missileY)
+            if (missile.isCollidingWith(this))            
                 this.deform(missile.Position.X, missile.Position.Z, 150, 10, 1);
         }
 

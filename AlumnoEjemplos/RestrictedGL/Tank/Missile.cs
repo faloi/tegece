@@ -1,4 +1,5 @@
 ﻿using System;
+using AlumnoEjemplos.RestrictedGL.Terrain;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TgcViewer;
@@ -79,5 +80,12 @@ public class Missile : ITransformObject
 
     public void dispose() {
         this.mesh.dispose();
+    }
+
+    public bool isCollidingWith(Terrain terrain) {
+        if (this.Position.Y < 0)
+            return false;
+        
+        return terrain.getYValueFor(this.Position.X, this.Position.Z) == (int) this.Position.Y;
     }
 }
