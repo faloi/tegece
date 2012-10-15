@@ -16,9 +16,9 @@ public class Missile : ITransformObject
         get { return this.mesh.BoundingBox; }
     }
 
-    private const float GRAVITY = -25.5f;
-    private const float INITIAL_HORIZONTAL_SPEED=-100f; //Es constante porque en el eje X no hay gravedad
-    private float initialVeticalSpeed = 200f;
+    private const float GRAVITY = -0.2f;
+    private const float INITIAL_HORIZONTAL_SPEED=-600f; //Es constante porque en el eje X no hay gravedad
+    private float initialVeticalSpeed;
     public bool isOutOfRange;
     public Matrix Transform { get; set; }
     public bool AutoTransformEnable { get; set; }
@@ -36,6 +36,7 @@ public class Missile : ITransformObject
         this.mesh.Position = new Vector3(tankPosition.X, tankPosition.Y + 10, tankPosition.Z);
         this.mesh.Rotation = new Vector3(tankRotation.X, tankRotation.Y, tankRotation.Z );
         this.isExploded = false;
+        this.initialVeticalSpeed = 8f;
     }
 
     public void move(Vector3 v) {
@@ -48,7 +49,8 @@ public class Missile : ITransformObject
         this.mesh.moveOrientedY(movement);
     }
     public void moveVertically() {
-        this.mesh.move(0, 0.2f, 0); 
+        this.initialVeticalSpeed = this.initialVeticalSpeed + GRAVITY*this.flightTime;
+        this.mesh.move(0,  this.initialVeticalSpeed * this.flightTime + 0.5f * GRAVITY * this.flightTime * this.flightTime, 0); 
     }
     public void getPosition(Vector3 pos) {
         throw new NotImplementedException();
