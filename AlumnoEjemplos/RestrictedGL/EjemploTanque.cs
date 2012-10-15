@@ -70,7 +70,6 @@ namespace AlumnoEjemplos.RestrictedGL
             camera.OffsetForward = Modifiers.get<float>("cameraOffsetForward");
 
             var lastPosition = tank.Position;
-            this.tank.moveAndRotate(elapsedTime);
 
             var tankCollide = terrain.isOutOfBounds(tank.BoundingBox) || terrain.isCollidingWith(tank.BoundingBox);
 

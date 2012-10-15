@@ -17,7 +17,7 @@ public class Missile : ITransformObject
     }
 
     private const float GRAVITY = -0.2f;
-    private const float INITIAL_HORIZONTAL_SPEED=-600f; //Es constante porque en el eje X no hay gravedad
+    private const float INITIAL_HORIZONTAL_SPEED=-900f; //Es constante porque en el eje X no hay gravedad
     private float initialVeticalSpeed;
     public bool isOutOfRange;
     public Matrix Transform { get; set; }

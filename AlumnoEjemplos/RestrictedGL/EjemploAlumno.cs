@@ -72,6 +72,7 @@ namespace AlumnoEjemplos.RestrictedGL
             GuiController.Instance.FpsCamera.setCamera(this.tank.Position + new Vector3(0, 200, 400), this.tank.Position);
 
             GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 500f);
+            GuiController.Instance.Modifiers.addFloat("tankVelocity", 0f, 1000f, 100f);
 
             this.userVars.addMany(
                 "posX", 

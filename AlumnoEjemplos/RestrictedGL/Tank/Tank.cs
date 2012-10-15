@@ -4,6 +4,7 @@ using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
+using TgcViewer.Utils.Input;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX.DirectInput;
@@ -70,7 +71,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.missilesShooted = new List<Missile>();
         }
 
-        public void moveAndRotate(float elapsedTime) {
+        private void moveAndRotate(float elapsedTime) {
             var d3DInput = GuiController.Instance.D3dInput;
 
             this.isMoving = false;
@@ -84,7 +85,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.rotate(Direction.Right);
             if (d3DInput.keyDown(Key.A))
                 this.rotate(Direction.Left);
-            if (d3DInput.keyDown(Key.Space))
+            if (d3DInput.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
                 this.shoot();
 
             var camera = GuiController.Instance.ThirdPersonCamera;
@@ -93,6 +94,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.moveOrientedY(elapsedTime*this.linearSpeed);
                 camera.Target = this.mesh.Position;
             }
+
             if (this.isRotating) {
                 var rotAngle = Geometry.DegreeToRadian(rotationSpeed * elapsedTime);
                 this.mesh.rotateY(rotAngle);
@@ -102,6 +104,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public void render(float elapsedTime)
         {
+            this.moveAndRotate(elapsedTime);
             this.mesh.render();
 
             foreach (var missile in missilesShooted) {
