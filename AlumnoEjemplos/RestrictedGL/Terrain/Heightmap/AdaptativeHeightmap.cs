@@ -159,7 +159,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
                         angle += 0.1;
                     }
-                    internalRadius--;
+                    internalRadius --;
                 }
             }
 

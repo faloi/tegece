@@ -11,7 +11,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain {
             this.Size = size;
 
             this.setFaceTexture(SkyFaces.Up, Path.SkyTop);
-            this.setFaceTexture(SkyFaces.Down, Path.SkyTop);
+            this.setFaceTexture(SkyFaces.Down, Path.SkyBottom);
             this.setFaceTexture(SkyFaces.Left, Path.SkyLeft);
             this.setFaceTexture(SkyFaces.Right, Path.SkyRight);
 

@@ -2,6 +2,7 @@ using Microsoft.DirectX.DirectInput;
 using TgcViewer;
 using TgcViewer.Example;
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
 namespace AlumnoEjemplos.RestrictedGL
@@ -61,6 +62,8 @@ namespace AlumnoEjemplos.RestrictedGL
 
         /// <summary>Código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.</summary>
         public override void init() {
+            var d3dDevice = GuiController.Instance.D3dDevice;
+
             this.terrain = new Terrain.Terrain(SCALE_XZ, SCALE_Y);
 
             var tankY = this.terrain.heightmapData[64, 64] * SCALE_Y;
@@ -82,6 +85,10 @@ namespace AlumnoEjemplos.RestrictedGL
                 "viewY",
                 "viewZ"
             );
+
+            //Aumentar distancia del far plane
+            d3dDevice.Transform.Projection = Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f),
+                (float)d3dDevice.CreationParameters.FocusWindow.Width / d3dDevice.CreationParameters.FocusWindow.Height, 1f, 30000f);
         }
 
         ///<summary>Se llama cada vez que hay que refrescar la pantalla</summary>

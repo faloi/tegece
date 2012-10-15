@@ -38,7 +38,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             this.components = new List<IRenderObject> { //lista de componentes a renderizar
                adaptativeHeightmap,
                treeFactory,
-               new SkyBox(new Vector3(0, 0, 0), new Vector3(this.heightmapSizeScaled, this.heightmapSizeScaled, this.heightmapSizeScaled))
+               new SkyBox(new Vector3(0, 0, 0), new Vector3(this.heightmapSizeScaled * 3f, this.heightmapSizeScaled, this.heightmapSizeScaled * 3f))
             };
 
             this.createModifiers();

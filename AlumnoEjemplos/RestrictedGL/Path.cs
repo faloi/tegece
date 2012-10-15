@@ -6,6 +6,7 @@
         public readonly static string Texture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
 
         public readonly static string SkyTop = Shared.MediaFolder + "\\Terreno\\SkyTop.jpg";
+        public readonly static string SkyBottom = Shared.MediaFolder + "\\Terreno\\SkyBottom.jpg";
         public readonly static string SkyLeft = Shared.MediaFolder + "\\Terreno\\SkyLeft.jpg";
         public readonly static string SkyRight = Shared.MediaFolder + "\\Terreno\\SkyRight.jpg";
         public readonly static string SkyFront = Shared.MediaFolder + "\\Terreno\\SkyFront.jpg";
