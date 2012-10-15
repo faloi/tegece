@@ -22,7 +22,12 @@ public class Missile : ITransformObject
     public bool isOutOfRange;
     public Matrix Transform { get; set; }
     public bool AutoTransformEnable { get; set; }
-    public Vector3 Position { get; set; }
+    
+    public Vector3 Position {
+        get { return this.mesh.Position; }
+        set { throw new NotImplementedException(); }
+    }
+
     public Vector3 Rotation { get; set; }
     public Vector3 Scale { get; set; }
     
