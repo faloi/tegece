@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AlumnoEjemplos.RestrictedGL.Interfaces;
 using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
@@ -6,7 +7,7 @@ using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
 namespace AlumnoEjemplos.RestrictedGL.Terrain
 {
-    public class Terrain : IRenderObject {
+    public class Terrain : IRenderObject, ITerrainCollision {
         private readonly List<IRenderObject> components;
         private readonly AdaptativeHeightmap adaptativeHeightmap;
 
@@ -75,15 +76,10 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         }
 
         public void render(List<Missile> missilesShooted) {
+
             this.updateModifiers();
-            missilesShooted.ForEach(this.deformIfCollidingWith);
             
             this.components.ForEach(o => o.render());
-        }
-
-        private void deformIfCollidingWith(Missile missile) {
-            if (missile.isCollidingWith(this))            
-                this.deform(missile.Position.X, missile.Position.Z, 150, 10, 1);
         }
 
         public void render() {

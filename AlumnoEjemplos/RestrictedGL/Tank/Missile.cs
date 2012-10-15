@@ -1,14 +1,13 @@
 ﻿using System;
+using AlumnoEjemplos.RestrictedGL.Interfaces;
 using AlumnoEjemplos.RestrictedGL.Terrain;
 using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
 using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
 public class Missile : ITransformObject
 {
-    private bool isExploded ;
     private float flightTime;
     private TgcMesh mesh;
   
@@ -20,7 +19,6 @@ public class Missile : ITransformObject
     private const float GRAVITY = -0.2f;
     private const float INITIAL_HORIZONTAL_SPEED=-900f; //Es constante porque en el eje X no hay gravedad
     private float initialVeticalSpeed;
-    public bool isOutOfRange;
     public Matrix Transform { get; set; }
     public bool AutoTransformEnable { get; set; }
     
@@ -39,9 +37,8 @@ public class Missile : ITransformObject
         var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
 
         this.mesh = scene.Meshes[2];
-        this.mesh.Position = new Vector3(tankPosition.X, tankPosition.Y + 10, tankPosition.Z);
+        this.mesh.Position = new Vector3(tankPosition.X, tankPosition.Y + 20, tankPosition.Z);
         this.mesh.Rotation = new Vector3(tankRotation.X, tankRotation.Y, tankRotation.Z );
-        this.isExploded = false;
         this.initialVeticalSpeed = 8f;
     }
 
@@ -82,10 +79,7 @@ public class Missile : ITransformObject
         this.mesh.dispose();
     }
 
-    public bool isCollidingWith(Terrain terrain) {
-        if (this.Position.Y < 0)
-            return false;
-        
-        return terrain.getYValueFor(this.Position.X, this.Position.Z) == (int) this.Position.Y;
+    public bool isCollidingWith(ITerrainCollision terrain) {
+        return terrain.getYValueFor(this.Position.X, this.Position.Z) >= (int) this.Position.Y;
     }
 }

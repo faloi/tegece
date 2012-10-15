@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+using AlumnoEjemplos.RestrictedGL.Interfaces;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
@@ -31,6 +32,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
+        private ITerrainCollision terrain;
 
         public List<Missile> missilesShooted { get; set; }
         private readonly Vector3 scale = new Vector3(3, 3, 3);
@@ -58,7 +60,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.isRotating = true;
         }
 
-        public Tank(Vector3 initialPosition) {
+        public Tank(Vector3 initialPosition,ITerrainCollision terrain) {
             this.userVars = new UserVars();
             
             var scene = new TgcSceneLoader().loadSceneFromFile(Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
@@ -66,7 +68,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.mesh = scene.Meshes[0];
             this.mesh.move(initialPosition);
             this.mesh.Scale = this.scale;
-
+            this.terrain = terrain;
             this.missilesShooted = new List<Missile>();
         }
 
@@ -108,9 +110,16 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.moveAndRotate(elapsedTime);
             this.mesh.render();
 
+            List<Missile> missilesToRemove = new List<Missile>();
             foreach (var missile in missilesShooted) {
-                missile.render(elapsedTime);
+                if (missile.isCollidingWith(terrain)) {
+                    this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10, 1);
+                    missilesToRemove.Add(missile);
+                } else {
+                    missile.render(elapsedTime);
+                }
             }
+            missilesToRemove.ForEach(o=> missilesShooted.Remove(o));
 
         }
 

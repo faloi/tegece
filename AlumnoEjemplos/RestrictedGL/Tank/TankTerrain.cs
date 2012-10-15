@@ -1,4 +1,6 @@
-﻿using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+﻿using System;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+using AlumnoEjemplos.RestrictedGL.Interfaces;
 using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
@@ -6,7 +8,8 @@ using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
 
-    class TankTerrain : IRenderObject {
+    class TankTerrain : IRenderObject, ITerrainCollision
+    {
         
         private TgcBox surface;
 
@@ -34,11 +37,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             return false;
         }
 
-        private static bool areColliding(TgcBoundingBox boundingBox, TgcMesh obstaculo) {
-            var result = TgcCollisionUtils.classifyBoxBox(boundingBox, obstaculo.BoundingBox);
-            return result == TgcCollisionUtils.BoxBoxResult.Adentro || result == TgcCollisionUtils.BoxBoxResult.Atravesando;
-        }
-
         public void render() {
             var showBoundingBox = Modifiers.get<bool>("showBoundingBox");
             
@@ -52,5 +50,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         public bool AlphaBlendEnable { get; set; }
+
+        public void deform(float x, float z, float radius, int power, int count){
+        }
+
+        public int getYValueFor(float x, float z) {
+            return 0;
+        }
     }   
 }
