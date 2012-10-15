@@ -10,13 +10,15 @@ public class Missile : ITransformObject
     private bool isExploded ;
     private float flightTime;
     private TgcMesh mesh;
-
+  
     public TgcBoundingBox BoundingBox
     {
         get { return this.mesh.BoundingBox; }
     }
 
-    private const float INITIAL_SPEED=-100f; //Es constante porque en el eje X no hay gravedad
+    private const float GRAVITY = -25.5f;
+    private const float INITIAL_HORIZONTAL_SPEED=-100f; //Es constante porque en el eje X no hay gravedad
+    private float initialVeticalSpeed = 200f;
     public bool isOutOfRange;
     public Matrix Transform { get; set; }
     public bool AutoTransformEnable { get; set; }
@@ -45,6 +47,9 @@ public class Missile : ITransformObject
     public void moveOrientedY(float movement) {
         this.mesh.moveOrientedY(movement);
     }
+    public void moveVertically() {
+        this.mesh.move(0, 0.2f, 0); 
+    }
     public void getPosition(Vector3 pos) {
         throw new NotImplementedException();
     }
@@ -60,7 +65,8 @@ public class Missile : ITransformObject
 
     public void render(float elapsedTime) {
         this.flightTime += elapsedTime;
-        this.moveOrientedY(INITIAL_SPEED * elapsedTime);
+        this.moveOrientedY(INITIAL_HORIZONTAL_SPEED * elapsedTime);
+        this.moveVertically();
         this.mesh.render();
     }
 
