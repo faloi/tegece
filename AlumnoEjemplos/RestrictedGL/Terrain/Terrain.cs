@@ -52,19 +52,47 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             this.adaptativeHeightmap.Threshold = Modifiers.get<float>("ROAM Threshold");
         }
 
+        private int transformCoordenate(float originalValue) {
+            return (int) (originalValue / this.ScaleXZ + this.heightmapSize / 2);
+        }
+
+        public int getYValueFor(float x, float z) {
+            var realX = this.transformCoordenate(x);
+            var realZ = this.transformCoordenate(z);
+
+            return this.heightmapData[realX, realZ];
+        }
+
         public void deform(float x, float z, float radius, int power, int count) {
             //Deforma el heightmap en (x,z) creando un agujero de un radio
             //con una determinada "potencia" (qué tan profundo se hace el agujero)
-            var realX = (int) (x / this.ScaleXZ) + this.heightmapSize / 2;
-            var realZ = (int) (z / this.ScaleXZ) + this.heightmapSize / 2;
+            var realX = this.transformCoordenate(x);
+            var realZ = this.transformCoordenate(z);
+
             var realRadius = (int)(radius / this.ScaleXZ);
 
             this.adaptativeHeightmap.deform(realX, realZ, realRadius, power, count);
         }
 
-        public void render() {
+        public void render(List<Missile> missilesShooted) {
             this.updateModifiers();
+            missilesShooted.ForEach(this.deformIfCollidingWith);
+            
             this.components.ForEach(o => o.render());
+        }
+
+        private void deformIfCollidingWith(Missile missile) {
+            var missileY = (int) missile.Position.Y;
+
+            if (missileY < 0)
+                return;
+
+            if (this.getYValueFor(missile.Position.X, missile.Position.Z) == missileY)
+                this.deform(missile.Position.X, missile.Position.Z, 150, 10, 1);
+        }
+
+        public void render() {
+            throw new System.NotImplementedException();
         }
 
         public void dispose() {

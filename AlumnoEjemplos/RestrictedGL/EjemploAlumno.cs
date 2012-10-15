@@ -101,9 +101,9 @@ namespace AlumnoEjemplos.RestrictedGL
                 Modifiers.get<float>("Cam Velocity");
             
             this.updateUserVars();
-            
-            this.terrain.render();
+
             this.tank.render(elapsedTime);
+            this.terrain.render(this.tank.missilesShooted);
         }
 
         ///<summary>Se llama al cerrar la app. Hacer dispose() de todos los objetos creados</summary>
