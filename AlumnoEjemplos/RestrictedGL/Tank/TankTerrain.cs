@@ -15,17 +15,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         const int SURFACE_SIZE = 3000;
 
-        private void createTrees(string alumnoMediaFolder) {
-            var loader = new TgcSceneLoader();
-            var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
-        }
-
         public void init(string alumnoMediaFolder){
             var d3DDevice = GuiController.Instance.D3dDevice;
-            var surfaceTexture = TgcTexture.createTexture(d3DDevice, alumnoMediaFolder + "RestrictedGL\\#TankExample\\Textures\\tierra.jpg");            
+            var surfaceTexture = TgcTexture.createTexture(d3DDevice, Path.TankTerrainSurface);            
             this.surface = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(SURFACE_SIZE, 0, SURFACE_SIZE), surfaceTexture);
-
-            this.createTrees(alumnoMediaFolder);
         }
 
         public bool isOutOfBounds(TgcBoundingBox boundingBox) {

@@ -12,6 +12,7 @@
         public readonly static string SkyFront = Shared.MediaFolder + "\\Terreno\\SkyFront.jpg";
         public readonly static string SkyBack = Shared.MediaFolder + "\\Terreno\\SkyBack.jpg";
 
-        public readonly static string TankScene = Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml";
+        public static readonly string TankTerrainSurface = Shared.MediaFolder + "#TankExample\\Textures\\tierra.jpg";
+        public readonly static string TankScene = Shared.MediaFolder + "#TankExample\\Scenes\\TankAndEnvironment@Meshes-TgcScene.xml";
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
+using AlumnoEjemplos.RestrictedGL;
 using AlumnoEjemplos.RestrictedGL.Interfaces;
-using AlumnoEjemplos.RestrictedGL.Terrain;
 using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
@@ -34,9 +34,9 @@ public class Missile : ITransformObject
        
         var alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
         var loader = new TgcSceneLoader();
-        var scene = loader.loadSceneFromFile(alumnoMediaFolder + "RestrictedGL\\#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
+        var scene = loader.loadSceneFromFile(Path.TankScene);
 
-        this.mesh = scene.Meshes[2];
+        this.mesh = scene.Meshes[1];
         this.mesh.Position = new Vector3(tankPosition.X, tankPosition.Y + 20, tankPosition.Z);
         this.mesh.Rotation = new Vector3(tankRotation.X, tankRotation.Y, tankRotation.Z );
         this.initialVeticalSpeed = 8f;

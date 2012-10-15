@@ -62,8 +62,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public Tank(Vector3 initialPosition,ITerrainCollision terrain) {
             this.userVars = new UserVars();
-            
-            var scene = new TgcSceneLoader().loadSceneFromFile(Shared.MediaFolder + "#TankExample\\Scenes\\TanqueFuturistaOrugas-TgcScene.xml");
+
+            var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
             
             this.mesh = scene.Meshes[0];
             this.mesh.move(initialPosition);

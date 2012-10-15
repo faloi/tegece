@@ -10,7 +10,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
         private static void createBaseTree() {
             var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
-            baseTree = (TgcMesh) scene.Meshes[1];
+            baseTree = (TgcMesh) scene.Meshes[2];
         }
 
         public static TgcMesh create(Vector3 initialPosition) {
