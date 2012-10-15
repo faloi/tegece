@@ -3,7 +3,7 @@
 
         int getYValueFor(float x, float z);
 
-        void deform(float x, float z, float radius, int power, int count);
+        void deform(float x, float z, float radius, int power);
 
     }
 }

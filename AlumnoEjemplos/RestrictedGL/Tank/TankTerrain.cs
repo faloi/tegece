@@ -51,7 +51,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public bool AlphaBlendEnable { get; set; }
 
-        public void deform(float x, float z, float radius, int power, int count){
+        public void deform(float x, float z, float radius, int power) {
         }
 
         public int getYValueFor(float x, float z) {

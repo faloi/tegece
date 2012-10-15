@@ -62,12 +62,8 @@ namespace AlumnoEjemplos.RestrictedGL
             //Convertir de centro a esquina
             this.Position = center - new Vector3(width * ScaleXZ / 2, Position.Y, length * ScaleXZ / 2);
 
-            //Crear vértices
-            CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
-
-            //Bajar vértices al VertexBuffer
-            this.vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
-            vbTerrain.SetData(terrainVertices, 0, LockFlags.None);
+            //Crear vértices y bajarlos al VertexBuffer
+            updateVertices();
 
             //Crear los dos triángulos root, el piso
             float terrainSize = width - 1;
@@ -135,19 +131,20 @@ namespace AlumnoEjemplos.RestrictedGL
             loadHeightmap(lastHeightmapPath, Center);
         }
 
-        public void deform(int x, int z, int radius, int power, int count) {
+        public void deform(int x, int z, int radius, int power) {
             //Deforma el heightmap en (x,z) creando un agujero de un radio
             //con una determinada "potencia" (qué tan profundo se hace el agujero)
-            Device d3dDevice = GuiController.Instance.D3dDevice;
             int length = HeightmapData.GetLength(0);
             int maxVal = length - 1;
 
             //Se dibujan tantos círculos como el radio indique (uno adentro del otro)
             //aumentando la potencia al estar más cerca del centro
-            for (int c = 0; c < count; c++) {
-                int internalRadius = radius;
-                double angle = 0;
-                for (float i = 1f; i <= radius; i++) {
+            int internalRadius = radius;
+            double angle = 0;
+            for (float i = 1f; i <= radius; i++) {
+                int repeats = 1;
+                if (i == radius) repeats = 2;
+                for (int j = 1; j <= repeats; j++) {
                     angle = 0;
                     while (angle < 2 * Math.PI) {
                         int posX = (int)Math.Round(x + (internalRadius * Math.Cos(angle)));
@@ -159,10 +156,15 @@ namespace AlumnoEjemplos.RestrictedGL
 
                         angle += 0.1;
                     }
-                    internalRadius --;
+                    internalRadius--;
                 }
             }
 
+            updateVertices();
+        }
+
+        protected void updateVertices() {
+            Device d3dDevice = GuiController.Instance.D3dDevice;
             CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
             this.vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
             vbTerrain.SetData(terrainVertices, 0, LockFlags.None);

@@ -100,7 +100,7 @@ namespace AlumnoEjemplos.RestrictedGL
             }
             if (GuiController.Instance.D3dInput.keyDown(Key.T)) {
                 //T = Deformar parte del terreno actual
-                terrain.deform(GuiController.Instance.FpsCamera.Position.X, GuiController.Instance.FpsCamera.Position.Z, 150, 1, 1);
+                terrain.deform(GuiController.Instance.FpsCamera.Position.X, GuiController.Instance.FpsCamera.Position.Z, 150, 1);
             }
             
             GuiController.Instance.FpsCamera.MovementSpeed = 

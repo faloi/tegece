@@ -64,7 +64,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             return this.heightmapData[realX, realZ];
         }
 
-        public void deform(float x, float z, float radius, int power, int count) {
+        public void deform(float x, float z, float radius, int power) {
             //Deforma el heightmap en (x,z) creando un agujero de un radio
             //con una determinada "potencia" (qué tan profundo se hace el agujero)
             var realX = this.transformCoordenate(x);
@@ -72,7 +72,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
             var realRadius = (int)(radius / this.ScaleXZ);
 
-            this.adaptativeHeightmap.deform(realX, realZ, realRadius, power, count);
+            this.adaptativeHeightmap.deform(realX, realZ, realRadius, power);
         }
 
         public void render(List<Missile> missilesShooted) {

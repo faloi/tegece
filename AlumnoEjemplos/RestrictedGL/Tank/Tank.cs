@@ -113,7 +113,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             List<Missile> missilesToRemove = new List<Missile>();
             foreach (var missile in missilesShooted) {
                 if (missile.isCollidingWith(terrain)) {
-                    this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10, 1);
+                    this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
                     missilesToRemove.Add(missile);
                 } else {
                     missile.render(elapsedTime);
