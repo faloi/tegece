@@ -4,7 +4,6 @@ using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
-using TgcViewer.Utils.Input;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX.DirectInput;
@@ -77,15 +76,17 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.isMoving = false;
             this.isRotating = false;
 
-            if (d3DInput.keyDown(Key.W))
+            if (d3DInput.keyDown(Key.UpArrow))
                 this.move(Direction.Forward);
-            if (d3DInput.keyDown(Key.S))
+            if (d3DInput.keyDown(Key.DownArrow))
                 this.move(Direction.Backward);
-            if (d3DInput.keyDown(Key.D))
+            
+            if (d3DInput.keyDown(Key.RightArrow))
                 this.rotate(Direction.Right);
-            if (d3DInput.keyDown(Key.A))
+            if (d3DInput.keyDown(Key.LeftArrow))
                 this.rotate(Direction.Left);
-            if (d3DInput.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            
+            if (d3DInput.keyDown(Key.RightControl))
                 this.shoot();
 
             var camera = GuiController.Instance.ThirdPersonCamera;
