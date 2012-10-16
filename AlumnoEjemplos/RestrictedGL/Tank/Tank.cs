@@ -68,7 +68,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void shoot() {
-            var newMissile = new Missile(this.mesh.Position, this.mesh.Rotation);
+            var newMissile = new Missile(this.createHeightmapPointFromTankPosition(this.Position.X, this.Position.Z), this.Rotation);
             this.missilesShooted.Add(newMissile);
         }
 
@@ -220,7 +220,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private Matrix transformMatrix {
-            get { return Matrix.Multiply(Matrix.Multiply(this.scaleMatrix, this.rotationMatrix), this.translationMatrix); }
+            get { return this.scaleMatrix * this.rotationMatrix * this.translationMatrix; }
         }
 
         private Matrix translationMatrix { get; set; }
