@@ -47,6 +47,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public void deform(float x, float z, float radius, int power) {
         }
 
+        public float ScaleY { get; private set; }
+
         public int getYValueFor(float x, float z) {
             return 0;
         }

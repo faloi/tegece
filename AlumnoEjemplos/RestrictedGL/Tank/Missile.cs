@@ -31,8 +31,6 @@ public class Missile : ITransformObject
     public Vector3 Scale { get; set; }
     
     public Missile(Vector3 tankPosition,Vector3 tankRotation) {
-       
-        var alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
         var loader = new TgcSceneLoader();
         var scene = loader.loadSceneFromFile(Path.TankScene);
 

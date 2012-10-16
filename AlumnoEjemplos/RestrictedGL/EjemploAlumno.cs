@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.RestrictedGL
         private Terrain.Terrain terrain;
         private Tank.Tank tank;
 
-        private const float SCALE_Y = 2f;
+        private const float SCALE_Y = 5f;
         private const float SCALE_XZ = 50f;
 
         private readonly UserVars userVars;

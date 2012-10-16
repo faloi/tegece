@@ -5,5 +5,6 @@
 
         void deform(float x, float z, float radius, int power);
 
+        float ScaleY { get; }
     }
 }

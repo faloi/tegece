@@ -35,7 +35,29 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private ITerrainCollision terrain;
 
         public List<Missile> missilesShooted { get; set; }
-        private readonly Vector3 scale = new Vector3(3, 3, 3);
+        private const float SCALE = 3;
+
+        public Tank(Vector3 initialPosition, ITerrainCollision terrain)
+        {
+            this.userVars = new UserVars();
+
+            var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
+            this.mesh = scene.Meshes[0];
+
+            this.terrain = terrain;
+            this.missilesShooted = new List<Missile>();
+            
+            this.translationMatrix = Matrix.Identity;
+            this.setTranslationMatrix(initialPosition);
+            this.mesh.AutoTransformEnable = false;
+        }
+
+        private void setTranslationMatrix(Vector3 translation) {
+            var matrix = this.translationMatrix;
+            matrix.Translate(this.createHeightmapPointFromTankPosition(translation.X, translation.Z));
+            
+            this.translationMatrix = matrix;
+        }
 
         private float calculateSpeed(Direction direction) {
             var speed = Modifiers.get<float>("tankVelocity");
@@ -46,7 +68,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void shoot() {
-            var newMissile = new Missile(this.mesh.Position,this.mesh.Rotation);
+            var newMissile = new Missile(this.mesh.Position, this.mesh.Rotation);
             this.missilesShooted.Add(newMissile);
         }
 
@@ -60,16 +82,88 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.isRotating = true;
         }
 
-        public Tank(Vector3 initialPosition, ITerrainCollision terrain) {
-            this.userVars = new UserVars();
+        private Vector3 createHeightmapPointFromTankPosition(float positionX, float positionZ) {
+            return new Vector3(positionX, this.terrain.getYValueFor(positionX, positionZ) * this.terrain.ScaleY, positionZ);
+        }
 
-            var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
-            
-            this.mesh = scene.Meshes[0];
-            this.mesh.move(initialPosition);
-            this.mesh.Scale = this.scale;
-            this.terrain = terrain;
-            this.missilesShooted = new List<Missile>();
+        private Vector3[] heightmapContactPoints { 
+            get {
+                var corners = this.mesh.BoundingBox.computeCorners();
+
+                var basePoints = new[] {0, 1, 4};
+                var heightmapPoints = new Vector3[3];
+
+                for (var i = 0; i < basePoints.Length; i++) {
+                    var nextPoint = basePoints[i];
+                    heightmapPoints[i] = this.createHeightmapPointFromTankPosition(corners[nextPoint].X, corners[nextPoint].Z);
+                }
+
+                return heightmapPoints;
+            }
+        }
+
+        private Plane positionPlane {
+            get {
+                var contactPoints = this.heightmapContactPoints;
+                return Plane.FromPoints(contactPoints[0], contactPoints[1], contactPoints[2]);
+            }
+        }
+
+        private Vector3 positionPlaneNormal {
+            get {
+                var plane = this.positionPlane;
+                return new Vector3(-plane.A, -plane.B, -plane.C);
+            }
+        }
+
+        private Vector3 rightMovementVector {
+            get { return Vector3.Cross(this.positionPlaneNormal, this.forwardVector); }
+        }
+
+        private Vector3 forwardVector {
+            get {
+                var faces = this.mesh.BoundingBox.computeFaces();
+                var forwardFacePlane = faces[2].Plane;
+                return new Vector3(forwardFacePlane.A, forwardFacePlane.B, forwardFacePlane.C);
+            }
+        }
+
+        private Vector3 adaptedForwardVector {
+            get { return Vector3.Cross(this.rightMovementVector, this.positionPlaneNormal); }
+        }
+
+        private Matrix rotationMatrix {
+            get {
+                var rotation = Matrix.Identity;
+
+                var right = this.rightMovementVector;
+                rotation.M11 = right.X;
+                rotation.M12 = right.Y;
+                rotation.M13 = right.Z;
+
+                var normal = this.positionPlaneNormal;
+                rotation.M21 = normal.X;
+                rotation.M22 = normal.Y;
+                rotation.M23 = normal.Z;
+
+                var forward = this.adaptedForwardVector;
+                rotation.M31 = forward.X;
+                rotation.M32 = forward.Y;
+                rotation.M33 = forward.Z;
+
+                rotation.M44 = 1;
+
+                return rotation;
+            }
+        }
+
+        private Matrix scaleMatrix {
+            get {
+                var matrix = Matrix.Identity;
+                matrix.M11 = matrix.M22 = matrix.M33 = SCALE;
+
+                return matrix;
+            }
         }
 
         private void moveAndRotate() {
@@ -95,7 +189,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             
             if (this.isMoving) {
                 this.moveOrientedY(Shared.ElapsedTime*this.linearSpeed);
-                camera.Target = this.mesh.Position;
+                camera.Target = this.Position;
+                this.setTranslationMatrix(this.Position);
             }
 
             if (this.isRotating) {
@@ -108,6 +203,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public void render()
         {
             this.moveAndRotate();
+            
+            this.mesh.Transform = this.transformMatrix;
             this.mesh.render();
 
             var missilesToRemove = new List<Missile>();
@@ -121,6 +218,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
             missilesToRemove.ForEach(o=> missilesShooted.Remove(o));
         }
+
+        private Matrix transformMatrix {
+            get { return Matrix.Multiply(Matrix.Multiply(this.scaleMatrix, this.rotationMatrix), this.translationMatrix); }
+        }
+
+        private Matrix translationMatrix { get; set; }
 
         public void dispose() {
             this.mesh.dispose();
@@ -138,7 +241,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             set { this.mesh.Position = value; }
         }
 
-        public Vector3 Rotation { get; set; }
+        public Vector3 Rotation { get { return this.mesh.Rotation; } set { throw new NotImplementedException(); } }
         public Vector3 Scale { get; set; }
         
         public void move(Vector3 v) {

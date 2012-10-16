@@ -16,7 +16,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
         public int[,] heightmapData { get { return this.adaptativeHeightmap.HeightmapData; } }
         public readonly float ScaleXZ;
-        public readonly float ScaleY;
+        public float ScaleY { get; private set; }
 
         private int heightmapSize { get { return this.heightmapData.GetLength(0); } }
         private float heightmapSizeScaled {
