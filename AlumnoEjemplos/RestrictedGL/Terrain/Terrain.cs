@@ -29,8 +29,8 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             this.ScaleY = scaleY;
             
             this.adaptativeHeightmap = new AdaptativeHeightmap(this.ScaleXZ, this.ScaleY, INITIAL_THRESHOLD);
-            this.adaptativeHeightmap.loadHeightmap(Path.HeightMap, new Vector3(0, 0, 0));
-            this.adaptativeHeightmap.loadTexture(Path.Texture);
+            this.adaptativeHeightmap.loadHeightmap(Path.MapHeightmap, new Vector3(0, 0, 0));
+            this.adaptativeHeightmap.loadTexture(Path.MapTexture);
 
             //Crear TREES_COUNT pinos de forma random a lo largo del tererno
             var treeFactory = new TreeFactory(this);
@@ -40,7 +40,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
                adaptativeHeightmap,
                treeFactory,
                new SkyBox(new Vector3(0, 0, 0), new Vector3(this.heightmapSizeScaled * 3f, this.heightmapSizeScaled, this.heightmapSizeScaled * 3f)),
-               new TestShaders()
+               new Water()
             };
 
             this.createModifiers();

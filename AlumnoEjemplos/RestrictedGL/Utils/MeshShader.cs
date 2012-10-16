@@ -70,12 +70,12 @@ namespace AlumnoEjemplos.RestrictedGL.Utils
                 effect = ((MeshShader)parentInstance).effect;
 
 
-            // incializacion standard para hacer la proyeccion
+            //Incializacion standard para hacer la proyeccion
             effect.SetValue("matWorld", device.Transform.World);
             effect.SetValue("matWorldView", device.Transform.World * device.Transform.View);
             effect.SetValue("matWorldViewProj", device.Transform.World * device.Transform.View * device.Transform.Projection);
 
-            // es usual en los shaders pasar directamente la matrix total de transformacion
+            // Es usual en los shaders pasar directamente la matrix total de transformacion
             // matWorldViewProj = World*View*Proj 
             // para hacer una sola multiplicacion.
 
@@ -94,19 +94,19 @@ namespace AlumnoEjemplos.RestrictedGL.Utils
 
             //Cargar VertexDeclaration
             device.VertexDeclaration = vertexDeclaration;
-            // dibujo a traves del effect
-            // itero por material, en cada material,
+            // Dibujo a traves del effect,
+            // itero por material, en cada material...
             // El SetTexture(0,diffuseMaps[i].D3dTexture) del fixed pipeline 
             // se reemplaza por 
             // effect.SetValue("base_Tex", diffuseMaps[i].D3dTexture);
-            // Una tecnica esta compuesta por una o mas pasadas. 
+            // Una tecnica esta compuesta por una o mas pasadas.
             // Esta es la estructura habitual para dibujar una primitiva mesh en un shader
-            // iterar por pasasdas, y dentro de cada pasada por material. 
+            // iterar por pasadas, y dentro de cada pasada por material. 
             int numPasses = effect.Begin(0);
             for (int n = 0; n < numPasses; n++) {
                 for (int i = 0; i < materials.Length; i++) {
                     effect.SetValue("base_Tex", diffuseMaps[i].D3dTexture);
-                    // guarda: Todos los SetValue tienen que ir ANTES del beginPass.
+                    // Guarda: Todos los SetValue tienen que ir ANTES del beginPass.
                     // si no hay que llamar effect.CommitChanges para que tome el dato!
                     effect.BeginPass(n);
                     d3dMesh.DrawSubset(i);

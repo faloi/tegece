@@ -70,7 +70,7 @@
     <Compile Include="RestrictedGL\Interfaces\ITerrainCollision.cs" />
     <Compile Include="RestrictedGL\Path.cs" />
     <Compile Include="RestrictedGL\Tank\Missile.cs" />
-    <Compile Include="RestrictedGL\Terrain\TestShaders.cs" />
+    <Compile Include="RestrictedGL\Terrain\Water.cs" />
     <Compile Include="RestrictedGL\Terrain\Heightmap\AdaptativeHeightmap.cs" />
     <Compile Include="RestrictedGL\EjemploTanque.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\GuiControllerWrapper.cs" />

@@ -2,8 +2,12 @@
 {
     struct Path //Recursos del TP
     {
-        public readonly static string HeightMap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
-        public readonly static string Texture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
+        public readonly static string MapHeightmap = Shared.MediaFolder + "\\Terreno\\Heightmap.jpg";
+        public readonly static string MapTexture = Shared.MediaFolder + "\\Terreno\\Mapa.jpg";
+
+        public readonly static string WaterScene = Shared.MediaFolder + "\\Terreno\\Agua.xml";
+        public readonly static string WaterTexture = Shared.MediaFolder + "\\Terreno\\Agua.jpg";
+        public readonly static string WaterShader = Shared.MediaFolder + "\\Terreno\\Agua.fx";
 
         public readonly static string SkyTop = Shared.MediaFolder + "\\Terreno\\SkyTop.jpg";
         public readonly static string SkyBottom = Shared.MediaFolder + "\\Terreno\\SkyBottom.jpg";

@@ -56,6 +56,7 @@ namespace AlumnoEjemplos.RestrictedGL
             this.userVars
                 .set("posX", GuiController.Instance.FpsCamera.Position.X)
                 .set("posY", GuiController.Instance.FpsCamera.Position.Y)
+                .set("posZ", GuiController.Instance.FpsCamera.Position.Z)
                 .set("viewX", GuiController.Instance.FpsCamera.LookAt.X)
                 .set("viewY", GuiController.Instance.FpsCamera.LookAt.Y)
                 .set("viewZ", GuiController.Instance.FpsCamera.LookAt.Z);
@@ -99,7 +100,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             if (GuiController.Instance.D3dInput.keyDown(Key.R)) {
                 //R = Cámara en el origen, más o menos
-                GuiController.Instance.FpsCamera.setCamera(new Vector3(-100, 100, 0), new Vector3(490f, 128f, -10f));
+                GuiController.Instance.FpsCamera.setCamera(new Vector3(-100, 200, 0), new Vector3(490f, 128f, -10f));
             }
             if (GuiController.Instance.D3dInput.keyDown(Key.T)) {
                 //T = Deformar parte del terreno actual
