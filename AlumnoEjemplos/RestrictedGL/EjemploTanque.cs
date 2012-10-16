@@ -78,7 +78,7 @@ namespace AlumnoEjemplos.RestrictedGL
                 this.tank.Position = lastPosition;
 
             terrain.render();
-            tank.render(elapsedTime);
+            tank.render();
         }
     }
 }

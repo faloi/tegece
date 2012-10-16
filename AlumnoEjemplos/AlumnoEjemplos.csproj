@@ -70,6 +70,7 @@
     <Compile Include="RestrictedGL\Interfaces\ITerrainCollision.cs" />
     <Compile Include="RestrictedGL\Path.cs" />
     <Compile Include="RestrictedGL\Tank\Missile.cs" />
+    <Compile Include="RestrictedGL\Terrain\TestShaders.cs" />
     <Compile Include="RestrictedGL\Terrain\Heightmap\AdaptativeHeightmap.cs" />
     <Compile Include="RestrictedGL\EjemploTanque.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\GuiControllerWrapper.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="RestrictedGL\Terrain\Trees\Tree.cs" />
     <Compile Include="RestrictedGL\Terrain\Trees\TreeFactory.cs" />
     <Compile Include="RestrictedGL\Terrain\Heightmap\Triangle.cs" />
+    <Compile Include="RestrictedGL\Utils\MeshShader.cs" />
     <Compile Include="RestrictedGL\Utils\Randomizer.cs" />
   </ItemGroup>
   <ItemGroup>

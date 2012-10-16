@@ -68,9 +68,9 @@ public class Missile : ITransformObject
         throw new NotImplementedException();
     }
 
-    public void render(float elapsedTime) {
-        this.flightTime += elapsedTime;
-        this.moveOrientedY(INITIAL_HORIZONTAL_SPEED * elapsedTime);
+    public void render() {
+        this.flightTime += Shared.ElapsedTime;
+        this.moveOrientedY(INITIAL_HORIZONTAL_SPEED * Shared.ElapsedTime);
         this.moveVertically();
         this.mesh.render();
     }

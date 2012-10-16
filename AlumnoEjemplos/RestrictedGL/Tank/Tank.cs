@@ -72,7 +72,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.missilesShooted = new List<Missile>();
         }
 
-        private void moveAndRotate(float elapsedTime) {
+        private void moveAndRotate() {
             var d3DInput = GuiController.Instance.D3dInput;
 
             this.isMoving = false;
@@ -94,20 +94,20 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             var camera = GuiController.Instance.ThirdPersonCamera;
             
             if (this.isMoving) {
-                this.moveOrientedY(elapsedTime*this.linearSpeed);
+                this.moveOrientedY(Shared.ElapsedTime*this.linearSpeed);
                 camera.Target = this.mesh.Position;
             }
 
             if (this.isRotating) {
-                var rotAngle = Geometry.DegreeToRadian(rotationSpeed * elapsedTime);
+                var rotAngle = Geometry.DegreeToRadian(rotationSpeed * Shared.ElapsedTime);
                 this.mesh.rotateY(rotAngle);
                 camera.rotateY(rotAngle);
             }
         }
 
-        public void render(float elapsedTime)
+        public void render()
         {
-            this.moveAndRotate(elapsedTime);
+            this.moveAndRotate();
             this.mesh.render();
 
             List<Missile> missilesToRemove = new List<Missile>();
@@ -116,7 +116,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                     this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
                     missilesToRemove.Add(missile);
                 } else {
-                    missile.render(elapsedTime);
+                    missile.render();
                 }
             }
             missilesToRemove.ForEach(o=> missilesShooted.Remove(o));

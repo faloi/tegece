@@ -11,6 +11,7 @@ namespace AlumnoEjemplos.RestrictedGL
     {
         public const string NombreGrupo = "RestrictedGL";
         public static readonly string MediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir + NombreGrupo + "\\";
+        public static float ElapsedTime = 0;
     }
 
     public class EjemploAlumno : TgcExample
@@ -94,6 +95,8 @@ namespace AlumnoEjemplos.RestrictedGL
         ///<summary>Se llama cada vez que hay que refrescar la pantalla</summary>
         ///<param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime) {
+            Shared.ElapsedTime = elapsedTime;
+
             if (GuiController.Instance.D3dInput.keyDown(Key.R)) {
                 //R = Cámara en el origen, más o menos
                 GuiController.Instance.FpsCamera.setCamera(new Vector3(-100, 100, 0), new Vector3(490f, 128f, -10f));
@@ -109,7 +112,7 @@ namespace AlumnoEjemplos.RestrictedGL
             
             this.updateUserVars();
 
-            this.tank.render(elapsedTime);
+            this.tank.render();
             this.terrain.render(this.tank.missilesShooted);
         }
 
