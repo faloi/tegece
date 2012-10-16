@@ -54,7 +54,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         private void setTranslationMatrix(Vector3 translation) {
             var matrix = this.translationMatrix;
-            matrix.Translate(this.createHeightmapPointFromTankPosition(translation.X, translation.Z));
+            matrix.Translate(this.createHeightmapPointFromTankPosition(translation));
             
             this.translationMatrix = matrix;
         }
@@ -67,8 +67,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                : -speed;
         }
 
+        private Vector3 realPosition { get { return this.createHeightmapPointFromTankPosition(this.Position); } }
+
         private void shoot() {
-            var newMissile = new Missile(this.createHeightmapPointFromTankPosition(this.Position.X, this.Position.Z), this.Rotation);
+            var newMissile = new Missile(this.realPosition, this.Rotation);
             this.missilesShooted.Add(newMissile);
         }
 
@@ -82,8 +84,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.isRotating = true;
         }
 
-        private Vector3 createHeightmapPointFromTankPosition(float positionX, float positionZ) {
-            return new Vector3(positionX, this.terrain.getYValueFor(positionX, positionZ) * this.terrain.ScaleY, positionZ);
+        private Vector3 createHeightmapPointFromTankPosition(Vector3 position) {
+            return new Vector3(position.X, this.terrain.getYValueFor(position.X, position.Z) * this.terrain.ScaleY, position.Z);
         }
 
         private Vector3[] heightmapContactPoints { 
@@ -95,7 +97,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
                 for (var i = 0; i < basePoints.Length; i++) {
                     var nextPoint = basePoints[i];
-                    heightmapPoints[i] = this.createHeightmapPointFromTankPosition(corners[nextPoint].X, corners[nextPoint].Z);
+                    heightmapPoints[i] = this.createHeightmapPointFromTankPosition(corners[nextPoint]);
                 }
 
                 return heightmapPoints;
