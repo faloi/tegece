@@ -65,6 +65,11 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             return this.heightmapData[realX, realZ];
         }
 
+        public bool isOutOfBounds(ITransformObject tankOrMissile){
+            return tankOrMissile.Position.X > this.heightmapSizeScaled / 2 || tankOrMissile.Position.X < -this.heightmapSizeScaled / 2 ||
+                   tankOrMissile.Position.Z > this.heightmapSizeScaled / 2 || tankOrMissile.Position.Z < -this.heightmapSizeScaled / 2;
+        }
+
         public void deform(float x, float z, float radius, int power) {
             //Deforma el heightmap en (x,z) creando un agujero de un radio
             //con una determinada "potencia" (qué tan profundo se hace el agujero)

@@ -52,5 +52,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public int getYValueFor(float x, float z) {
             return 0;
         }
+        public bool isOutOfBounds(ITransformObject tankOrMissile){
+          //  var result = TgcCollisionUtils.classifyBoxBox(tankOrMissile., this.surface.BoundingBox);
+          //  return result != TgcCollisionUtils.BoxBoxResult.Atravesando;
+            return false;
+        }
     }   
 }

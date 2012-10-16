@@ -214,7 +214,9 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 if (missile.isCollidingWith(terrain)) {
                     this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
                     missilesToRemove.Add(missile);
-                } else {
+                } else if(this.terrain.isOutOfBounds(missile)) {
+                    missilesToRemove.Add(missile);
+                }else {
                     missile.render();
                 }
             }
