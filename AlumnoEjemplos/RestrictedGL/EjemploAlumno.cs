@@ -113,7 +113,7 @@ namespace AlumnoEjemplos.RestrictedGL
             this.updateUserVars();
 
             this.tank.render();
-            this.terrain.render(this.tank.missilesShooted);
+            this.terrain.render();
         }
 
         ///<summary>Se llama al cerrar la app. Hacer dispose() de todos los objetos creados</summary>

@@ -76,15 +76,9 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             this.adaptativeHeightmap.deform(realX, realZ, realRadius, power);
         }
 
-        public void render(List<Missile> missilesShooted) {
-
-            this.updateModifiers();
-            
-            this.components.ForEach(o => o.render());
-        }
-
         public void render() {
-            throw new System.NotImplementedException();
+            this.updateModifiers();
+            this.components.ForEach(o => o.render());
         }
 
         public void dispose() {
