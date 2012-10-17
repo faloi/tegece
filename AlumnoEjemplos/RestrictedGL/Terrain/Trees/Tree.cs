@@ -1,7 +1,7 @@
 ﻿using Microsoft.DirectX;
 using TgcViewer.Utils.TgcSceneLoader;
 
-namespace AlumnoEjemplos.RestrictedGL.Terrain
+namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
 {
     public static class Tree {
         private static TgcMesh baseTree;
