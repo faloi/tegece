@@ -22,6 +22,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             var newTree = baseTree.createMeshInstance(baseTree.Name + count);
             newTree.Position = initialPosition;
             newTree.Scale = scale;
+            newTree.AlphaBlendEnable = true;
 
             return newTree;
         }
