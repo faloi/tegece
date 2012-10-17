@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using AlumnoEjemplos.RestrictedGL.Interfaces;
-using TgcViewer;
-using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using Microsoft.DirectX.DirectInput;
+using TgcViewer;
+using TgcViewer.Utils.Input;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
-using Microsoft.DirectX.DirectInput;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     
@@ -19,85 +20,55 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
     }
 
     public class Tank : ITransformObject {
+        private const float SCALE = 3;
 
-        public TgcBoundingBox BoundingBox
-        {
-            get { return this.mesh.BoundingBox; }
-        }
-
-        private readonly UserVars userVars;
         private readonly TgcMesh mesh;
-        
+        private readonly ITerrainCollision terrain;
+        private readonly UserVars userVars;
+        private Vector3 forwardVector;
+
         private bool isMoving;
         private bool isRotating;
         private float linearSpeed;
         private float rotationSpeed;
-        private ITerrainCollision terrain;
+        private Matrix translationMatrix;
 
-        public List<Missile> missilesShooted { get; set; }
-        private const float SCALE = 3;
-
-        public Tank(Vector3 initialPosition, ITerrainCollision terrain)
-        {
-            this.userVars = new UserVars();
+        public Tank(Vector3 initialPosition, ITerrainCollision terrain) {
+            userVars = new UserVars();
 
             var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
-            this.mesh = scene.Meshes[0];
+            mesh = scene.Meshes[0];
 
             this.terrain = terrain;
-            this.missilesShooted = new List<Missile>();
-            
-            this.translationMatrix = Matrix.Identity;
-            this.setTranslationMatrix(initialPosition);
-            this.mesh.AutoTransformEnable = false;
+            missilesShooted = new List<Missile>();
+
+            mesh.AutoTransformEnable = false;
+            translationMatrix = Matrix.Identity;
+            setTranslationMatrix(initialPosition);
+
+            forwardVector = new Vector3(0, 0, 1);
         }
 
-        private void setTranslationMatrix(Vector3 translation) {
-            var matrix = this.translationMatrix;
-            matrix.Translate(this.createHeightmapPointFromTankPosition(translation));
-            
-            this.translationMatrix = matrix;
+        public TgcBoundingBox boundingBox {
+            get { return mesh.BoundingBox; }
         }
 
-        private float calculateSpeed(Direction direction) {
-            var speed = Modifiers.get<float>("tankVelocity");
+        private List<Missile> missilesShooted { get; set; }
 
-            return direction == Direction.Backward || direction == Direction.Right
-               ? speed
-               : -speed;
+        private Vector3 realPosition {
+            get { return createHeightmapPointFromTankPosition(Position); }
         }
 
-        private Vector3 realPosition { get { return this.createHeightmapPointFromTankPosition(this.Position); } }
-
-        private void shoot() {
-            var newMissile = new Missile(this.realPosition, this.Rotation);
-            this.missilesShooted.Add(newMissile);
-        }
-
-        private void move(Direction direction) {
-            this.linearSpeed = calculateSpeed(direction);
-            this.isMoving = true;
-        }
-
-        private void rotate(Direction direction) {
-            this.rotationSpeed = calculateSpeed(direction);
-            this.isRotating = true;
-        }
-
-        private Vector3 createHeightmapPointFromTankPosition(Vector3 position) {
-            return new Vector3(position.X, this.terrain.getYValueFor(position.X, position.Z) * this.terrain.ScaleY, position.Z);
-        }
-
-        private Vector3[] heightmapContactPoints { 
+        private Vector3[] heightmapContactPoints {
             get {
-                var corners = this.mesh.BoundingBox.computeCorners();
+                var corners = mesh.BoundingBox.computeCorners();
 
                 var basePoints = new[] {0, 1, 4};
                 var heightmapPoints = new Vector3[3];
 
                 for (var i = 0; i < basePoints.Length; i++) {
                     var nextPoint = basePoints[i];
-                    heightmapPoints[i] = this.createHeightmapPointFromTankPosition(corners[nextPoint]);
+                    heightmapPoints[i] = createHeightmapPointFromTankPosition(corners[nextPoint]);
                 }
 
                 return heightmapPoints;
@@ -106,49 +77,41 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         private Plane positionPlane {
             get {
-                var contactPoints = this.heightmapContactPoints;
+                var contactPoints = heightmapContactPoints;
                 return Plane.FromPoints(contactPoints[0], contactPoints[1], contactPoints[2]);
             }
         }
 
         private Vector3 positionPlaneNormal {
             get {
-                var plane = this.positionPlane;
-                return new Vector3(-plane.A, -plane.B, -plane.C);
+                var plane = positionPlane;
+                return new Vector3(plane.A, plane.B, plane.C);
             }
         }
 
         private Vector3 rightMovementVector {
-            get { return Vector3.Cross(this.positionPlaneNormal, this.forwardVector); }
-        }
-
-        private Vector3 forwardVector {
-            get {
-                var faces = this.mesh.BoundingBox.computeFaces();
-                var forwardFacePlane = faces[2].Plane;
-                return new Vector3(forwardFacePlane.A, forwardFacePlane.B, forwardFacePlane.C);
-            }
+            get { return Vector3.Cross(positionPlaneNormal, forwardVector); }
         }
 
         private Vector3 adaptedForwardVector {
-            get { return Vector3.Cross(this.rightMovementVector, this.positionPlaneNormal); }
+            get { return Vector3.Cross(rightMovementVector, positionPlaneNormal); }
         }
 
         private Matrix rotationMatrix {
             get {
                 var rotation = Matrix.Identity;
 
-                var right = this.rightMovementVector;
+                var right = rightMovementVector;
                 rotation.M11 = right.X;
                 rotation.M12 = right.Y;
                 rotation.M13 = right.Z;
 
-                var normal = this.positionPlaneNormal;
+                var normal = positionPlaneNormal;
                 rotation.M21 = normal.X;
                 rotation.M22 = normal.Y;
                 rotation.M23 = normal.Z;
 
-                var forward = this.adaptedForwardVector;
+                var forward = adaptedForwardVector;
                 rotation.M31 = forward.X;
                 rotation.M32 = forward.Y;
                 rotation.M33 = forward.Z;
@@ -168,69 +131,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
         }
 
-        private void moveAndRotate() {
-            var d3DInput = GuiController.Instance.D3dInput;
-
-            this.isMoving = false;
-            this.isRotating = false;
-
-            if (d3DInput.keyDown(Key.UpArrow))
-                this.move(Direction.Forward);
-            if (d3DInput.keyDown(Key.DownArrow))
-                this.move(Direction.Backward);
-            
-            if (d3DInput.keyDown(Key.RightArrow))
-                this.rotate(Direction.Right);
-            if (d3DInput.keyDown(Key.LeftArrow))
-                this.rotate(Direction.Left);
-            
-            if (d3DInput.keyDown(Key.RightControl))
-                this.shoot();
-
-            var camera = GuiController.Instance.ThirdPersonCamera;
-            
-            if (this.isMoving) {
-                this.moveOrientedY(Shared.ElapsedTime*this.linearSpeed);
-                camera.Target = this.Position;
-                this.setTranslationMatrix(this.Position);
-            }
-
-            if (this.isRotating) {
-                var rotAngle = Geometry.DegreeToRadian(rotationSpeed * Shared.ElapsedTime);
-                this.mesh.rotateY(rotAngle);
-                camera.rotateY(rotAngle);
-            }
-        }
-
-        public void render()
-        {
-            this.moveAndRotate();
-            
-            this.mesh.Transform = this.transformMatrix;
-            this.mesh.render();
-
-            var missilesToRemove = new List<Missile>();
-            foreach (var missile in missilesShooted) {
-                if (missile.isCollidingWith(terrain)) {
-                    this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
-                    missilesToRemove.Add(missile);
-                } else if(this.terrain.isOutOfBounds(missile)) {
-                    missilesToRemove.Add(missile);
-                }else {
-                    missile.render();
-                }
-            }
-            missilesToRemove.ForEach(o=> missilesShooted.Remove(o));
-        }
-
         private Matrix transformMatrix {
-            get { return this.scaleMatrix * this.rotationMatrix * this.translationMatrix; }
-        }
-
-        private Matrix translationMatrix { get; set; }
-
-        public void dispose() {
-            this.mesh.dispose();
+            get { return scaleMatrix*rotationMatrix*translationMatrix; }
         }
 
         public bool AlphaBlendEnable { get; set; }
@@ -239,36 +141,40 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public Matrix Transform { get; set; }
         public bool AutoTransformEnable { get; set; }
-        
+
         public Vector3 Position {
-            get { return this.mesh.Position; }
-            set { this.mesh.Position = value; }
+            get { return mesh.Position; }
+            set { mesh.Position = value; }
         }
 
-        public Vector3 Rotation { get { return this.mesh.Rotation; } set { throw new NotImplementedException(); } }
+        public Vector3 Rotation {
+            get { return mesh.Rotation; }
+            set { throw new NotImplementedException(); }
+        }
+
         public Vector3 Scale { get; set; }
-        
+
         public void move(Vector3 v) {
-            this.userVars
+            userVars
                 .set("posX", v.X)
                 .set("posY", v.Y)
                 .set("posZ", v.Z);
         }
 
         public void moveOrientedY(float movement) {
-            this.mesh.moveOrientedY(movement);
-            this.move(this.mesh.Position);
+            mesh.moveOrientedY(movement);
+            move(mesh.Position);
         }
 
         public void rotateY(float angle) {
-            this.mesh.rotateY(angle);
+            mesh.rotateY(angle);
             GuiController.Instance.ThirdPersonCamera.rotateY(angle);
         }
 
         public void move(float x, float y, float z) {
             throw new NotImplementedException();
         }
-        
+
         public void getPosition(Vector3 pos) {
             throw new NotImplementedException();
         }
@@ -282,5 +188,99 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         #endregion
+
+        private void setTranslationMatrix(Vector3 translation) {
+            this.translationMatrix.Translate(createHeightmapPointFromTankPosition(translation));
+        }
+
+        private float calculateSpeed(Direction direction) {
+            var speed = Modifiers.get<float>("tankVelocity");
+
+            return direction == Direction.Backward || direction == Direction.Right
+                       ? speed
+                       : -speed;
+        }
+
+        private void shoot() {
+            var newMissile = new Missile(realPosition, Rotation);
+            missilesShooted.Add(newMissile);
+        }
+
+        private void move(Direction direction) {
+            linearSpeed = calculateSpeed(direction);
+            isMoving = true;
+        }
+
+        private void rotate(Direction direction) {
+            rotationSpeed = calculateSpeed(direction);
+            isRotating = true;
+        }
+
+        private Vector3 createHeightmapPointFromTankPosition(Vector3 position) {
+            return new Vector3(position.X, terrain.getYValueFor(position.X, position.Z)*terrain.ScaleY, position.Z);
+        }
+
+        private void moveAndRotate() {
+            var d3DInput = GuiController.Instance.D3dInput;
+
+            isMoving = false;
+            isRotating = false;
+
+            if (d3DInput.keyDown(Key.UpArrow))
+                move(Direction.Forward);
+            if (d3DInput.keyDown(Key.DownArrow))
+                move(Direction.Backward);
+
+            if (d3DInput.keyDown(Key.RightArrow))
+                rotate(Direction.Right);
+            if (d3DInput.keyDown(Key.LeftArrow))
+                rotate(Direction.Left);
+
+            if (d3DInput.keyDown(Key.RightControl))
+                shoot();
+
+            var camera = GuiController.Instance.ThirdPersonCamera;
+
+            if (isMoving) {
+                moveOrientedY(Shared.ElapsedTime*linearSpeed);
+                camera.Target = Position;
+                setTranslationMatrix(Position);
+            }
+
+            if (isRotating) {
+                var rotAngle = Geometry.DegreeToRadian(rotationSpeed*Shared.ElapsedTime);
+                camera.rotateY(rotAngle);
+                rotateY(rotAngle);
+                forwardVector.TransformNormal(Matrix.RotationY(rotAngle));
+            }
+        }
+
+        public void render() {
+            moveAndRotate();
+
+            mesh.BoundingBox.transform(transformMatrix);
+            mesh.Transform = transformMatrix;
+
+            mesh.render();
+
+            var missilesToRemove = new List<Missile>();
+            foreach (var missile in missilesShooted) {
+                if (missile.isCollidingWith(terrain)) {
+                    terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
+                    missilesToRemove.Add(missile);
+                }
+                
+                else if (terrain.isOutOfBounds(missile)) 
+                    missilesToRemove.Add(missile);
+                
+                else 
+                    missile.render();
+            }
+            missilesToRemove.ForEach(o => missilesShooted.Remove(o));
+        }
+
+        public void dispose() {
+            mesh.dispose();
+        }
     }
 }
