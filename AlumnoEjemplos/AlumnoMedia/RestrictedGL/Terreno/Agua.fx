@@ -15,6 +15,8 @@ sampler_state
    MINFILTER = LINEAR;
    MAGFILTER = LINEAR;
    MIPFILTER = LINEAR;
+   AddressU = MIRROR;
+   AddressV = MIRROR;
 };
 
 //Input del Vertex Shader
@@ -61,14 +63,29 @@ float4 ps_main( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0) : COLOR0
 
 
 //Vertex Shader (efecto de "agua")
+//(mueve la coordenada u)
 VS_OUTPUT vs_mainTextureOffset ( VS_INPUT Input )
 {
 	VS_OUTPUT Out = (VS_OUTPUT)0;
 
 	Out.Position = mul(Input.Position, matWorldViewProj);
 	Out.Color = Input.Color;
-	Out.Texcoord = Input.Texcoord;
-	Out.Texcoord[0] += time * textureOffset;
+	Out.Texcoord = float2(Input.Texcoord.x*1000,Input.Texcoord.y*100);
+	Out.Texcoord[0] += time *2* textureOffset;
+	
+	return Out;
+}
+
+//Vertex Shader (efecto de "agua")
+//(mueve la coordenada v)
+VS_OUTPUT vs_mainTextureOffset2 ( VS_INPUT Input )
+{
+	VS_OUTPUT Out = (VS_OUTPUT)0;
+
+	Out.Position = mul(Input.Position, matWorldViewProj);
+	Out.Color = Input.Color;
+	Out.Texcoord = float2(Input.Texcoord.x*1000,Input.Texcoord.y*100);
+	Out.Texcoord[1] += time *2* textureOffset;
 	
 	return Out;
 }
@@ -78,8 +95,18 @@ technique RenderScene
 {
    pass Pass_0
    {
+	  AlphaBlendEnable = false;
+	  SrcBlend = One;
+	  DestBlend = Zero;
 	  VertexShader = compile vs_2_0 vs_mainTextureOffset();
 	  PixelShader = compile ps_2_0 ps_main();
    }
-
+   pass Pass_1
+   {
+	  AlphaBlendEnable = true;
+	  SrcBlend = DestColor;
+	  DestBlend = Zero;
+	  VertexShader = compile vs_2_0 vs_mainTextureOffset2();
+	  PixelShader = compile ps_2_0 ps_main();
+   }
 }
