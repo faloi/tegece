@@ -33,7 +33,9 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
                 var offsetY = terrain.heightmapData[offsetX + adjust, offsetZ + adjust];
 
                 var initialPosition = new Vector3(offsetX * terrain.ScaleXZ, offsetY * terrain.ScaleY, offsetZ * terrain.ScaleXZ);
+                
                 var newTree = Tree.create(initialPosition);
+                newTree.rotateY(offsetX);
 
                 this.addTree(newTree);
             }
