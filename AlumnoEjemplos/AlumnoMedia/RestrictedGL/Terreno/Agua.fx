@@ -71,7 +71,7 @@ VS_OUTPUT vs_mainTextureOffset ( VS_INPUT Input )
 	Out.Position = mul(Input.Position, matWorldViewProj);
 	Out.Color = Input.Color;
 	Out.Texcoord = float2(Input.Texcoord.x*1000,Input.Texcoord.y*100);
-	Out.Texcoord[0] += time *2* textureOffset;
+	Out.Texcoord[0] += time *5* textureOffset;
 	
 	return Out;
 }
@@ -85,7 +85,7 @@ VS_OUTPUT vs_mainTextureOffset2 ( VS_INPUT Input )
 	Out.Position = mul(Input.Position, matWorldViewProj);
 	Out.Color = Input.Color;
 	Out.Texcoord = float2(Input.Texcoord.x*1000,Input.Texcoord.y*100);
-	Out.Texcoord[1] += time *2* textureOffset;
+	Out.Texcoord[1] += time *3* textureOffset;
 	
 	return Out;
 }
