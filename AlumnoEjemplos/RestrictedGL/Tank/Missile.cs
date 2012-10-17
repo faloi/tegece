@@ -8,7 +8,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 public class Missile : ITransformObject
 {
-    private float flightTime;
+    public float flightTime { set; get; }
     private TgcMesh mesh;
   
     public TgcBoundingBox BoundingBox

@@ -21,6 +21,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
     public class Tank : ITransformObject {
         private const float SCALE = 3;
+        private const float INTERVAL_BETWEEN_MISSILES = 2.5f;
 
         private readonly TgcMesh mesh;
         private readonly ITerrainCollision terrain;
@@ -202,8 +203,18 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void shoot() {
-            var newMissile = new Missile(realPosition, Rotation);
-            missilesShooted.Add(newMissile);
+            var flightTimeOfLastMissile=0f;
+            foreach (var missile in missilesShooted) {
+                if(flightTimeOfLastMissile==0f)
+                    flightTimeOfLastMissile=missile.flightTime;
+                else if(flightTimeOfLastMissile<missile.flightTime) {
+                    flightTimeOfLastMissile = missile.flightTime;
+                }
+            }
+            if(INTERVAL_BETWEEN_MISSILES<=flightTimeOfLastMissile || missilesShooted.Count==0){
+                var newMissile = new Missile(realPosition, Rotation);
+                missilesShooted.Add(newMissile);
+            }
         }
 
         private void move(Direction direction) {
