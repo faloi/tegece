@@ -6,11 +6,11 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
     public static class Tree {
         private static TgcMesh baseTree;
         private static int count;
-        private static readonly Vector3 scale = new Vector3(3, 4.5f, 3);
+        private static readonly Vector3 scale = new Vector3(5, 5, 5);
 
         private static void createBaseTree() {
             var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
-            baseTree = (TgcMesh) scene.Meshes[2];
+            baseTree = scene.Meshes[2];
         }
 
         public static TgcMesh create(Vector3 initialPosition) {
