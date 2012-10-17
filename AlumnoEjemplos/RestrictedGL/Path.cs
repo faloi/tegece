@@ -18,5 +18,7 @@
 
         public static readonly string TankTerrainSurface = Shared.MediaFolder + "#TankExample\\Textures\\tierra.jpg";
         public readonly static string TankScene = Shared.MediaFolder + "#TankExample\\Scenes\\TankAndEnvironment@Meshes-TgcScene.xml";
+
+        public static readonly string ExplosionSound = Shared.MediaFolder + "#TankExample\\Sounds\\explosion.wav";
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer;
 using TgcViewer.Utils.Input;
+using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
@@ -213,6 +214,9 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
             if(INTERVAL_BETWEEN_MISSILES<=flightTimeOfLastMissile || missilesShooted.Count==0){
                 var newMissile = new Missile(realPosition, Rotation);
+                TgcStaticSound sound = new TgcStaticSound();
+                sound.loadSound(Path.ExplosionSound);  
+                sound.play(false);
                 missilesShooted.Add(newMissile);
             }
         }
