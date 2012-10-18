@@ -303,12 +303,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             missilesToRemove.ForEach(o => missilesShooted.Remove(o));
         }
 
-        protected virtual void loadShader() {
+        private void loadShader() {
             var d3dDevice = GuiController.Instance.D3dDevice;
             string compilationErrors;
-            this.effect = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, Path.TankShader, null, null, ShaderFlags.None, null, out compilationErrors);
+            this.effect = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, this.pathShader(), null, null, ShaderFlags.None, null, out compilationErrors);
             mesh.effect = effect;
         }
+        protected virtual string pathShader() { return Path.TankShader; }
         protected virtual void processShader() { }
 
         public void dispose() {

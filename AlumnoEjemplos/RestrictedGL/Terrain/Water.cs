@@ -40,6 +40,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain {
 
             time += Shared.ElapsedTime;
             effect.SetValue("time", time);
+            if (time > float.MaxValue - 3) time = 0;
             
             mesh.render();
         }

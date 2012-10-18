@@ -13,10 +13,20 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     public class TankEnemy : Tank {
-        public TankEnemy(Vector3 initialPosition, ITerrainCollision terrain) : base(initialPosition, terrain) {}
+        private float time = 0;
+
+        public TankEnemy(Vector3 initialPosition, ITerrainCollision terrain) : base(initialPosition, terrain) { }
 
         protected override void moveAndRotate() {
+            //IA del enemigo
+
             base.processMovement();
+        }
+
+        protected override string pathShader() { return Path.TankEnemyShader; }
+        protected override void processShader() {
+            time += Shared.ElapsedTime;
+            this.effect.SetValue("time", time);
         }
     }
 }

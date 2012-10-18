@@ -73,7 +73,7 @@ namespace AlumnoEjemplos.RestrictedGL
             var tankY = this.terrain.heightmapData[64, 64] * SCALE_Y;
             this.tank = new Tank.Tank(new Vector3(0, tankY + 15, 0), this.terrain);
 
-            var rand = new Randomizer((int)-this.terrain.heightmapSizeScaled/2, (int)this.terrain.heightmapSizeScaled/2);
+            var rand = new Randomizer((int)-this.terrain.heightmapSizeScaled/2 + 100, (int)this.terrain.heightmapSizeScaled/2 - 100);
             this.tankEnemy = new Tank.TankEnemy(new Vector3(rand.getNext(), tankY + 15, rand.getNext()), this.terrain);
 
             GuiController.Instance.FpsCamera.Enable = true;
