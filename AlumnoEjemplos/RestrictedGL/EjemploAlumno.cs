@@ -4,6 +4,7 @@ using TgcViewer.Example;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
+using AlumnoEjemplos.RestrictedGL.Utils;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
@@ -18,6 +19,7 @@ namespace AlumnoEjemplos.RestrictedGL
     {
         private Terrain.Terrain terrain;
         private Tank.Tank tank;
+        private Tank.TankEnemy tankEnemy;
 
         private const float SCALE_Y = 2f;
         private const float SCALE_XZ = 50f;
@@ -69,7 +71,10 @@ namespace AlumnoEjemplos.RestrictedGL
             this.terrain = new Terrain.Terrain(SCALE_XZ, SCALE_Y);
 
             var tankY = this.terrain.heightmapData[64, 64] * SCALE_Y;
-            this.tank = new Tank.Tank(new Vector3(0, tankY + 15, 0),this.terrain);
+            this.tank = new Tank.Tank(new Vector3(0, tankY + 15, 0), this.terrain);
+
+            var rand = new Randomizer((int)-this.terrain.heightmapSizeScaled/2, (int)this.terrain.heightmapSizeScaled/2);
+            this.tankEnemy = new Tank.TankEnemy(new Vector3(rand.getNext(), tankY + 15, rand.getNext()), this.terrain);
 
             GuiController.Instance.FpsCamera.Enable = true;
             GuiController.Instance.FpsCamera.MovementSpeed = 100f;
@@ -114,6 +119,7 @@ namespace AlumnoEjemplos.RestrictedGL
             this.updateUserVars();
 
             this.tank.render();
+            this.tankEnemy.render();
             this.terrain.render();
         }
 

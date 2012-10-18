@@ -16,9 +16,11 @@
         public readonly static string SkyFront = Shared.MediaFolder + "\\Terreno\\SkyFront.jpg";
         public readonly static string SkyBack = Shared.MediaFolder + "\\Terreno\\SkyBack.jpg";
 
-        public static readonly string TankTerrainSurface = Shared.MediaFolder + "#TankExample\\Textures\\tierra.jpg";
+        public readonly static string TankTerrainSurface = Shared.MediaFolder + "#TankExample\\Textures\\tierra.jpg";
         public readonly static string TankScene = Shared.MediaFolder + "#TankExample\\Scenes\\TankAndEnvironment@Meshes-TgcScene.xml";
+        public readonly static string TankShader = Shared.MediaFolder + "ShaderVacio.fx";
+        public readonly static string TankEnemyShader = Shared.MediaFolder + "ShaderVacio.fx";
 
-        public static readonly string ExplosionSound = Shared.MediaFolder + "#TankExample\\Sounds\\explosion.wav";
+        public readonly static string ExplosionSound = Shared.MediaFolder + "#TankExample\\Sounds\\explosion.wav";
     }
 }

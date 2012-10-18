@@ -69,7 +69,6 @@ namespace AlumnoEjemplos.RestrictedGL.Utils
             if (parentInstance != null)
                 effect = ((MeshShader)parentInstance).effect;
 
-
             //Incializacion standard para hacer la proyeccion
             effect.SetValue("matWorld", device.Transform.World);
             effect.SetValue("matWorldView", device.Transform.World * device.Transform.View);

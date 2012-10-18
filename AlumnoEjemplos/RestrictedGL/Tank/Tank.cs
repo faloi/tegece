@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using AlumnoEjemplos.RestrictedGL.Interfaces;
+using AlumnoEjemplos.RestrictedGL.Utils;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
@@ -13,7 +14,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     
-    internal enum Direction {
+    public enum Direction {
         Forward,
         Backward,
         Left,
@@ -24,7 +25,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private const float SCALE = 3;
         private const float INTERVAL_BETWEEN_MISSILES = 2.5f;
 
-        private readonly TgcMesh mesh;
+        protected readonly MeshShader mesh;
+        protected Microsoft.DirectX.Direct3D.Effect effect;
         private readonly ITerrainCollision terrain;
         private readonly UserVars userVars;
         private Vector3 forwardVector;
@@ -38,8 +40,11 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public Tank(Vector3 initialPosition, ITerrainCollision terrain) {
             userVars = new UserVars();
 
-            var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
-            mesh = scene.Meshes[0];
+            var loader = new TgcSceneLoader();
+            loader.MeshFactory = new MeshShaderFactory();
+            var scene = loader.loadSceneFromFile(Path.TankScene);
+            mesh = (MeshShader) scene.Meshes[0];
+            this.loadShader();
 
             this.terrain = terrain;
             missilesShooted = new List<Missile>();
@@ -203,7 +208,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                        : -speed;
         }
 
-        private void shoot() {
+        protected void shoot() {
             var flightTimeOfLastMissile=0f;
             foreach (var missile in missilesShooted) {
                 if(flightTimeOfLastMissile==0f)
@@ -221,12 +226,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
         }
 
-        private void move(Direction direction) {
+        protected void move(Direction direction) {
             linearSpeed = calculateSpeed(direction);
             isMoving = true;
         }
 
-        private void rotate(Direction direction) {
+        protected void rotate(Direction direction) {
             rotationSpeed = calculateSpeed(direction);
             isRotating = true;
         }
@@ -235,7 +240,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             return new Vector3(position.X, terrain.getYValueFor(position.X, position.Z)*terrain.ScaleY, position.Z);
         }
 
-        private void moveAndRotate() {
+        protected virtual void moveAndRotate() {
             var d3DInput = GuiController.Instance.D3dInput;
 
             isMoving = false;
@@ -254,28 +259,32 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             if (d3DInput.keyDown(Key.RightControl))
                 shoot();
 
-            var camera = GuiController.Instance.ThirdPersonCamera;
+            this.processMovement();
+        }
 
+        protected void processMovement() {
+            var camera = GuiController.Instance.ThirdPersonCamera;
             if (isMoving) {
-                moveOrientedY(Shared.ElapsedTime*linearSpeed);
+                moveOrientedY(Shared.ElapsedTime * linearSpeed);
                 camera.Target = Position;
                 setTranslationMatrix(Position);
             }
 
             if (isRotating) {
-                var rotAngle = Geometry.DegreeToRadian(rotationSpeed*Shared.ElapsedTime);
+                var rotAngle = Geometry.DegreeToRadian(rotationSpeed * Shared.ElapsedTime);
                 camera.rotateY(rotAngle);
                 rotateY(rotAngle);
                 forwardVector.TransformNormal(Matrix.RotationY(rotAngle));
             }
         }
 
-        public void render() {
+        public virtual void render() {
             moveAndRotate();
 
             mesh.BoundingBox.transform(transformMatrix);
             mesh.Transform = transformMatrix;
 
+            this.processShader();
             mesh.render();
 
             var missilesToRemove = new List<Missile>();
@@ -293,6 +302,14 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
             missilesToRemove.ForEach(o => missilesShooted.Remove(o));
         }
+
+        protected virtual void loadShader() {
+            var d3dDevice = GuiController.Instance.D3dDevice;
+            string compilationErrors;
+            this.effect = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, Path.TankShader, null, null, ShaderFlags.None, null, out compilationErrors);
+            mesh.effect = effect;
+        }
+        protected virtual void processShader() { }
 
         public void dispose() {
             mesh.dispose();

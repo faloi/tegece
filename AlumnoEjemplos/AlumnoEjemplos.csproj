@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="RestrictedGL\Interfaces\ITerrainCollision.cs" />
     <Compile Include="RestrictedGL\Path.cs" />
+    <Compile Include="RestrictedGL\Tank\TankEnemy.cs" />
     <Compile Include="RestrictedGL\Tank\Missile.cs" />
     <Compile Include="RestrictedGL\Terrain\Water.cs" />
     <Compile Include="RestrictedGL\Terrain\Heightmap\AdaptativeHeightmap.cs" />

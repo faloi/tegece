@@ -20,7 +20,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         public float ScaleY { get; private set; }
 
         private int heightmapSize { get { return this.heightmapData.GetLength(0); } }
-        private float heightmapSizeScaled {
+        public float heightmapSizeScaled {
             get { return this.heightmapSize * this.ScaleXZ; }
         }
 
