@@ -13,12 +13,22 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     public class TankEnemy : Tank {
+        public ITransformObject tank { get; set; }
         private float time = 0;
+        private float timeDirChange = 0;
+        private Direction dir = Direction.Forward;
 
         public TankEnemy(Vector3 initialPosition, ITerrainCollision terrain) : base(initialPosition, terrain) { }
 
         protected override void moveAndRotate() {
             //IA del enemigo
+            timeDirChange += Shared.ElapsedTime;
+            if (timeDirChange > 1) {
+                timeDirChange = 0;
+                if (dir == Direction.Forward) dir = Direction.Backward;
+                else dir = Direction.Forward;
+            }
+            this.move(dir);
 
             base.processMovement();
         }
@@ -27,6 +37,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected override void processShader() {
             time += Shared.ElapsedTime;
             this.effect.SetValue("time", time);
+            if (time > float.MaxValue - 3) time = 0;
         }
     }
 }
