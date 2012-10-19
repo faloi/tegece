@@ -18,6 +18,8 @@ public class Missile : ITransformObject
 
     private const float GRAVITY = -0.2f;
     private const float INITIAL_HORIZONTAL_SPEED=-900f; //Es constante porque en el eje X no hay gravedad
+    private const int ALTURA_CANION = 60;
+
     private float initialVeticalSpeed;
     public Matrix Transform { get; set; }
     public bool AutoTransformEnable { get; set; }
@@ -35,7 +37,7 @@ public class Missile : ITransformObject
         var scene = loader.loadSceneFromFile(Path.TankScene);
 
         this.mesh = scene.Meshes[1];
-        this.mesh.Position = new Vector3(tankPosition.X, tankPosition.Y + 20, tankPosition.Z);
+        this.mesh.Position = new Vector3(tankPosition.X, tankPosition.Y + ALTURA_CANION, tankPosition.Z);
         this.mesh.Rotation = new Vector3(tankRotation.X, tankRotation.Y, tankRotation.Z );
         this.initialVeticalSpeed = 8f;
     }
