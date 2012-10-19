@@ -49,7 +49,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public float ScaleY { get; private set; }
 
-        public int getYValueFor(float x, float z) {
+        public float getYValueFor(float x, float z) {
             return 0;
         }
         public bool isOutOfBounds(ITransformObject tankOrMissile){

@@ -55,15 +55,15 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             this.adaptativeHeightmap.Threshold = Modifiers.get<float>("ROAM Threshold");
         }
 
-        private int transformCoordenate(float originalValue) {
-            return (int) (originalValue / this.ScaleXZ + this.heightmapSize / 2);
+        private float transformCoordenate(float originalValue) {
+            return originalValue / this.ScaleXZ + this.heightmapSize / 2;
         }
 
-        public int getYValueFor(float x, float z) {
+        public float getYValueFor(float x, float z) {
             var realX = this.transformCoordenate(x);
             var realZ = this.transformCoordenate(z);
 
-            return this.heightmapData[realX, realZ];
+            return this.heightmapData[(int)realX, (int)realZ];
         }
 
         public bool isOutOfBounds(ITransformObject tankOrMissile){
@@ -79,7 +79,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
             var realRadius = (int)(radius / this.ScaleXZ);
 
-            this.adaptativeHeightmap.deform(realX, realZ, realRadius, power);
+            this.adaptativeHeightmap.deform((int)realX, (int)realZ, realRadius, power);
         }
 
         public void render() {
