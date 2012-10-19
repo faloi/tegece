@@ -38,22 +38,22 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private Matrix translationMatrix;
 
         public Tank(Vector3 initialPosition, ITerrainCollision terrain) {
-            userVars = new UserVars();
+            this.userVars = new UserVars();
 
-            var loader = new TgcSceneLoader();
-            loader.MeshFactory = new MeshShaderFactory();
+            var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
             var scene = loader.loadSceneFromFile(Path.TankScene);
-            mesh = (MeshShader) scene.Meshes[0];
+            this.mesh = (MeshShader) scene.Meshes[0];
             this.loadShader();
 
             this.terrain = terrain;
             missilesShooted = new List<Missile>();
 
-            mesh.AutoTransformEnable = false;
-            translationMatrix = Matrix.Identity;
-            setTranslationMatrix(initialPosition);
+            this.mesh.AutoTransformEnable =  this.mesh.AutoUpdateBoundingBox = false;
+            this.translationMatrix = Matrix.Identity;
+            
+            this.setTranslationMatrix(initialPosition);
 
-            forwardVector = new Vector3(0, 0, 1);
+            this.forwardVector = new Vector3(0, 0, 1);
         }
 
         public TgcBoundingBox boundingBox {
@@ -279,27 +279,31 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         public virtual void render() {
-            moveAndRotate();
+            this.moveAndRotate();
 
-            mesh.BoundingBox.transform(transformMatrix);
-            mesh.Transform = transformMatrix;
+            this.mesh.BoundingBox.transform(transformMatrix);
+            this.mesh.Transform = transformMatrix;
 
             this.processShader();
-            mesh.render();
+            this.mesh.render();
+
+            if (Modifiers.showBoundingBox())
+                this.mesh.BoundingBox.render();
 
             var missilesToRemove = new List<Missile>();
-            foreach (var missile in missilesShooted) {
+            foreach (var missile in this.missilesShooted) {
                 if (missile.isCollidingWith(terrain)) {
-                    terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
+                    this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
                     missilesToRemove.Add(missile);
                 }
                 
-                else if (terrain.isOutOfBounds(missile)) 
+                else if (this.terrain.isOutOfBounds(missile)) 
                     missilesToRemove.Add(missile);
                 
                 else 
                     missile.render();
             }
+            
             missilesToRemove.ForEach(o => missilesShooted.Remove(o));
         }
 
@@ -307,13 +311,14 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             var d3dDevice = GuiController.Instance.D3dDevice;
             string compilationErrors;
             this.effect = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, this.pathShader(), null, null, ShaderFlags.None, null, out compilationErrors);
-            mesh.effect = effect;
+            this.mesh.effect = effect;
         }
+
         protected virtual string pathShader() { return Path.TankShader; }
         protected virtual void processShader() { }
 
         public void dispose() {
-            mesh.dispose();
+            this.mesh.dispose();
         }
     }
 }

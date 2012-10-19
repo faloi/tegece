@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using AlumnoEjemplos.RestrictedGL.Utils;
 using Microsoft.DirectX;
 using TgcViewer.Utils.TgcSceneLoader;
@@ -20,15 +21,16 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
         }
 
         public void createTrees(int count, int maxRadius) {
-            var treeSize = Tree.baseSize;
-            var maxValue = (int)(maxRadius - 2 * Tree.baseSize / terrain.ScaleXZ);
+            var baseSize = Tree.baseSize;
+
+            var maxValue = (int)(maxRadius - 2 * baseSize / terrain.ScaleXZ);
             var randomizer = new Randomizer(5, maxValue);
 
             for (var i = 1; i < count; i++) {
                 var offsetX = randomizer.getNext();
                 var offsetZ = randomizer.getNext();
 
-                var adjust = (int)(maxRadius + treeSize / terrain.ScaleXZ);
+                var adjust = (int)(maxRadius + baseSize / terrain.ScaleXZ);
                 var offsetY = terrain.getYValueFor(offsetX + adjust, offsetZ + adjust);
 
                 var initialPosition = new Vector3(offsetX * terrain.ScaleXZ, offsetY * terrain.ScaleY, offsetZ * terrain.ScaleXZ);
@@ -41,7 +43,12 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
         }
 
         public void render() {
-            this.trees.ForEach(t => t.render());
+            this.trees.ForEach(t => {
+               t.render(); 
+               
+               if (Modifiers.showBoundingBox())
+                    t.BoundingBox.render();
+            });
         }
 
         public void dispose() {

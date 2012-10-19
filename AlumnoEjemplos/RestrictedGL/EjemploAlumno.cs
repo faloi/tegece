@@ -86,6 +86,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
             GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 500f);
             GuiController.Instance.Modifiers.addFloat("tankVelocity", 0f, 1000f, 100f);
+            GuiController.Instance.Modifiers.addBoolean("ShowBoundingBox", "Show bounding box", false);
 
             this.userVars.addMany(
                 "posX", 

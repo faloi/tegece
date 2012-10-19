@@ -6,5 +6,9 @@
         {
             return (T) Gui.Modifiers.getValue(key);
         }        
+
+        public static bool showBoundingBox() {
+            return get<bool>("ShowBoundingBox");
+        }
     }
 }
