@@ -59,17 +59,19 @@ public class Missile : ITransformObject
     public void rotateX(float angle) {
         throw new NotImplementedException();
     }
-    public void rotateY(float angle) {
+    public void rotateY(float angle){
         throw new NotImplementedException();
+        
     }
     public void rotateZ(float angle) {
-        throw new NotImplementedException();
+        this.mesh.rotateZ(angle);
     }
 
     public void render() {
         this.flightTime += Shared.ElapsedTime;
         this.moveOrientedY(INITIAL_HORIZONTAL_SPEED * Shared.ElapsedTime);
         this.moveVertically();
+        this.rotateZ(0.1f);
         this.mesh.render();
     }
 
