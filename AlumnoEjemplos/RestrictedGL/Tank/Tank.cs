@@ -41,7 +41,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.userVars = new UserVars();
 
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
-            var scene = loader.loadSceneFromFile(Path.TankScene);
+            var scene = loader.loadSceneFromFile(Path.Tank);
             this.mesh = (MeshShader) scene.Meshes[0];
             this.loadShader();
 
