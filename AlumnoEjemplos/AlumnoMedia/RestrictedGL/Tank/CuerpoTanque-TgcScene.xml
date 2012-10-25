@@ -10,7 +10,7 @@
 			<specular>[229.5,229.5,229.5,255.0]</specular>
 			<opacity>100.0</opacity>
 			<alphaBlendEnable>false</alphaBlendEnable>
-			<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>triax_tracks.bmp</bitmap>
+			<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>triax_tracks.png</bitmap>
 		</m>
 	</materials>
 	<meshes count='1' >

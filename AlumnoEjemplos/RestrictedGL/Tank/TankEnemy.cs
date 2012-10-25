@@ -14,7 +14,6 @@ using TgcViewer.Utils.TgcSceneLoader;
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     public class TankEnemy : Tank {
         public ITransformObject tank { get; set; }
-        private float time = 0;
         private float timeDirChange = 0;
         private Direction dir = Direction.Forward;
 
@@ -34,10 +33,5 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         protected override string pathShader() { return Path.TankEnemyShader; }
-        protected override void processShader() {
-            time += Shared.ElapsedTime;
-            this.effect.SetValue("time", time);
-            if (time > float.MaxValue - 3) time = 0;
-        }
     }
 }

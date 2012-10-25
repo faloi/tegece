@@ -3,6 +3,8 @@ float4x4 matWorldView;
 float4x4 matWorldViewProj;
 float4x4 matWorldInverseTranspose;
 
+float time = 0;
+
 // Textura y sampler de textura
 texture base_Tex;
 sampler2D baseMap =
@@ -27,6 +29,7 @@ struct VS_OUTPUT
 {
    float4 Position :        POSITION0;
    float2 Texcoord :        TEXCOORD0;
+   float4 ModPos : TEXCOORD01;
    float4 Color :			COLOR0;
 };
 
@@ -34,6 +37,9 @@ struct VS_OUTPUT
 VS_OUTPUT vs_main( VS_INPUT Input )
 {
    VS_OUTPUT Output;
+
+   Output.ModPos = Input.Position;
+   
    //Proyectar posicion
    Output.Position = mul( Input.Position, matWorldViewProj);
    
@@ -48,12 +54,42 @@ VS_OUTPUT vs_main( VS_INPUT Input )
 }
 
 //Pixel Shader
-float4 ps_main( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0) : COLOR0
+float4 ps_mov( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0,float4 ModPos : TEXCOORD01) : COLOR0
 {      
 	// Obtener el texel de textura
 	// baseMap es el sampler, Texcoord son las coordenadas interpoladas
 	float4 fvBaseColor = tex2D( baseMap, Texcoord );
-	return 1*fvBaseColor + 0*Color;
+
+	if(fvBaseColor.a < 0.99) {
+		if(Texcoord.y > 0.879) {
+			if(ModPos.y > 17) {
+				Texcoord.x = (Texcoord.x + time*0.1)%0.4;
+			} else {
+				Texcoord.x = abs((Texcoord.x - time*0.1)%0.4);
+			}
+			
+		} else {
+			if(ModPos.y > 17) {
+				Texcoord.y = ((Texcoord.y + time*0.1)%(0.84-0.425)) + 0.425;
+			} else {
+				Texcoord.y = abs(((Texcoord.y - time*0.1)%(0.84-0.425))) + 0.425;
+			}
+		}
+	}
+
+	fvBaseColor = tex2D( baseMap, Texcoord );
+	return fvBaseColor;
+}
+
+//Pixel Shader
+float4 ps_main( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0,float4 ModPos : TEXCOORD01) : COLOR0
+{      
+	// Obtener el texel de textura
+	// baseMap es el sampler, Texcoord son las coordenadas interpoladas
+	float4 fvBaseColor = tex2D( baseMap, Texcoord );
+
+	fvBaseColor = tex2D( baseMap, Texcoord );
+	return fvBaseColor;
 }
 
 // ------------------------------------------------------------------
@@ -64,5 +100,15 @@ technique RenderScene
 	  AlphaBlendEnable = false;
 	  VertexShader = compile vs_2_0 vs_main();
 	  PixelShader = compile ps_2_0 ps_main();
+   }
+}
+
+technique RenderSceneMovement
+{
+   pass Pass_0
+   {
+	  AlphaBlendEnable = false;
+	  VertexShader = compile vs_2_0 vs_main();
+	  PixelShader = compile ps_2_0 ps_mov();
    }
 }

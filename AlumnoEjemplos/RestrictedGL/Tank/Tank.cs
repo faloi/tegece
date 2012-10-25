@@ -27,14 +27,15 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         protected readonly MeshShader mesh;
         protected Microsoft.DirectX.Direct3D.Effect effect;
+        protected float time = 0;
         private readonly ITerrainCollision terrain;
         private readonly UserVars userVars;
         private Vector3 forwardVector;
 
-        private bool isMoving;
-        private bool isRotating;
-        private float linearSpeed;
-        private float rotationSpeed;
+        protected bool isMoving;
+        protected bool isRotating;
+        protected float linearSpeed;
+        protected float rotationSpeed;
         private Matrix translationMatrix;
 
         public Tank(Vector3 initialPosition, ITerrainCollision terrain) {
@@ -315,7 +316,16 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         protected virtual string pathShader() { return Path.TankShader; }
-        protected virtual void processShader() { }
+        protected virtual void processShader() {
+            time += Shared.ElapsedTime;
+            this.effect.SetValue("time", time);
+            if (time > float.MaxValue - 3) time = 0;
+            if (isMoving) {
+                effect.Technique = "RenderSceneMovement";
+            } else {
+                effect.Technique = "RenderScene";
+            }
+        }
 
         public void dispose() {
             this.mesh.dispose();
