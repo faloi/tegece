@@ -13,7 +13,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     public class TankEnemy : Tank {
-        public ITransformObject tank { get; set; }
+        public Tank tank { get; set; }
         private float timeDirChange = 0;
         private Direction dir = Direction.Forward;
 
@@ -28,6 +28,20 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 else dir = Direction.Forward;
             }
             this.move(dir);
+            //this.rotate(Direction.Left);
+
+            double dotProductTest;
+            Vector3 directionTank = new Vector3(0, tank.lastRotation.Y, 0);
+            Vector3 directionEnemy = new Vector3(0, lastRotation.Y, 0);
+            GuiController.Instance.UserVars["tankRotateY"] = directionTank.Y.ToString();
+            GuiController.Instance.UserVars["enemyRotateY"] = directionEnemy.Y.ToString();
+            directionTank.Normalize();
+            directionEnemy.Normalize();
+            directionTank.Y = (float) Math.Round(directionTank.Y);
+            directionEnemy.Y = (float) Math.Round(directionEnemy.Y);
+            dotProductTest = Math.Round(Vector3.Dot(directionTank, directionEnemy));
+
+            GuiController.Instance.UserVars["rotateProduct"] = dotProductTest.ToString();
 
             base.processMovement();
         }

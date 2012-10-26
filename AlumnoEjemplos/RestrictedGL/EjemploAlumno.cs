@@ -94,7 +94,10 @@ namespace AlumnoEjemplos.RestrictedGL
                 "posZ",
                 "viewX",
                 "viewY",
-                "viewZ"
+                "viewZ",
+                "tankRotateY",
+                "enemyRotateY",
+                "rotateProduct"
             );
 
             //Aumentar distancia del far plane
@@ -107,12 +110,12 @@ namespace AlumnoEjemplos.RestrictedGL
         public override void render(float elapsedTime) {
             Shared.ElapsedTime = elapsedTime;
 
-            if (GuiController.Instance.D3dInput.keyDown(Key.R)) {
+            if (GuiController.Instance.D3dInput.keyDown(Key.R)) { //(test)
                 //R = Cámara en el origen, más o menos
                 GuiController.Instance.FpsCamera.setCamera(new Vector3(-100, 200, 0), new Vector3(490f, 128f, -10f));
             }
-            if (GuiController.Instance.D3dInput.keyDown(Key.T)) {
-                //T = Deformar parte del terreno actual
+            if (GuiController.Instance.D3dInput.keyDown(Key.T)) { //(test)
+                //T = Rotar al enemigo
                 terrain.deform(GuiController.Instance.FpsCamera.Position.X, GuiController.Instance.FpsCamera.Position.Z, 150, 1);
             }
             

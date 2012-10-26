@@ -37,6 +37,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected float linearSpeed;
         protected float rotationSpeed;
         private Matrix translationMatrix;
+        public Vector3 lastRotation;
 
         public Tank(Vector3 initialPosition, ITerrainCollision terrain) {
             this.userVars = new UserVars();
@@ -176,6 +177,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public void rotateY(float angle) {
             mesh.rotateY(angle);
+            this.lastRotation = mesh.Rotation;
             GuiController.Instance.ThirdPersonCamera.rotateY(angle);
         }
 
