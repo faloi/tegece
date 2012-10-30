@@ -55,7 +55,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             
             this.setTranslationMatrix(initialPosition);
 
-            this.forwardVector = new Vector3(0, 0, 1);
+            this.forwardVector = new Vector3(0, 0, -1); //[!] VER DESPUÉS
         }
 
         public TgcBoundingBox boundingBox {
