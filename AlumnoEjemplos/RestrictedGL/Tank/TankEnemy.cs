@@ -29,12 +29,14 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             isMoving = false;
             isRotating = false;
 
+            /*
             var d3DInput = GuiController.Instance.D3dInput;
             if (d3DInput.keyDown(Key.U))
                 rotate(Direction.Right);
             if (d3DInput.keyDown(Key.Y))
                 rotate(Direction.Left);
-            //this.move(dir);
+            if (d3DInput.keyDown(Key.J)) move(dir);
+            */
 
             //Origen, y destino:
             Vector3 origin = this.Position;
@@ -46,27 +48,35 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
             //Normalizar direcciones y sus ángulos:
             direcOrg.Normalize(); 
-            direcOrg.Normalize();
-            double angOrg = /*Math.Atan(direcOrg.Z, direcOrg.X)*/2;
-            double angDst = /*Math.Atan(direcDst.Z, direcDst.X)*/2;
+            direcDst.Normalize();
+            double angOrg = Math.Atan2(direcOrg.Z, direcOrg.X);
+            double angDst = Math.Atan2(direcDst.Z, direcDst.X);
             if (angOrg < 0) angOrg += 2 * Math.PI;
             if (angDst < 0) angOrg += 2 * Math.PI;
-            double distIzq = angOrg > angDst ? Math.PI * 2 - angOrg + angDst : angDst - angOrg;
-            double distDer = angOrg < angDst ? Math.PI * 2 - angDst + angOrg : angOrg - angDst;
-
+            double distLeft = angOrg > angDst ? Math.PI * 2 - angOrg + angDst : angDst - angOrg;
+            double distRight = angOrg < angDst ? Math.PI * 2 - angDst + angOrg : angOrg - angDst;
+            if (!isInPosition(direcOrg, direcDst, THRESHOLD_DIR)) {
+                if (distLeft < distRight) {
+                    this.rotate(Direction.Left);
+                } else {
+                    this.rotate(Direction.Right);
+                }   
+            }
+            this.move(dir);
+            
             /*
-            GuiController.Instance.UserVars["aX"] = "a";
-            GuiController.Instance.UserVars["aY"] = Position.Y.ToString();
-            GuiController.Instance.UserVars["aZ"] = Position.Z.ToString();
-            GuiController.Instance.UserVars["bX"] = destination.X.ToString();
-            GuiController.Instance.UserVars["bY"] = destination.Y.ToString();
-            GuiController.Instance.UserVars["bZ"] = destination.Z.ToString();
+            GuiController.Instance.UserVars["aX"] = direcOrg.X.ToString();
+            GuiController.Instance.UserVars["aY"] = "0";
+            GuiController.Instance.UserVars["aZ"] = direcOrg.Z.ToString();
+            GuiController.Instance.UserVars["bX"] = direcDst.X.ToString();
+            GuiController.Instance.UserVars["bY"] = "0";
+            GuiController.Instance.UserVars["bZ"] = direcDst.Z.ToString();
             */
 
             base.processMovement();
         }
 
-        private bool isInPosition(Vector3 positionA, Vector3 positionB, float threshold) {
+        private bool isInPosition(Vector3 positionA, Vector3 positionB, double threshold) {
             //Determina si A está en la posición B (teniendo en cuanta un rango de error)
             return (positionA.X > positionB.X - threshold && positionA.X < positionB.X + threshold &&
                     positionA.Z > positionB.Z - threshold && positionA.Z < positionB.Z + threshold);

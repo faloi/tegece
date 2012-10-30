@@ -52,10 +52,11 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
             this.mesh.AutoTransformEnable =  this.mesh.AutoUpdateBoundingBox = false;
             this.translationMatrix = Matrix.Identity;
+            this.Position = initialPosition;
             
             this.setTranslationMatrix(initialPosition);
 
-            this.forwardVector = new Vector3(0, 0, -1); //[!] VER DESPUÉS
+            this.forwardVector = new Vector3(0, 0, -1);
         }
 
         public TgcBoundingBox boundingBox {
