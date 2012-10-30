@@ -56,14 +56,22 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         }
 
         private float transformCoordenate(float originalValue) {
-            return originalValue / this.ScaleXZ + this.heightmapSize / 2;
+            return (float) (originalValue / this.ScaleXZ + this.heightmapSize / 2);
         }
 
         public float getYValueFor(float x, float z) {
             var realX = this.transformCoordenate(x);
             var realZ = this.transformCoordenate(z);
 
-            return this.heightmapData[(int)realX, (int)realZ];
+            var u = (int) realX;
+            var v = (int)realZ;
+            var s = realX - u;
+            var t = realZ - v;
+            var heightA = heightmapData[u, v] + s * (heightmapData[u+1, v] - heightmapData[u, v]);
+            var heightB = heightmapData[u, v+1] + s * (heightmapData[u+1, v+1] - heightmapData[u, v+1]);
+            var finalHeight = heightA + t * (heightB - heightA);
+
+            return finalHeight;
         }
 
         public bool isOutOfBounds(ITransformObject tankOrMissile){
