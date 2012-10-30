@@ -95,9 +95,12 @@ namespace AlumnoEjemplos.RestrictedGL
                 "viewX",
                 "viewY",
                 "viewZ",
-                "tankRotateY",
-                "enemyRotateY",
-                "rotateProduct"
+                "aX",
+                "aY",
+                "aZ",
+                "bX",
+                "bY",
+                "bZ"
             );
 
             //Aumentar distancia del far plane

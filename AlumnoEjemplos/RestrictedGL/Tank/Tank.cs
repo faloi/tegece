@@ -30,7 +30,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected float time = 0;
         private readonly ITerrainCollision terrain;
         private readonly UserVars userVars;
-        private Vector3 forwardVector;
+        protected Vector3 forwardVector;
 
         protected bool isMoving;
         protected bool isRotating;
@@ -162,23 +162,19 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         public Vector3 Scale { get; set; }
-
-        public void move(Vector3 v) {
-            userVars
-                .set("posX", v.X)
-                .set("posY", v.Y)
-                .set("posZ", v.Z);
-        }
-
+            
         public void moveOrientedY(float movement) {
             mesh.moveOrientedY(movement);
-            move(mesh.Position);
         }
 
         public void rotateY(float angle) {
             mesh.rotateY(angle);
             this.lastRotation = mesh.Rotation;
             GuiController.Instance.ThirdPersonCamera.rotateY(angle);
+        }
+
+        public void move(Vector3 v) {
+            throw new NotImplementedException();
         }
 
         public void move(float x, float y, float z) {
