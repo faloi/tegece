@@ -16,31 +16,26 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public Tank tank { get; set; }
         private Direction dir = Direction.Forward;
         Vector3 destination;
+        bool iddle = true;
         const double THRESHOLD_POS = 200;
         const double THRESHOLD_DIR = 0.5;
 
         public TankEnemy(Vector3 initialPosition, ITerrainCollision terrain) : base(initialPosition, terrain) { }
 
         protected override void moveAndRotate() {
-            //IA del enemigo
+            //IA del enemigo:
             //El chabon se mueve siempre para adelante, persiguiendo a la posición del tanque jugador
             //Para llegar a una determinada posición, primero debería rotar en la dirección adecuada
             //Y darle para adelante.
             isMoving = false;
             isRotating = false;
 
-            /*
-            var d3DInput = GuiController.Instance.D3dInput;
-            if (d3DInput.keyDown(Key.U))
-                rotate(Direction.Right);
-            if (d3DInput.keyDown(Key.Y))
-                rotate(Direction.Left);
-            if (d3DInput.keyDown(Key.J)) move(dir);
-            */
-
             //Origen, y destino:
             Vector3 origin = this.Position;
-            this.destination = tank.Position;
+            if (iddle) { //(hasta no llegar ahí no cambia de destino)
+                this.destination = tank.Position;
+                iddle = false;
+            }
 
             //Direcciones origen y destino:
             Vector3 direcOrg = this.forwardVector; 
@@ -63,15 +58,21 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 }   
             }
             this.move(dir);
-            
-            /*
-            GuiController.Instance.UserVars["aX"] = direcOrg.X.ToString();
-            GuiController.Instance.UserVars["aY"] = "0";
-            GuiController.Instance.UserVars["aZ"] = direcOrg.Z.ToString();
-            GuiController.Instance.UserVars["bX"] = direcDst.X.ToString();
-            GuiController.Instance.UserVars["bY"] = "0";
-            GuiController.Instance.UserVars["bZ"] = direcDst.Z.ToString();
-            */
+
+            //Si este random se cumple, dispara:
+            if (new Utils.Randomizer(1, 500).getNext() > 495) {
+                this.shoot();
+                iddle = true; //para que tenga chances de esquivar el bache...
+            }
+
+            if (TgcCollisionUtils.testAABBAABB(mesh.BoundingBox, tank.mesh.BoundingBox))
+                isMoving = false; //si colisiona con el tanque no debería moverse
+
+            //Si llego al destino, lo marca como inactivo para buscar uno nuevo...
+            if (isInPosition(Position, destination, THRESHOLD_POS)) iddle=true;
+            GuiController.Instance.UserVars["destX"] = destination.X.ToString();
+            GuiController.Instance.UserVars["destY"] = destination.Y.ToString();
+            GuiController.Instance.UserVars["destZ"] = destination.Z.ToString();
 
             base.processMovement();
         }

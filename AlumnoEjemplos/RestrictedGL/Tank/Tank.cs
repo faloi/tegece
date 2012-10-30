@@ -25,7 +25,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private const float SCALE = 3;
         private const float INTERVAL_BETWEEN_MISSILES = 2.5f;
 
-        protected readonly MeshShader mesh;
+        public readonly MeshShader mesh;
         protected Microsoft.DirectX.Direct3D.Effect effect;
         protected float time = 0;
         private readonly ITerrainCollision terrain;

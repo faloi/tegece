@@ -93,12 +93,10 @@ namespace AlumnoEjemplos.RestrictedGL
                 "viewX",
                 "viewY",
                 "viewZ",
-                "aX",
-                "aY",
-                "aZ",
-                "bX",
-                "bY",
-                "bZ"
+                "destX",
+                "destY",
+                "destZ",
+                "test"
             );
 
             //Aumentar distancia del far plane
