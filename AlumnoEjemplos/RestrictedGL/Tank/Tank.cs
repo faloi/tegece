@@ -264,17 +264,32 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         protected void processMovement() {
             var camera = GuiController.Instance.ThirdPersonCamera;
-            if (isMoving) {
+
+            if (isMoving)
+            {
                 moveOrientedY(Shared.ElapsedTime * linearSpeed);
                 camera.Target = Position;
                 setTranslationMatrix(Position);
+                if (terrain.isOutOfBounds(this.mesh))
+                {
+                    moveOrientedY(Shared.ElapsedTime * (-linearSpeed));
+                    camera.Target = Position;
+                    setTranslationMatrix(Position);
+                }
             }
 
-            if (isRotating) {
+            if (isRotating)
+            {
                 var rotAngle = Geometry.DegreeToRadian(rotationSpeed * Shared.ElapsedTime);
                 camera.rotateY(rotAngle);
                 rotateY(rotAngle);
                 forwardVector.TransformNormal(Matrix.RotationY(rotAngle));
+                if (terrain.isOutOfBounds(this.mesh))
+                {
+                    camera.rotateY(-rotAngle);
+                    rotateY(-rotAngle);
+                    forwardVector.TransformNormal(Matrix.RotationY(-rotAngle));
+                }
             }
         }
 

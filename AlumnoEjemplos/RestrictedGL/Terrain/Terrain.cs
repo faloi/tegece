@@ -63,20 +63,25 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             var realX = this.transformCoordenate(x);
             var realZ = this.transformCoordenate(z);
 
-            var u = (int) realX;
-            var v = (int)realZ;
+            var u = checkIndex((int)realX);
+            var v = checkIndex((int)realZ);
+
             var s = realX - u;
             var t = realZ - v;
-            if(v<0) {
-                v = 0;
-            }else if(v>=127) {
-                v = 126;
-            }
             var heightA = heightmapData[u, v] + s * (heightmapData[u+1, v] - heightmapData[u, v]);
             var heightB = heightmapData[u, v+1] + s * (heightmapData[u+1, v+1] - heightmapData[u, v+1]);
             var finalHeight = heightA + t * (heightB - heightA);
 
             return finalHeight;
+        }
+
+        private static int checkIndex(int value){
+            if (value < 0){
+                return 0;
+            }else if (value >= 127){
+                return 126;
+            }
+            return value;
         }
 
         public bool isOutOfBounds(ITransformObject tankOrMissile){
