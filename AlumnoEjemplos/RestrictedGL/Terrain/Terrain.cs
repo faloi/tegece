@@ -3,12 +3,14 @@ using AlumnoEjemplos.RestrictedGL.Interfaces;
 using AlumnoEjemplos.RestrictedGL.Terrain.Trees;
 using Microsoft.DirectX;
 using TgcViewer;
+using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
 namespace AlumnoEjemplos.RestrictedGL.Terrain
 {
     public class Terrain : IRenderObject, ITerrainCollision {
+        public readonly TreeFactory treeFactory;
         private readonly List<IRenderObject> components;
         private readonly AdaptativeHeightmap adaptativeHeightmap;
 
@@ -34,12 +36,11 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
             this.adaptativeHeightmap.loadTexture(Path.MapTexture);
 
             //Crear TREES_COUNT pinos de forma random a lo largo del tererno
-            var treeFactory = new TreeFactory(this);
-            treeFactory.createTrees(TREES_COUNT, this.heightmapSize / 2);
+            this.treeFactory = new TreeFactory(this);
+            this.treeFactory.createTrees(TREES_COUNT, this.heightmapSize / 2);
 
             this.components = new List<IRenderObject> { //lista de componentes a renderizar
                adaptativeHeightmap,
-               treeFactory,
                new SkyBox(new Vector3(0, 0, 0), new Vector3(this.heightmapSizeScaled * 3f, this.heightmapSizeScaled, this.heightmapSizeScaled * 3f)),
                new Water()
             };
@@ -102,6 +103,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
 
         public void render() {
             this.updateModifiers();
+            this.treeFactory.render();
             this.components.ForEach(o => o.render());
         }
 

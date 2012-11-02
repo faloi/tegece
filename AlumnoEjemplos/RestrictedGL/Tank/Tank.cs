@@ -11,6 +11,7 @@ using TgcViewer.Utils.Input;
 using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.RestrictedGL.Terrain;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     
@@ -28,7 +29,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public readonly MeshShader mesh;
         protected Microsoft.DirectX.Direct3D.Effect effect;
         protected float time = 0;
-        private readonly ITerrainCollision terrain;
+        private readonly Terrain.Terrain terrain;
         private readonly UserVars userVars;
         protected Vector3 forwardVector;
 
@@ -39,7 +40,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private Matrix translationMatrix;
         public Vector3 lastRotation;
 
-        public Tank(Vector3 initialPosition, ITerrainCollision terrain) {
+        public Tank(Vector3 initialPosition, Terrain.Terrain terrain) {
             this.userVars = new UserVars();
 
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
@@ -270,7 +271,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 moveOrientedY(Shared.ElapsedTime * linearSpeed);
                 camera.Target = Position;
                 setTranslationMatrix(Position);
-                if (terrain.isOutOfBounds(this.mesh))
+                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingBox))
                 {
                     moveOrientedY(Shared.ElapsedTime * (-linearSpeed));
                     camera.Target = Position;

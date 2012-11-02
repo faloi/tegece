@@ -73,14 +73,12 @@
     <Compile Include="RestrictedGL\Tank\Missile.cs" />
     <Compile Include="RestrictedGL\Terrain\Water.cs" />
     <Compile Include="RestrictedGL\Terrain\Heightmap\AdaptativeHeightmap.cs" />
-    <Compile Include="RestrictedGL\EjemploTanque.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\GuiControllerWrapper.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\Modifiers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\UserVars.cs" />
     <Compile Include="RestrictedGL\Terrain\Terrain.cs" />
     <Compile Include="RestrictedGL\Tank\Tank.cs" />
-    <Compile Include="RestrictedGL\Tank\TankTerrain.cs" />
     <Compile Include="RestrictedGL\EjemploAlumno.cs" />
     <Compile Include="RestrictedGL\Terrain\SkyBox.cs" />
     <Compile Include="RestrictedGL\Terrain\Trees\Tree.cs" />

@@ -2,6 +2,7 @@
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using AlumnoEjemplos.RestrictedGL.Utils;
 using Microsoft.DirectX;
+using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
@@ -9,15 +10,15 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
     public class TreeFactory : IRenderObject
     {
         private readonly Terrain terrain;
-        private readonly List<TgcMesh> trees;
+        private readonly List<Tree> trees;
 
         public TreeFactory(Terrain terrain) {
             this.terrain = terrain;
-            this.trees = new List<TgcMesh>();
+            this.trees = new List<Tree>();
         }
 
-        private void addTree(TgcMesh instance) {
-            this.trees.Add(instance);
+        private void addTree(Tree newTree) {
+            this.trees.Add(newTree);
         }
 
         public void createTrees(int count, int maxRadius) {
@@ -36,23 +37,32 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
                 var initialPosition = new Vector3(offsetX * terrain.ScaleXZ, offsetY * terrain.ScaleY, offsetZ * terrain.ScaleXZ);
                 
                 var newTree = Tree.create(initialPosition);
-                newTree.rotateY(offsetX);
+                newTree.mesh.rotateY(offsetX);
 
                 this.addTree(newTree);
             }
         }
 
+        public bool isAnyCollidingWith(TgcBoundingBox tankBB){
+            foreach (var tree in trees) {
+                var result = TgcCollisionUtils.classifyBoxBox(tankBB, tree.boundingBox);
+                if (result == TgcCollisionUtils.BoxBoxResult.Atravesando)
+                    return true;
+            }
+            return false;
+        }
+
         public void render() {
             this.trees.ForEach(t => {
-               t.render(); 
+               t.mesh.render(); 
                
                if (Modifiers.showBoundingBox())
-                    t.BoundingBox.render();
+                    t.mesh.BoundingBox.render();
             });
         }
 
         public void dispose() {
-            this.trees.ForEach(t => t.dispose());
+            this.trees.ForEach(t => t.mesh.dispose());
         }
 
         public bool AlphaBlendEnable { get; set; }

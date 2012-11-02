@@ -1,4 +1,5 @@
-﻿using TgcViewer.Utils.TgcSceneLoader;
+﻿using TgcViewer.Utils.TgcGeometry;
+using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Interfaces {
     public interface ITerrainCollision {

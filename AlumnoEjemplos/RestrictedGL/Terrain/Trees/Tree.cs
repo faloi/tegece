@@ -1,28 +1,35 @@
 ﻿using Microsoft.DirectX;
+using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
 {
-    public static class Tree {
+    public class Tree {
         private static TgcMesh baseTree;
         private static int count;
         private static readonly Vector3 scale = new Vector3(5, 5, 5);
+        public TgcMesh mesh;
+        public TgcBoundingBox boundingBox;
 
         private static void createBaseTree() {
             var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
             baseTree = scene.Meshes[2];
         }
 
-        public static TgcMesh create(Vector3 initialPosition) {
+        public static Tree create(Vector3 initialPosition) {
             if (baseTree == null)
                 createBaseTree();
 
             count++;
             
-            var newTree = baseTree.createMeshInstance(baseTree.Name + count);
-            newTree.Position = initialPosition;
-            newTree.Scale = scale;
-            newTree.AlphaBlendEnable = true;
+            var newMesh = baseTree.createMeshInstance(baseTree.Name + count);
+            newMesh.Position = initialPosition;
+            newMesh.Scale = scale;
+            newMesh.AlphaBlendEnable = true;
+
+            var newTree = new Tree();
+            newTree.mesh = newMesh;
+            newTree.boundingBox = newMesh.BoundingBox;
 
             return newTree;
         }

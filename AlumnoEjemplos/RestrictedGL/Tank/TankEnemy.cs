@@ -20,7 +20,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         const double THRESHOLD_POS = 200;
         const double THRESHOLD_DIR = 0.5;
 
-        public TankEnemy(Vector3 initialPosition, ITerrainCollision terrain) : base(initialPosition, terrain) { }
+        public TankEnemy(Vector3 initialPosition, Terrain.Terrain terrain) : base(initialPosition, terrain) { }
 
         protected override void moveAndRotate() {
             //IA del enemigo:
