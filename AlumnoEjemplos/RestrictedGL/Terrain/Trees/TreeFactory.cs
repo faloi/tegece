@@ -36,7 +36,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
 
                 var initialPosition = new Vector3(offsetX * terrain.ScaleXZ, offsetY * terrain.ScaleY, offsetZ * terrain.ScaleXZ);
                 
-                var newTree = Tree.create(initialPosition);
+                var newTree = Tree.create(initialPosition,terrain);
                 newTree.mesh.rotateY(offsetX);
 
                 this.addTree(newTree);
@@ -45,8 +45,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
 
         public bool isAnyCollidingWith(TgcBoundingBox tankBB){
             foreach (var tree in trees) {
-                var result = TgcCollisionUtils.classifyBoxBox(tankBB, tree.boundingBox);
-                if (result == TgcCollisionUtils.BoxBoxResult.Atravesando)
+                if (TgcCollisionUtils.testSphereAABB(tree.boundingSphere,tankBB))
                     return true;
             }
             return false;
@@ -57,7 +56,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
                t.mesh.render(); 
                
                if (Modifiers.showBoundingBox())
-                    t.mesh.BoundingBox.render();
+                    t.boundingSphere.render();
             });
         }
 

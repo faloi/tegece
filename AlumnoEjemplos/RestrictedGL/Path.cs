@@ -9,6 +9,9 @@
         public readonly static string WaterTexture = Shared.MediaFolder + "\\Terreno\\Agua.jpg";
         public readonly static string WaterShader = Shared.MediaFolder + "\\Terreno\\Agua.fx";
 
+
+        public readonly static string PalmScene = Shared.MediaFolder + "\\Terreno\\Palmera3-TgcScene.xml";
+
         public readonly static string SkyTop = Shared.MediaFolder + "\\Terreno\\SkyTop.jpg";
         public readonly static string SkyBottom = Shared.MediaFolder + "\\Terreno\\SkyBottom.jpg";
         public readonly static string SkyLeft = Shared.MediaFolder + "\\Terreno\\SkyLeft.jpg";

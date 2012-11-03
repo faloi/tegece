@@ -9,14 +9,14 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
         private static int count;
         private static readonly Vector3 scale = new Vector3(5, 5, 5);
         public TgcMesh mesh;
-        public TgcBoundingBox boundingBox;
+        public TgcBoundingSphere boundingSphere;
 
         private static void createBaseTree() {
-            var scene = new TgcSceneLoader().loadSceneFromFile(Path.TankScene);
-            baseTree = scene.Meshes[2];
+            var scene = new TgcSceneLoader().loadSceneFromFile(Path.PalmScene);
+            baseTree = scene.Meshes[0];
         }
 
-        public static Tree create(Vector3 initialPosition) {
+        public static Tree create(Vector3 initialPosition,Terrain terrain) {
             if (baseTree == null)
                 createBaseTree();
 
@@ -29,7 +29,9 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
 
             var newTree = new Tree();
             newTree.mesh = newMesh;
-            newTree.boundingBox = newMesh.BoundingBox;
+            
+            var newYValue = terrain.getYValueFor(newMesh.BoundingBox.calculateBoxCenter().X,newMesh.BoundingBox.calculateBoxCenter().Z);
+            newTree.boundingSphere = new TgcBoundingSphere(new Vector3(newMesh.BoundingBox.calculateBoxCenter().X, newYValue+100f, newMesh.BoundingBox.calculateBoxCenter().Z), 150f);
 
             return newTree;
         }
