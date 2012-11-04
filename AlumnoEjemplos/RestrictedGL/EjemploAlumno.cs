@@ -97,7 +97,10 @@ namespace AlumnoEjemplos.RestrictedGL
                 "destY",
                 "destZ",
                 "totalSpeed",
-                "direction"
+                "direction",
+                "enemyColliding",
+                "enemyAvoiding",
+                "enemyTA"
             );
 
             //Aumentar distancia del far plane

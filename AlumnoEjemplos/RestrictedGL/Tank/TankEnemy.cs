@@ -10,13 +10,15 @@ using TgcViewer.Utils.Input;
 using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.RestrictedGL.Utils;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     public class TankEnemy : Tank {
-        public Tank tank { get; set; }
         private Direction dir = Direction.Forward;
         Vector3 destination;
         bool iddle = true;
+        bool avoiding = false;
+        float timeAvoiding = 0;
         const double THRESHOLD_POS = 200;
         const double THRESHOLD_DIR = 0.5;
 
@@ -68,13 +70,41 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 iddle = true; //para que tenga chances de esquivar el bache...
             }
 
+            if (colliding) {
+                if (!avoiding) {
+                    recalc(); //REECALCULANDO...
+                    timeAvoiding = 0;
+                } else {
+                    timeAvoiding += Shared.ElapsedTime;
+                    if (timeAvoiding > 3) {
+                        recalc();
+                        timeAvoiding = 0;
+                    }
+                }
+            }
+
             //Si llego al destino, lo marca como inactivo para buscar uno nuevo...
-            if (isInPosition(Position, destination, THRESHOLD_POS)) iddle=true;
+            if (isInPosition(Position, destination, THRESHOLD_POS)) {
+                iddle = true;
+                if (avoiding) avoiding = false;
+            }
+
             Gui.I.UserVars["destX"] = destination.X.ToString();
             Gui.I.UserVars["destY"] = destination.Y.ToString();
             Gui.I.UserVars["destZ"] = destination.Z.ToString();
+            Gui.I.UserVars["enemyColliding"] = colliding.ToString();
+            Gui.I.UserVars["enemyAvoiding"] = avoiding.ToString();
+            Gui.I.UserVars["enemyTA"] = timeAvoiding.ToString();
 
             base.processMovement();
+        }
+
+        private void recalc() {
+            Randomizer rand = new Randomizer(-200, 200);
+            destination.X = Position.X + rand.getNext();
+            destination.Z = Position.Z + rand.getNext();
+            iddle = true;
+            avoiding = true;
         }
 
         private bool isInPosition(Vector3 positionA, Vector3 positionB, double threshold) {

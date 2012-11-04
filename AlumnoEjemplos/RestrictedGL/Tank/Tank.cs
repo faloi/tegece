@@ -37,6 +37,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected float time = 0;
         protected bool isMoving;
         protected bool isRotating;
+        protected bool colliding;
         protected float speed;
         protected float totalSpeed; //valor absoluto de speed
         protected float rotationSpeed;
@@ -316,8 +317,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 moveOrientedY(Shared.ElapsedTime * speed);
                 //camera.Target = Position;
                 setTranslationMatrix(Position);
-                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox))
-                {
+                this.colliding = this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox);
+                if (terrain.isOutOfBounds(this.mesh) || this.colliding) {
                     this.stop();
                     moveOrientedY(Shared.ElapsedTime * (-speed));
                     //camera.Target = Position;
