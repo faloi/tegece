@@ -43,9 +43,9 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
             }
         }
 
-        public bool isAnyCollidingWith(TgcBoundingBox tankBB){
+        public bool isAnyCollidingWith(TgcBoundingSphere tankSphere){
             foreach (var tree in trees) {
-                if (TgcCollisionUtils.testSphereAABB(tree.boundingSphere,tankBB))
+                if (TgcCollisionUtils.testSphereSphere(tree.boundingSphere, tankSphere))
                     return true;
             }
             return false;

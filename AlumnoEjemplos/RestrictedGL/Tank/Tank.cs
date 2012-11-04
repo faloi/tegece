@@ -27,6 +27,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private const float INTERVAL_BETWEEN_MISSILES = 2.5f;
         protected const float MAX_SPEED = 300;
 
+        public TgcBoundingSphere boundingSphere;
         public readonly MeshShader mesh;
         public Tank enemy { set; get; }
         protected Microsoft.DirectX.Direct3D.Effect effect;
@@ -53,6 +54,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
             this.terrain = terrain;
             missilesShooted = new List<Missile>();
+
+            this.boundingSphere = new TgcBoundingSphere(this.mesh.BoundingBox.calculateBoxCenter(), this.mesh.BoundingBox.calculateBoxRadius()*3);
 
             this.mesh.AutoTransformEnable =  this.mesh.AutoUpdateBoundingBox = false;
             this.translationMatrix = Matrix.Identity;
@@ -308,13 +311,14 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 moveOrientedY(Shared.ElapsedTime * speed);
                 //camera.Target = Position;
                 setTranslationMatrix(Position);
-                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingBox) || TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox))
+                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox))
                 {
                     this.stop();
                     moveOrientedY(Shared.ElapsedTime * (-speed));
                     //camera.Target = Position;
                     setTranslationMatrix(Position);
                 }
+                this.boundingSphere.setCenter(this.mesh.BoundingBox.calculateBoxCenter()); 
             }
 
             if (isRotating) {
@@ -340,7 +344,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.mesh.render();
 
             if (Modifiers.showBoundingBox())
-                this.mesh.BoundingBox.render();
+                this.boundingSphere.render();
 
             var missilesToRemove = new List<Missile>();
             foreach (var missile in this.missilesShooted) {
