@@ -45,8 +45,11 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Direction direction;
         private Matrix translationMatrix;
         public Vector3 lastRotation;
+       
         private TgcMesh turret;
-
+        private const float TURRET_ROTATION_FACTOR = 0.005f;
+        private float turretAngle;
+        private Vector3 offsetRotationCenter = new Vector3(0, 0, -5);
 
         public Tank(Vector3 initialPosition, Terrain.Terrain terrain) {
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
@@ -55,6 +58,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.loadShader();
             var turretScene = loader.loadSceneFromFile(Path.Turret);
             this.turret = turretScene.Meshes[0];
+
+            this.turretAngle = 0;
 
             this.terrain = terrain;
             missilesShooted = new List<Missile>();
@@ -340,13 +345,32 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
         }
 
+        public void rotateTurret() {
+            this.calculateTurretAngleFactorDiff();
+
+            this.turret.Transform = Matrix.Translation(offsetRotationCenter) * Matrix.RotationY(turretAngle) *
+                                   Matrix.Translation(offsetRotationCenter) * transformMatrix;
+
+        }
+
+        private void calculateTurretAngleFactorDiff() {
+            var d3DInput = Gui.I.D3dInput;
+            if (d3DInput.keyDown(Key.E))
+                this.turretAngle += TURRET_ROTATION_FACTOR;
+            if (d3DInput.keyDown(Key.Q))
+                this.turretAngle -= TURRET_ROTATION_FACTOR;
+        }
+
         public virtual void render() {
             this.moveAndRotate();
 
             this.mesh.BoundingBox.transform(transformMatrix);
             this.turret.BoundingBox.transform(transformMatrix);
+            
             this.mesh.Transform = transformMatrix;
             this.turret.Transform = transformMatrix;
+
+            this.rotateTurret();
 
             this.processShader();
             this.mesh.render();
