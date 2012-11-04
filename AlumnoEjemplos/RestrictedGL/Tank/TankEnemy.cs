@@ -34,7 +34,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             //Origen, y destino
             Vector3 origin = this.Position;
             if (iddle) { //(hasta no llegar ahí no cambia de destino)
-                this.destination = tank.Position;
+                this.destination = this.enemy.Position;
                 iddle = false;
             }
 
@@ -68,7 +68,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 iddle = true; //para que tenga chances de esquivar el bache...
             }
 
-            if (TgcCollisionUtils.testAABBAABB(mesh.BoundingBox, tank.mesh.BoundingBox))
+            if (TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox))
                 isMoving = false; //si colisiona con el tanque no debería moverse
 
             //Si llego al destino, lo marca como inactivo para buscar uno nuevo...

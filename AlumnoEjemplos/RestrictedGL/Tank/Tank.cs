@@ -28,6 +28,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected const float MAX_SPEED = 300;
 
         public readonly MeshShader mesh;
+        public Tank enemy { set; get; }
         protected Microsoft.DirectX.Direct3D.Effect effect;
         private readonly Terrain.Terrain terrain;
         protected Vector3 forwardVector;
@@ -42,6 +43,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Direction direction;
         private Matrix translationMatrix;
         public Vector3 lastRotation;
+
 
         public Tank(Vector3 initialPosition, Terrain.Terrain terrain) {
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
@@ -306,7 +308,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 moveOrientedY(Shared.ElapsedTime * speed);
                 //camera.Target = Position;
                 setTranslationMatrix(Position);
-                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingBox)) {
+                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingBox) || TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox))
+                {
                     this.stop();
                     moveOrientedY(Shared.ElapsedTime * (-speed));
                     //camera.Target = Position;
