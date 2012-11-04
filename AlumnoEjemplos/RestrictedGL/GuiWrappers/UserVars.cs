@@ -1,19 +1,18 @@
 ﻿namespace AlumnoEjemplos.RestrictedGL.GuiWrappers
 {
-    class UserVars : GuiControllerWrapper
+    static class UserVars
     {
-        public void add(string key) {
-            Gui.UserVars.addVar(key);
+        public static void add(string key) {
+            Gui.I.UserVars.addVar(key);
         }
 
-        public void addMany(params string[] keys) {
+        public static void addMany(params string[] keys) {
             foreach (var key in keys)
-                this.add(key);
+                UserVars.add(key);
         }
 
-        public UserVars set(string key, object value) {
-            Gui.UserVars.setValue(key, value);
-            return this;
+        public static void set(string key, object value) {
+            Gui.I.UserVars.setValue(key, value);
         }
     }
 }

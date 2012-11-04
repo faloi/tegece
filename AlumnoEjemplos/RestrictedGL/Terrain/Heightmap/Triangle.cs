@@ -171,7 +171,7 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public void createMergeList(ref List<Triangle> mergeList, ref List<Triangle> leftoverList, ref Matrix wvp, ref TgcFrustum bf) {
-            //Crea la mergeList, los restantes van a lestoverList
+            //Crea la mergeList, los restantes van a leftoverList
             bool cannotMerge = true;
             if (parent != null)
                 cannotMerge = !parent.checkMerge(ref mergeList, ref wvp, ref bf);

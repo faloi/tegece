@@ -2,9 +2,9 @@
 
 namespace AlumnoEjemplos.RestrictedGL.GuiWrappers
 {
-    public abstract class GuiControllerWrapper
+    public abstract class Gui
     {
-        protected static GuiController Gui
+        public static GuiController I
         {
             get { return GuiController.Instance; }
         }

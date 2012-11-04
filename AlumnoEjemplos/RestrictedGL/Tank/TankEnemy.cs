@@ -27,21 +27,22 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             //El chabon se mueve siempre para adelante, persiguiendo a la posición del tanque jugador
             //Para llegar a una determinada posición, primero debería rotar en la dirección adecuada
             //Y darle para adelante.
-            isMoving = false;
+
+            if (this.totalSpeed == 0) isMoving = false;
             isRotating = false;
 
-            //Origen, y destino:
+            //Origen, y destino
             Vector3 origin = this.Position;
             if (iddle) { //(hasta no llegar ahí no cambia de destino)
                 this.destination = tank.Position;
                 iddle = false;
             }
 
-            //Direcciones origen y destino:
+            //Direcciones origen y destino
             Vector3 direcOrg = this.forwardVector; 
             Vector3 direcDst = this.destination - this.Position;
 
-            //Normalizar direcciones y sus ángulos:
+            //Normalizar direcciones y sus ángulos
             direcOrg.Normalize(); 
             direcDst.Normalize();
             double angOrg = Math.Atan2(direcOrg.Z, direcOrg.X);
@@ -57,9 +58,11 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                     this.rotate(Direction.Right);
                 }   
             }
+            this.acel(1);
             this.move(dir);
+            this.doFriction();
 
-            //Si este random se cumple, dispara:
+            //Si este random se cumple, dispara
             if (new Utils.Randomizer(1, 500).getNext() > 495) {
                 this.shoot();
                 iddle = true; //para que tenga chances de esquivar el bache...
@@ -70,9 +73,9 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
             //Si llego al destino, lo marca como inactivo para buscar uno nuevo...
             if (isInPosition(Position, destination, THRESHOLD_POS)) iddle=true;
-            GuiController.Instance.UserVars["destX"] = destination.X.ToString();
-            GuiController.Instance.UserVars["destY"] = destination.Y.ToString();
-            GuiController.Instance.UserVars["destZ"] = destination.Z.ToString();
+            Gui.I.UserVars["destX"] = destination.X.ToString();
+            Gui.I.UserVars["destY"] = destination.Y.ToString();
+            Gui.I.UserVars["destZ"] = destination.Z.ToString();
 
             base.processMovement();
         }

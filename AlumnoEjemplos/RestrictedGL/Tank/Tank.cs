@@ -25,24 +25,25 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
     public class Tank : ITransformObject {
         private const float SCALE = 3;
         private const float INTERVAL_BETWEEN_MISSILES = 2.5f;
+        protected const float MAX_SPEED = 300;
 
         public readonly MeshShader mesh;
         protected Microsoft.DirectX.Direct3D.Effect effect;
-        protected float time = 0;
         private readonly Terrain.Terrain terrain;
-        private readonly UserVars userVars;
         protected Vector3 forwardVector;
 
+        protected float time = 0;
         protected bool isMoving;
         protected bool isRotating;
-        protected float linearSpeed;
+        protected float speed;
+        protected float totalSpeed; //valor absoluto de speed
         protected float rotationSpeed;
+        protected float totalRotationSpeed; //valor absoluto de rotationSpeed
+        protected Direction direction;
         private Matrix translationMatrix;
         public Vector3 lastRotation;
 
         public Tank(Vector3 initialPosition, Terrain.Terrain terrain) {
-            this.userVars = new UserVars();
-
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
             var scene = loader.loadSceneFromFile(Path.Tank);
             this.mesh = (MeshShader) scene.Meshes[0];
@@ -56,7 +57,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.Position = initialPosition;
             
             this.setTranslationMatrix(initialPosition);
-
+            this.totalSpeed = 0f;
+            this.totalRotationSpeed = 100f;
             this.forwardVector = new Vector3(0, 0, -1);
         }
 
@@ -172,7 +174,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public void rotateY(float angle) {
             mesh.rotateY(angle);
             this.lastRotation = mesh.Rotation;
-            GuiController.Instance.ThirdPersonCamera.rotateY(angle);
+            //Gui.I.ThirdPersonCamera.rotateY(angle);
         }
 
         public void move(Vector3 v) {
@@ -202,23 +204,22 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private float calculateSpeed(Direction direction) {
-            var speed = Modifiers.get<float>("tankVelocity");
-
-            return direction == Direction.Backward || direction == Direction.Right
-                       ? speed
-                       : -speed;
+            return direction == Direction.Backward ? totalSpeed : -totalSpeed;
+        }
+        private float calculateRotationSpeed(Direction direction) {
+            return direction == Direction.Right ? totalRotationSpeed : -totalRotationSpeed;
         }
 
         protected void shoot() {
-            var flightTimeOfLastMissile=0f;
+            var flightTimeOfLastMissile = 0f;
             foreach (var missile in missilesShooted) {
-                if(flightTimeOfLastMissile==0f)
-                    flightTimeOfLastMissile=missile.flightTime;
-                else if(flightTimeOfLastMissile<missile.flightTime) {
+                if (flightTimeOfLastMissile == 0f)
+                    flightTimeOfLastMissile = missile.flightTime;
+                else if (flightTimeOfLastMissile < missile.flightTime) {
                     flightTimeOfLastMissile = missile.flightTime;
                 }
             }
-            if(INTERVAL_BETWEEN_MISSILES<=flightTimeOfLastMissile || missilesShooted.Count==0){
+            if (INTERVAL_BETWEEN_MISSILES<=flightTimeOfLastMissile || missilesShooted.Count==0) {
                 var newMissile = new Missile(realPosition, Rotation);
                 TgcStaticSound sound = new TgcStaticSound();
                 sound.loadSound(Path.ExplosionSound);  
@@ -228,13 +229,30 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         protected void move(Direction direction) {
-            linearSpeed = calculateSpeed(direction);
+            speed = calculateSpeed(direction);
             isMoving = true;
         }
 
         protected void rotate(Direction direction) {
-            rotationSpeed = calculateSpeed(direction);
+            this.rotationSpeed = Modifiers.get<float>("rotationVelocity");
+            rotationSpeed = calculateRotationSpeed(direction);
             isRotating = true;
+        }
+
+        protected void acel(float n) {
+            this.totalSpeed += n;
+            if (totalSpeed > MAX_SPEED) totalSpeed = MAX_SPEED;
+        }
+
+        protected void doFriction() {
+            if (isMoving)
+                this.totalSpeed -= 0.5f;
+            if (totalSpeed <= 0) this.totalSpeed = 0;
+        }
+
+        protected void stop() {
+            isMoving = false;
+            totalSpeed = 0;
         }
 
         private Vector3 createHeightmapPointFromTankPosition(Vector3 position) {
@@ -242,15 +260,29 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         protected virtual void moveAndRotate() {
-            var d3DInput = GuiController.Instance.D3dInput;
+            var d3DInput = Gui.I.D3dInput;
 
-            isMoving = false;
+            if (this.totalSpeed == 0) isMoving = false;
             isRotating = false;
 
-            if (d3DInput.keyDown(Key.UpArrow))
-                move(Direction.Forward);
-            if (d3DInput.keyDown(Key.DownArrow))
-                move(Direction.Backward);
+            if (d3DInput.keyDown(Key.UpArrow)) {
+                if (!isMoving || (isMoving && direction == Direction.Forward)) {
+                    direction = Direction.Forward;
+                    acel(1);
+                    move(Direction.Forward);
+                } else {
+                    acel(-1);
+                }
+            }
+            if (d3DInput.keyDown(Key.DownArrow)) {
+                if (!isMoving || (isMoving && direction == Direction.Backward)) {
+                    direction = Direction.Backward;
+                    acel(1);
+                    move(Direction.Backward);
+                } else {
+                    acel(-1);
+                }
+            }
 
             if (d3DInput.keyDown(Key.RightArrow))
                 rotate(Direction.Right);
@@ -260,34 +292,35 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             if (d3DInput.keyDown(Key.RightControl))
                 shoot();
 
+            doFriction();
+
+            UserVars.set("totalSpeed", totalSpeed);
+            UserVars.set("direction", direction.ToString());
             this.processMovement();
         }
 
         protected void processMovement() {
-            var camera = GuiController.Instance.ThirdPersonCamera;
+            //var camera = Gui.I.ThirdPersonCamera;
 
-            if (isMoving)
-            {
-                moveOrientedY(Shared.ElapsedTime * linearSpeed);
-                camera.Target = Position;
+            if (isMoving) {
+                moveOrientedY(Shared.ElapsedTime * speed);
+                //camera.Target = Position;
                 setTranslationMatrix(Position);
-                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingBox))
-                {
-                    moveOrientedY(Shared.ElapsedTime * (-linearSpeed));
-                    camera.Target = Position;
+                if (terrain.isOutOfBounds(this.mesh) || this.terrain.treeFactory.isAnyCollidingWith(this.boundingBox)) {
+                    this.stop();
+                    moveOrientedY(Shared.ElapsedTime * (-speed));
+                    //camera.Target = Position;
                     setTranslationMatrix(Position);
                 }
             }
 
-            if (isRotating)
-            {
+            if (isRotating) {
                 var rotAngle = Geometry.DegreeToRadian(rotationSpeed * Shared.ElapsedTime);
-                camera.rotateY(rotAngle);
+                //camera.rotateY(rotAngle);
                 rotateY(rotAngle);
                 forwardVector.TransformNormal(Matrix.RotationY(rotAngle));
-                if (terrain.isOutOfBounds(this.mesh))
-                {
-                    camera.rotateY(-rotAngle);
+                if (terrain.isOutOfBounds(this.mesh)) {
+                    //camera.rotateY(-rotAngle);
                     rotateY(-rotAngle);
                     forwardVector.TransformNormal(Matrix.RotationY(-rotAngle));
                 }
@@ -311,11 +344,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 if (missile.isCollidingWith(terrain)) {
                     this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
                     missilesToRemove.Add(missile);
-                }
-                
-                else if (this.terrain.isOutOfBounds(missile)) 
+                } else if (this.terrain.isOutOfBounds(missile)) 
                     missilesToRemove.Add(missile);
-                
                 else 
                     missile.render();
             }
@@ -324,7 +354,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         private void loadShader() {
-            var d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = Gui.I.D3dDevice;
             string compilationErrors;
             this.effect = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, this.pathShader(), null, null, ShaderFlags.None, null, out compilationErrors);
             this.mesh.effect = effect;

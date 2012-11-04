@@ -11,7 +11,7 @@ namespace AlumnoEjemplos.RestrictedGL
     struct Shared
     {
         public const string NombreGrupo = "RestrictedGL";
-        public static readonly string MediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir + NombreGrupo + "\\";
+        public static readonly string MediaFolder = Gui.I.AlumnoEjemplosMediaDir + NombreGrupo + "\\";
         public static float ElapsedTime = 0;
     }
 
@@ -23,11 +23,9 @@ namespace AlumnoEjemplos.RestrictedGL
 
         private const float SCALE_Y = 2f;
         private const float SCALE_XZ = 50f;
-
-        private readonly UserVars userVars;
         
         public EjemploAlumno() {
-            this.userVars = new UserVars();
+
         }
 
         #region Descripciones
@@ -50,23 +48,23 @@ namespace AlumnoEjemplos.RestrictedGL
             /// Completar con la descripción del TP
             /// </summary>
             public override string getDescription() {
-                return "SuperMegaTanque";
+                return "Tenés que matar al tanque enemigo: Flechitas = Moverse; Ctrl Derecho = Disparar";
             }
         #endregion
 
         private void updateUserVars() {
-            this.userVars
-                .set("posX", GuiController.Instance.FpsCamera.Position.X)
-                .set("posY", GuiController.Instance.FpsCamera.Position.Y)
-                .set("posZ", GuiController.Instance.FpsCamera.Position.Z)
-                .set("viewX", GuiController.Instance.FpsCamera.LookAt.X)
-                .set("viewY", GuiController.Instance.FpsCamera.LookAt.Y)
-                .set("viewZ", GuiController.Instance.FpsCamera.LookAt.Z);
+            UserVars.set("posX", Gui.I.FpsCamera.Position.X);
+            UserVars.set("posX", Gui.I.FpsCamera.Position.X);
+            UserVars.set("posY", Gui.I.FpsCamera.Position.Y);
+            UserVars.set("posZ", Gui.I.FpsCamera.Position.Z);
+            UserVars.set("viewX", Gui.I.FpsCamera.LookAt.X);
+            UserVars.set("viewY", Gui.I.FpsCamera.LookAt.Y);
+            UserVars.set("viewZ", Gui.I.FpsCamera.LookAt.Z);
         }
 
         /// <summary>Código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.</summary>
         public override void init() {
-            var d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = Gui.I.D3dDevice;
 
             this.terrain = new Terrain.Terrain(SCALE_XZ, SCALE_Y);
 
@@ -77,16 +75,16 @@ namespace AlumnoEjemplos.RestrictedGL
             this.tankEnemy = new Tank.TankEnemy(new Vector3(rand.getNext(), tankY + 15, rand.getNext()), this.terrain);
             this.tankEnemy.tank = this.tank;
 
-            GuiController.Instance.FpsCamera.Enable = true;
-            GuiController.Instance.FpsCamera.MovementSpeed = 100f;
-            GuiController.Instance.FpsCamera.JumpSpeed = 100f;
-            GuiController.Instance.FpsCamera.setCamera(this.tank.Position + new Vector3(0, 300, 400), this.tank.Position);
+            Gui.I.FpsCamera.Enable = true;
+            Gui.I.FpsCamera.MovementSpeed = 100f;
+            Gui.I.FpsCamera.JumpSpeed = 100f;
+            Gui.I.FpsCamera.setCamera(this.tank.Position + new Vector3(0, 300, 400), this.tank.Position);
 
-            GuiController.Instance.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 500f);
-            GuiController.Instance.Modifiers.addFloat("tankVelocity", 0f, 1000f, 100f);
-            GuiController.Instance.Modifiers.addBoolean("ShowBoundingBox", "Show bounding box", false);
+            Gui.I.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 500f);
+            Gui.I.Modifiers.addFloat("rotationVelocity", 0f, 1000f, 100f);
+            Gui.I.Modifiers.addBoolean("ShowBoundingBox", "Show bounding box", false);
 
-            this.userVars.addMany(
+            UserVars.addMany(
                 "posX", 
                 "posY",
                 "posZ",
@@ -96,7 +94,8 @@ namespace AlumnoEjemplos.RestrictedGL
                 "destX",
                 "destY",
                 "destZ",
-                "test"
+                "totalSpeed",
+                "direction"
             );
 
             //Aumentar distancia del far plane
@@ -109,17 +108,17 @@ namespace AlumnoEjemplos.RestrictedGL
         public override void render(float elapsedTime) {
             Shared.ElapsedTime = elapsedTime;
 
-            if (GuiController.Instance.D3dInput.keyDown(Key.R)) { //(test)
+            if (Gui.I.D3dInput.keyDown(Key.R)) { //(test)
                 //R = Cámara en el origen, más o menos
-                GuiController.Instance.FpsCamera.setCamera(new Vector3(-100, 200, 0), new Vector3(490f, 128f, -10f));
+                Gui.I.FpsCamera.setCamera(new Vector3(-100, 200, 0), new Vector3(490f, 128f, -10f));
             }
-            if (GuiController.Instance.D3dInput.keyDown(Key.T)) { //(test)
+            if (Gui.I.D3dInput.keyDown(Key.T)) { //(test)
                 //T = Rotar al enemigo
-                terrain.deform(GuiController.Instance.FpsCamera.Position.X, GuiController.Instance.FpsCamera.Position.Z, 150, 1);
+                terrain.deform(Gui.I.FpsCamera.Position.X, Gui.I.FpsCamera.Position.Z, 150, 1);
             }
             
-            GuiController.Instance.FpsCamera.MovementSpeed = 
-            GuiController.Instance.FpsCamera.JumpSpeed =
+            Gui.I.FpsCamera.MovementSpeed = 
+            Gui.I.FpsCamera.JumpSpeed =
                 Modifiers.get<float>("Cam Velocity");
             
             this.updateUserVars();

@@ -15,7 +15,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private readonly AdaptativeHeightmap adaptativeHeightmap;
 
         private const float INITIAL_THRESHOLD = 0.075f;
-        private const int TREES_COUNT = 30;
+        private const int TREES_COUNT = 10;
 
         public int[,] heightmapData { get { return this.adaptativeHeightmap.HeightmapData; } }
         public readonly float ScaleXZ;
@@ -49,7 +49,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         }
 
         private void createModifiers() {
-            GuiController.Instance.Modifiers.addFloat("ROAM Threshold", 0f, 1f, INITIAL_THRESHOLD);
+            Gui.I.Modifiers.addFloat("ROAM Threshold", 0f, 1f, INITIAL_THRESHOLD);
         }
 
         private void updateModifiers() {
@@ -79,7 +79,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain
         private static int checkIndex(int value){
             if (value < 0){
                 return 0;
-            }else if (value >= 127){
+            } else if (value >= 127){
                 return 126;
             }
             return value;

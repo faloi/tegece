@@ -7,6 +7,7 @@ using TgcViewer;
 using TgcViewer.Utils;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
@@ -42,7 +43,7 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         public void loadHeightmap(string heightmapPath, Vector3 center) {
-            var d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = Gui.I.D3dDevice;
 
             //Dispose de vb y ib si había
             if (vbTerrain != null && !vbTerrain.Disposed) {
@@ -112,7 +113,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
         public void loadTexture(string path) {
             //Dispose textura anterior, si habia
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = Gui.I.D3dDevice;
 
             if (terrainTexture != null && !terrainTexture.Disposed) {
                 terrainTexture.Dispose();
@@ -164,7 +165,7 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         protected void updateVertices() {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = Gui.I.D3dDevice;
             CustomVertex.PositionNormalTextured[] terrainVertices = createTerrainVertices(totalVertices);
             this.vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
             vbTerrain.SetData(terrainVertices, 0, LockFlags.None);
@@ -191,7 +192,7 @@ namespace AlumnoEjemplos.RestrictedGL
         }
 
         protected void updateTriangles() {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = Gui.I.D3dDevice;
 
             List<Triangle> splitList = new List<Triangle>(); //triángulos que deben ser divididos
             List<Triangle> mergeList = new List<Triangle>(); //triángulos padres de dos que se unieron
@@ -222,7 +223,7 @@ namespace AlumnoEjemplos.RestrictedGL
 
         protected void updateIndexBuffer() {
             //Actualiza el Index Buffer pidiendole a cada triángulo que por favor agregue sus índice a la lista
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = Gui.I.D3dDevice;
 
             indicesList.Clear();
             foreach (Triangle t in triangleList)
@@ -238,7 +239,7 @@ namespace AlumnoEjemplos.RestrictedGL
         public void render() {
             if (!Enabled) return;
 
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = Gui.I.D3dDevice;
             d3dDevice.Transform.World = Matrix.Identity;
             frustum.updateVolume(d3dDevice.Transform.View, d3dDevice.Transform.Projection);
 

@@ -48,7 +48,6 @@ namespace AlumnoEjemplos.RestrictedGL.Utils
             return createMeshInstance(name, Vector3.Empty, Vector3.Empty, new Vector3(1, 1, 1));
         }
 
-
         /// <summary>
         /// Se redefine este método para agregar shaders.
         /// Es el mismo código del render() pero con la sección de "MeshRenderType.DIFFUSE_MAP" ampliada
