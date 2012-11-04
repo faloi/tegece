@@ -44,6 +44,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Direction direction;
         private Matrix translationMatrix;
         public Vector3 lastRotation;
+        private TgcMesh turret;
 
 
         public Tank(Vector3 initialPosition, Terrain.Terrain terrain) {
@@ -51,13 +52,15 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             var scene = loader.loadSceneFromFile(Path.Tank);
             this.mesh = (MeshShader) scene.Meshes[0];
             this.loadShader();
+            var turretScene = loader.loadSceneFromFile(Path.Turret);
+            this.turret = turretScene.Meshes[0];
 
             this.terrain = terrain;
             missilesShooted = new List<Missile>();
 
             this.boundingSphere = new TgcBoundingSphere(this.mesh.BoundingBox.calculateBoxCenter(), this.mesh.BoundingBox.calculateBoxRadius()*3);
 
-            this.mesh.AutoTransformEnable =  this.mesh.AutoUpdateBoundingBox = false;
+            this.mesh.AutoTransformEnable =  this.mesh.AutoUpdateBoundingBox = this.turret.AutoUpdateBoundingBox = this.turret.AutoTransformEnable = false;
             this.translationMatrix = Matrix.Identity;
             this.Position = initialPosition;
             
@@ -174,10 +177,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             
         public void moveOrientedY(float movement) {
             mesh.moveOrientedY(movement);
+            turret.moveOrientedY(movement);
         }
 
         public void rotateY(float angle) {
             mesh.rotateY(angle);
+            turret.rotateY(angle);
             this.lastRotation = mesh.Rotation;
             //Gui.I.ThirdPersonCamera.rotateY(angle);
         }
@@ -338,10 +343,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.moveAndRotate();
 
             this.mesh.BoundingBox.transform(transformMatrix);
+            this.turret.BoundingBox.transform(transformMatrix);
             this.mesh.Transform = transformMatrix;
+            this.turret.Transform = transformMatrix;
 
             this.processShader();
             this.mesh.render();
+            this.turret.render();
 
             if (Modifiers.showBoundingBox())
                 this.boundingSphere.render();
@@ -365,6 +373,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             string compilationErrors;
             this.effect = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, this.pathShader(), null, null, ShaderFlags.None, null, out compilationErrors);
             this.mesh.effect = effect;
+            
         }
 
         protected virtual string pathShader() { return Path.TankShader; }
@@ -381,6 +390,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public void dispose() {
             this.mesh.dispose();
+            this.turret.dispose();
         }
     }
 }
