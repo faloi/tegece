@@ -68,9 +68,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 iddle = true; //para que tenga chances de esquivar el bache...
             }
 
-            if (TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox))
-                isMoving = false; //si colisiona con el tanque no debería moverse
-
             //Si llego al destino, lo marca como inactivo para buscar uno nuevo...
             if (isInPosition(Position, destination, THRESHOLD_POS)) iddle=true;
             Gui.I.UserVars["destX"] = destination.X.ToString();
