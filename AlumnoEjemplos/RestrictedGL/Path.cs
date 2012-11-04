@@ -21,7 +21,7 @@
         public readonly static string TankTerrainSurface = Shared.MediaFolder + "#TankExample\\Textures\\Tierra.jpg";
         public readonly static string TankScene = Shared.MediaFolder + "#TankExample\\Scenes\\TankAndEnvironment@Meshes-TgcScene.xml";
         public readonly static string Tank = Shared.MediaFolder + "Tank\\CuerpoTanque-TgcScene.xml";
-        public readonly static string Tank = Shared.MediaFolder + "Tank\\TorretaTanque-TgcScene.xml";
+        public readonly static string Turret = Shared.MediaFolder + "Tank\\TorretaTanque-TgcScene.xml";
         public readonly static string TankShader = Shared.MediaFolder + "ShaderTanque.fx";
         public readonly static string TankEnemyShader = Shared.MediaFolder + "ShaderEnemigo.fx";
 
