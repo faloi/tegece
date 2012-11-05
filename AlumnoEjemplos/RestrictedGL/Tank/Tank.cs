@@ -46,27 +46,18 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private Matrix translationMatrix;
         public Vector3 lastRotation;
        
-        private TgcMesh turret;
-        private const float TURRET_ROTATION_FACTOR = 0.005f;
-        private float turretAngle;
-        private Vector3 offsetRotationCenter = new Vector3(0, 0, -5);
-
-        public Tank(Vector3 initialPosition, Terrain.Terrain terrain) {
+        public Tank(Vector3 initialPosition, Terrain.Terrain terrain, string scenePath) {
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
-            var scene = loader.loadSceneFromFile(Path.Tank);
+            var scene = loader.loadSceneFromFile(scenePath);
             this.mesh = (MeshShader) scene.Meshes[0];
             this.loadShader();
-            var turretScene = loader.loadSceneFromFile(Path.Turret);
-            this.turret = turretScene.Meshes[0];
-
-            this.turretAngle = 0;
-
+            
             this.terrain = terrain;
             missilesShooted = new List<Missile>();
 
             this.boundingSphere = new TgcBoundingSphere(this.mesh.BoundingBox.calculateBoxCenter(), this.mesh.BoundingBox.calculateBoxRadius()*3);
 
-            this.mesh.AutoTransformEnable =  this.mesh.AutoUpdateBoundingBox = this.turret.AutoUpdateBoundingBox = this.turret.AutoTransformEnable = false;
+            this.mesh.AutoTransformEnable =  this.mesh.AutoUpdateBoundingBox = false;
             this.translationMatrix = Matrix.Identity;
             this.Position = initialPosition;
             
@@ -158,7 +149,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
         }
 
-        private Matrix transformMatrix {
+        protected Matrix transformMatrix {
             get { return scaleMatrix*rotationMatrix*translationMatrix; }
         }
 
@@ -181,14 +172,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public Vector3 Scale { get; set; }
             
-        public void moveOrientedY(float movement) {
+        public virtual void moveOrientedY(float movement) {
             mesh.moveOrientedY(movement);
-            turret.moveOrientedY(movement);
+            
         }
 
-        public void rotateY(float angle) {
+        public virtual void rotateY(float angle) {
             mesh.rotateY(angle);
-            turret.rotateY(angle);
             this.lastRotation = mesh.Rotation;
             //Gui.I.ThirdPersonCamera.rotateY(angle);
         }
@@ -307,7 +297,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
             if (d3DInput.keyDown(Key.RightControl))
                 shoot();
-
+            
             doFriction();
 
             UserVars.set("totalSpeed", totalSpeed);
@@ -345,37 +335,17 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
         }
 
-        public void rotateTurret() {
-            this.calculateTurretAngleFactorDiff();
-
-            this.turret.Transform = Matrix.Translation(offsetRotationCenter) * Matrix.RotationY(turretAngle) *
-                                   Matrix.Translation(offsetRotationCenter) * transformMatrix;
-
-        }
-
-        private void calculateTurretAngleFactorDiff() {
-            var d3DInput = Gui.I.D3dInput;
-            if (d3DInput.keyDown(Key.E))
-                this.turretAngle += TURRET_ROTATION_FACTOR;
-            if (d3DInput.keyDown(Key.Q))
-                this.turretAngle -= TURRET_ROTATION_FACTOR;
-        }
-
+     
         public virtual void render() {
             this.moveAndRotate();
 
             this.mesh.BoundingBox.transform(transformMatrix);
-            this.turret.BoundingBox.transform(transformMatrix);
             
             this.mesh.Transform = transformMatrix;
-            this.turret.Transform = transformMatrix;
-
-            this.rotateTurret();
-
+            
             this.processShader();
             this.mesh.render();
-            this.turret.render();
-
+            
             if (Modifiers.showBoundingBox())
                 this.boundingSphere.render();
 
@@ -413,9 +383,9 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             }
         }
 
-        public void dispose() {
+        public virtual void dispose() {
             this.mesh.dispose();
-            this.turret.dispose();
+            
         }
     }
 }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{659DA3D0-B324-45DF-83B0-7AE04280ADC1}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -71,6 +71,7 @@
     <Compile Include="RestrictedGL\Path.cs" />
     <Compile Include="RestrictedGL\Tank\TankEnemy.cs" />
     <Compile Include="RestrictedGL\Tank\Missile.cs" />
+    <Compile Include="RestrictedGL\Tank\TankPlayer.cs" />
     <Compile Include="RestrictedGL\Terrain\Water.cs" />
     <Compile Include="RestrictedGL\Terrain\Heightmap\AdaptativeHeightmap.cs" />
     <Compile Include="RestrictedGL\GuiWrappers\GuiControllerWrapper.cs" />
