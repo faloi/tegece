@@ -43,6 +43,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected float rotationSpeed;
         protected float totalRotationSpeed; //valor absoluto de rotationSpeed
         protected Direction direction;
+        protected Direction lastDirectionBeforeCrash;
         private Matrix translationMatrix;
         public Vector3 lastRotation;
        
@@ -312,12 +313,17 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 moveOrientedY(Shared.ElapsedTime * speed);
                 //camera.Target = Position;
                 setTranslationMatrix(Position);
-                this.colliding = this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testAABBAABB(this.mesh.BoundingBox, this.enemy.boundingBox);
-                if (terrain.isOutOfBounds(this.mesh) || this.colliding) {
-                    this.stop();
-                    moveOrientedY(Shared.ElapsedTime * (-speed));
-                    //camera.Target = Position;
-                    setTranslationMatrix(Position);
+                this.colliding = this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testSphereSphere(this.boundingSphere, this.enemy.boundingSphere);
+                if (this.colliding) {
+                    if (this.lastDirectionBeforeCrash == this.direction || terrain.isOutOfBounds(this.mesh))
+                    {
+                        this.stop();
+                        moveOrientedY(Shared.ElapsedTime * (-speed));
+                        //camera.Target = Position;
+                        setTranslationMatrix(Position);
+                    }
+                }else{
+                    this.lastDirectionBeforeCrash = this.direction;
                 }
                 this.boundingSphere.setCenter(this.mesh.BoundingBox.calculateBoxCenter()); 
             }
