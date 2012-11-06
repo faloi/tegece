@@ -22,7 +22,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         Right
     }
 
-    public class Tank : ITransformObject {
+    public abstract class Tank : ITransformObject {
         private const float SCALE = 3;
         private const float INTERVAL_BETWEEN_MISSILES = 2.5f;
         protected const float MAX_SPEED = 300;
@@ -33,6 +33,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Microsoft.DirectX.Direct3D.Effect effect;
         private readonly Terrain.Terrain terrain;
         protected Vector3 forwardVector;
+        protected Vector3 initMissileRotation;
 
         protected float time = 0;
         protected bool isMoving;
@@ -115,6 +116,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private Vector3 adaptedForwardVector {
             get { return Vector3.Cross(rightMovementVector, positionPlaneNormal); }
         }
+
+        public abstract void setInitMissileRotation();
 
         private Matrix rotationMatrix {
             get {
@@ -226,8 +229,9 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                     flightTimeOfLastMissile = missile.flightTime;
                 }
             }
-            if (INTERVAL_BETWEEN_MISSILES<=flightTimeOfLastMissile || missilesShooted.Count==0) {
-                var newMissile = new Missile(realPosition, Rotation);
+            if (INTERVAL_BETWEEN_MISSILES<=flightTimeOfLastMissile || missilesShooted.Count==0) {              
+                this.setInitMissileRotation();
+                var newMissile = new Missile(realPosition, this.initMissileRotation);
                 TgcStaticSound sound = new TgcStaticSound();
                 sound.loadSound(Path.ExplosionSound);  
                 sound.play(false);

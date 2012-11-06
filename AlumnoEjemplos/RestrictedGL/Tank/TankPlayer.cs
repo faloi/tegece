@@ -56,8 +56,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
            
             this.turret.Transform = Matrix.Translation(offsetRotationCenter) * Matrix.RotationY(turretAngle) *
                                    Matrix.Translation(offsetRotationCenter) * transformMatrix;
-
+            this.turret.Rotation = new Vector3(0, this.turretAngle + this.mesh.Rotation.Y, 0);
         }
+
+        public override void setInitMissileRotation(){
+            this.initMissileRotation = this.turret.Rotation;
+        }
+
 
         public override void render() {
             base.render();

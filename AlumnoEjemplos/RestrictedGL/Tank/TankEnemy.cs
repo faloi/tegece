@@ -107,6 +107,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             avoiding = true;
         }
 
+        public override void setInitMissileRotation(){
+            this.initMissileRotation = this.mesh.Rotation;
+        }
+
         private bool isInPosition(Vector3 positionA, Vector3 positionB, double threshold) {
             //Determina si A está en la posición B (teniendo en cuanta un rango de error)
             return (positionA.X > positionB.X - threshold && positionA.X < positionB.X + threshold &&
