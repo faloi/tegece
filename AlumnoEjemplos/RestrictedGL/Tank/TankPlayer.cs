@@ -20,7 +20,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private TgcMesh turret;
         private const float TURRET_ROTATION_FACTOR = 0.005f;
         private float turretAngle;
-        private Vector3 offsetRotationCenter = new Vector3(0, 0, -5);
+        private Vector3 offsetRotationCenter = new Vector3(0, 0, 10);
 
         public TankPlayer (Vector3 initialPosition, Terrain.Terrain terrain, string scenePath) : base(initialPosition, terrain, scenePath) {
             
