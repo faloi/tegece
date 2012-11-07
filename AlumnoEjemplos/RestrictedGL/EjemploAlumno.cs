@@ -119,7 +119,6 @@ namespace AlumnoEjemplos.RestrictedGL
                 var camera = Gui.I.FpsCamera;
                 camera.Enable = true;
                 camera.MovementSpeed = camera.JumpSpeed = Modifiers.get<float>("Cam Velocity");
-                camera.setCamera(this.tank.Position + new Vector3(0, 300, 400), new Vector3(this.tank.Position.X, this.tank.Position.Y , this.tank.Position.Z)); 
             }
             this.currentCamera = Modifiers.get<string>("Camera");
 
@@ -140,7 +139,7 @@ namespace AlumnoEjemplos.RestrictedGL
                 this.setUpCamera();
             if (Modifiers.get<string>("Camera") == "Third Person"){
                 var camera = Gui.I.ThirdPersonCamera;
-                camera.setCamera(tank.Position, 900f, 1000f);
+                camera.setCamera(tank.Position, 900f, 1300f);
             }
         }
 
