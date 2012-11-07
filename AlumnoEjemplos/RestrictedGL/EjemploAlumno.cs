@@ -18,8 +18,10 @@ namespace AlumnoEjemplos.RestrictedGL
     public class EjemploAlumno : TgcExample
     {
         private Terrain.Terrain terrain;
-        private Tank.Tank tank;
+        private Tank.TankPlayer tank;
         private Tank.TankEnemy tankEnemy;
+
+        private string currentCamera;
 
         private const float SCALE_Y = 2f;
         private const float SCALE_XZ = 50f;
@@ -77,14 +79,12 @@ namespace AlumnoEjemplos.RestrictedGL
             this.tank.enemy = this.tankEnemy;
             this.tankEnemy.enemy = this.tank;
 
-            Gui.I.FpsCamera.Enable = true;
-            Gui.I.FpsCamera.MovementSpeed = 100f;
-            Gui.I.FpsCamera.JumpSpeed = 100f;
-            Gui.I.FpsCamera.setCamera(this.tank.Position + new Vector3(0, 300, 400), this.tank.Position);
-
             Gui.I.Modifiers.addFloat("Cam Velocity", 0f, 1000f, 500f);
             Gui.I.Modifiers.addFloat("rotationVelocity", 0f, 1000f, 100f);
             Gui.I.Modifiers.addBoolean("ShowBoundingBox", "Show bounding box", false);
+            object[] values = {"Third Person","First Person(Free)" };
+            Gui.I.Modifiers.addInterval("Camera", values, 0);
+                        
 
             UserVars.addMany(
                 "posX", 
@@ -106,31 +106,42 @@ namespace AlumnoEjemplos.RestrictedGL
             //Aumentar distancia del far plane
             d3dDevice.Transform.Projection = Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f),
                 (float)d3dDevice.CreationParameters.FocusWindow.Width / d3dDevice.CreationParameters.FocusWindow.Height, 1f, 30000f);
+            this.setUpCamera();
+        }
+
+        protected void setUpCamera() {
+            if (Modifiers.get<string>("Camera") == "Third Person"){
+                Gui.I.FpsCamera.Enable = false;
+                var camera = Gui.I.ThirdPersonCamera;
+                camera.Enable = true;
+            }else{
+                Gui.I.ThirdPersonCamera.Enable = false;
+                var camera = Gui.I.FpsCamera;
+                camera.Enable = true;
+                camera.MovementSpeed = camera.JumpSpeed = Modifiers.get<float>("Cam Velocity");
+                camera.setCamera(this.tank.Position + new Vector3(0, 300, 400), new Vector3(this.tank.Position.X, this.tank.Position.Y , this.tank.Position.Z)); 
+            }
+            this.currentCamera = Modifiers.get<string>("Camera");
+
         }
 
         ///<summary>Se llama cada vez que hay que refrescar la pantalla</summary>
         ///<param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime) {
             Shared.ElapsedTime = elapsedTime;
-
-            if (Gui.I.D3dInput.keyDown(Key.R)) { //(test)
-                //R = Cámara en el origen, más o menos
-                Gui.I.FpsCamera.setCamera(new Vector3(-100, 200, 0), new Vector3(490f, 128f, -10f));
-            }
-            if (Gui.I.D3dInput.keyDown(Key.T)) { //(test)
-                //T = Rotar al enemigo
-                terrain.deform(Gui.I.FpsCamera.Position.X, Gui.I.FpsCamera.Position.Z, 150, 1);
-            }
-            
-            Gui.I.FpsCamera.MovementSpeed = 
-            Gui.I.FpsCamera.JumpSpeed =
-                Modifiers.get<float>("Cam Velocity");
-            
+           
             this.updateUserVars();
 
             this.tank.render();
             this.tankEnemy.render();
             this.terrain.render();
+
+            if (Modifiers.get<string>("Camera") != this.currentCamera)
+                this.setUpCamera();
+            if (Modifiers.get<string>("Camera") == "Third Person"){
+                var camera = Gui.I.ThirdPersonCamera;
+                camera.setCamera(tank.Position, 900f, 1000f);
+            }
         }
 
         ///<summary>Se llama al cerrar la app. Hacer dispose() de todos los objetos creados</summary>

@@ -17,7 +17,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
     
     class TankPlayer : Tank {
 
-        private TgcMesh turret;
+        public TgcMesh turret;
         private const float TURRET_ROTATION_FACTOR = 0.005f;
         private float turretAngle;
         private Vector3 offsetRotationCenter = new Vector3(0, 0, 10);
@@ -41,6 +41,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public override void rotateY(float angle) {
             turret.rotateY(angle);
             base.rotateY(angle);
+            GuiController.Instance.ThirdPersonCamera.rotateY(angle);
         }
 
         protected override void moveAndRotate() {
@@ -57,6 +58,8 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.turret.Transform = Matrix.Translation(offsetRotationCenter) * Matrix.RotationY(turretAngle) *
                                    Matrix.Translation(offsetRotationCenter) * transformMatrix;
             this.turret.Rotation = new Vector3(0, this.turretAngle + this.mesh.Rotation.Y, 0);
+            //ACA HAY QUE HACER ROTAR LA CAMARA CUANDO ROTAS LA TURRET
+            //GuiController.Instance.ThirdPersonCamera.rotateY(Geometry.DegreeToRadian(this.turret.Rotation.Y));
         }
 
         public override void setInitMissileRotation(){
