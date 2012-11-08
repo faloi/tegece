@@ -309,11 +309,11 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         protected void processMovement() {
             if (this.isMoving) {
-                this.moveOrientedY(Shared.ElapsedTime * speed);
-                this.setTranslationMatrix(Position);
-                this.colliding = this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testSphereSphere(this.boundingSphere, this.enemy.boundingSphere);
+                moveOrientedY(Shared.ElapsedTime * speed);
+                setTranslationMatrix(Position);
+                this.colliding = this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testSphereSphere(this.boundingSphere, this.enemy.boundingSphere) || terrain.isOutOfBounds(this.mesh);
                 if (this.colliding) {
-                    if (this.lastDirectionBeforeCrash == this.direction || terrain.isOutOfBounds(this.mesh))
+                    if (this.lastDirectionBeforeCrash == this.direction)
                     {
                         this.stop();
                         this.moveOrientedY(Shared.ElapsedTime * (-speed));
@@ -349,6 +349,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.blockedTime = 0;
             }else{
                 this.moveAndRotate();
+                this.processShader();
             }
             if(this.blockedTime>=5) {
                 this.isBlocked = false;
@@ -358,8 +359,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.mesh.BoundingBox.transform(transformMatrix);
 
             this.mesh.Transform = transformMatrix;
-
-            this.processShader();
+            
 
             this.mesh.render();
             
