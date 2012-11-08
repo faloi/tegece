@@ -56,7 +56,6 @@ namespace AlumnoEjemplos.RestrictedGL
 
         private void updateUserVars() {
             UserVars.set("posX", Gui.I.FpsCamera.Position.X);
-            UserVars.set("posX", Gui.I.FpsCamera.Position.X);
             UserVars.set("posY", Gui.I.FpsCamera.Position.Y);
             UserVars.set("posZ", Gui.I.FpsCamera.Position.Z);
             UserVars.set("viewX", Gui.I.FpsCamera.LookAt.X);
