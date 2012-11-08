@@ -76,7 +76,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.turret.Transform = Matrix.Translation(offsetRotationCenter) * Matrix.RotationY(turretAngle) *
                                    Matrix.Translation(offsetRotationCenter) * transformMatrix;
             this.turret.Rotation = new Vector3(0, this.turretAngle + this.mesh.Rotation.Y, 0);
-            //ACA HAY QUE HACER ROTAR LA CAMARA CUANDO ROTAS LA TURRET
+            GuiController.Instance.ThirdPersonCamera.RotationY = this.turret.Rotation.Y;
             //GuiController.Instance.ThirdPersonCamera.rotateY(Geometry.DegreeToRadian(this.turret.Rotation.Y));
         }
 
