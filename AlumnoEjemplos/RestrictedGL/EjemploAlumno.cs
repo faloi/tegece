@@ -5,6 +5,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 using AlumnoEjemplos.RestrictedGL.Utils;
+using TgcViewer.Utils.Sound;
 
 namespace AlumnoEjemplos.RestrictedGL
 {
@@ -20,6 +21,8 @@ namespace AlumnoEjemplos.RestrictedGL
         private Terrain.Terrain terrain;
         private Tank.TankPlayer tank;
         private Tank.TankEnemy tankEnemy;
+
+        private TgcStaticSound ambientSound;
 
         private string currentCamera;
 
@@ -106,6 +109,11 @@ namespace AlumnoEjemplos.RestrictedGL
             d3dDevice.Transform.Projection = Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f),
                 (float)d3dDevice.CreationParameters.FocusWindow.Width / d3dDevice.CreationParameters.FocusWindow.Height, 1f, 30000f);
             this.setUpCamera();
+
+            //Carga del sonido ambiente
+            this.ambientSound = new TgcStaticSound();
+            this.ambientSound.loadSound(Shared.MediaFolder + @"Sound\ambient.wav");
+            this.ambientSound.play(true);
         }
 
         protected void setUpCamera() {
