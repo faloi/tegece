@@ -32,7 +32,7 @@ namespace AlumnoEjemplos.RestrictedGL.Terrain.Trees
                 var offsetZ = randomizer.getNext();
 
                 var adjust = (int)(maxRadius + baseSize / terrain.ScaleXZ);
-                var offsetY = terrain.getYValueFor(offsetX + adjust, offsetZ + adjust);
+                var offsetY = terrain.getYValueFor(offsetX + adjust - 100, offsetZ + adjust - 100);
 
                 var initialPosition = new Vector3(offsetX * terrain.ScaleXZ, offsetY * terrain.ScaleY, offsetZ * terrain.ScaleXZ);
                 
