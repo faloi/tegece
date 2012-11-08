@@ -35,7 +35,11 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Vector3 forwardVector;
         protected Vector3 initMissileRotation;
 
+        public int score;
         protected float time = 0;
+        protected float blockedTime = 0;
+        public bool isBlocked;
+        public bool isPermanentBlocked;
         protected bool isMoving;
         protected bool isRotating;
         protected bool colliding;
@@ -310,6 +314,11 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.processMovement();
         }
 
+        protected virtual void processSuccessfulShot() {
+            this.score++;
+            this.enemy.blockTank();
+        }
+
         protected void processMovement() {
             //var camera = Gui.I.ThirdPersonCamera;
 
@@ -347,13 +356,29 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
      
         public virtual void render() {
-            this.moveAndRotate();
+            var d3DInput = Gui.I.D3dInput;
+            if(this.isPermanentBlocked && d3DInput.keyPressed(Key.R)) {
+                this.isPermanentBlocked = false;
+                this.enemy.isPermanentBlocked = false;
+            }
+            if(this.isBlocked) {
+                this.blockedTime += Shared.ElapsedTime;
+            }else if (this.isPermanentBlocked) {
+                this.blockedTime = 0;
+            }else{
+                this.moveAndRotate();
+            }
+            if(this.blockedTime>=5) {
+                this.isBlocked = false;
+                this.blockedTime = 0f;
+            }
 
             this.mesh.BoundingBox.transform(transformMatrix);
-            
+
             this.mesh.Transform = transformMatrix;
-            
+
             this.processShader();
+
             this.mesh.render();
             
             if (Modifiers.showBoundingBox())
@@ -364,12 +389,19 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 if (missile.isCollidingWith(terrain)) {
                     this.terrain.deform(missile.Position.X, missile.Position.Z, 150, 10);
                     missilesToRemove.Add(missile);
-                } else if (this.terrain.isOutOfBounds(missile)) 
+                }
+                else if (missile.isExplodedOnTank(this.enemy)) {
+                    this.processSuccessfulShot();
                     missilesToRemove.Add(missile);
-                else 
+                }
+                else if (this.terrain.isOutOfBounds(missile)) {
+                    missilesToRemove.Add(missile);
+                }
+                else {
                     missile.render();
+                }
             }
-            
+
             missilesToRemove.ForEach(o => missilesShooted.Remove(o));
         }
 
@@ -379,6 +411,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.effect = Microsoft.DirectX.Direct3D.Effect.FromFile(d3dDevice, this.pathShader(), null, null, ShaderFlags.None, null, out compilationErrors);
             this.mesh.effect = effect;
             
+        }
+
+        public void blockTank() {
+            this.isBlocked = true;
         }
 
         protected virtual string pathShader() { return Path.TankShader; }

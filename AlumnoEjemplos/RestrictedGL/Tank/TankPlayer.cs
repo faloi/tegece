@@ -7,6 +7,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer;
+using TgcViewer.Utils;
 using TgcViewer.Utils.Input;
 using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcGeometry;
@@ -31,6 +32,23 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
             this.turret.AutoUpdateBoundingBox = this.turret.AutoTransformEnable = false;
 
+        }
+
+        protected override void processSuccessfulShot(){
+            base.processSuccessfulShot();
+            GuiController.Instance.Logger.log("TankEnemy " + this.enemy.score + " - " + this.score + " TankPlayer");
+            if (this.score == 5) {
+                GuiController.Instance.Logger.log("TankPlayer WINS.");
+                GuiController.Instance.Logger.log("Press R to RESTART.");
+
+                this.isPermanentBlocked = true;
+                this.isBlocked = false;
+                this.score = 0;
+
+                this.enemy.isPermanentBlocked = true;
+                this.enemy.isBlocked = false;
+                this.enemy.score = 0;
+            }
         }
 
         public override void moveOrientedY(float movement) {

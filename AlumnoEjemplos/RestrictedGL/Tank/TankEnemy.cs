@@ -6,6 +6,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer;
+using TgcViewer.Utils;
 using TgcViewer.Utils.Input;
 using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcGeometry;
@@ -105,6 +106,23 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             destination.Z = Position.Z + rand.getNext();
             iddle = true;
             avoiding = true;
+        }
+
+        protected override void processSuccessfulShot(){
+            base.processSuccessfulShot();
+            GuiController.Instance.Logger.log("TankEnemy " + this.score + " - " + this.enemy.score + " TankPlayer");
+            if (this.score == 5){
+                GuiController.Instance.Logger.log("TankEnemy WINS.");
+                GuiController.Instance.Logger.log("Press R to RESTART.");
+
+                this.isBlocked = false;
+                this.isPermanentBlocked=true;
+                this.score = 0;
+
+                this.enemy.isBlocked = false;
+                this.enemy.isPermanentBlocked = true;
+                this.enemy.score = 0;
+            }
         }
 
         public override void setInitMissileRotation(){

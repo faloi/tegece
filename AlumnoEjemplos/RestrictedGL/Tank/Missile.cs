@@ -1,6 +1,7 @@
 ﻿using System;
 using AlumnoEjemplos.RestrictedGL;
 using AlumnoEjemplos.RestrictedGL.Interfaces;
+using AlumnoEjemplos.RestrictedGL.Tank;
 using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
@@ -83,5 +84,9 @@ public class Missile : ITransformObject
 
     public bool isCollidingWith(ITerrainCollision terrain) {
         return terrain.getYValueFor(this.Position.X, this.Position.Z) >= (int) this.Position.Y;
+    }
+
+    public bool isExplodedOnTank(Tank oneTank) {
+        return TgcCollisionUtils.testSphereAABB(oneTank.boundingSphere, this.mesh.BoundingBox);
     }
 }

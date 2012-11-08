@@ -139,7 +139,7 @@ namespace AlumnoEjemplos.RestrictedGL
                 this.setUpCamera();
             if (Modifiers.get<string>("Camera") == "Third Person"){
                 var camera = Gui.I.ThirdPersonCamera;
-                camera.setCamera(tank.Position, 900f, 1300f);
+                camera.setCamera(tank.Position,900f, 1300f);
             }
         }
 
