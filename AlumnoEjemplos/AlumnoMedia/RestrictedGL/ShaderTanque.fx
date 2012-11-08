@@ -4,6 +4,7 @@ float4x4 matWorldViewProj;
 float4x4 matWorldInverseTranspose;
 
 float time = 0;
+bool isBlocked = true;
 
 // Textura y sampler de textura
 texture base_Tex;
@@ -48,6 +49,10 @@ VS_OUTPUT vs_main( VS_INPUT Input )
 
    //Propago el color x vertice
    Output.Color = Input.Color;
+   
+   if (isBlocked) {
+      Output.Color.r = 50;
+   }
 
    return( Output );
    

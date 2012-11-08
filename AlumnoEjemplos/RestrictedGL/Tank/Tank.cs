@@ -34,7 +34,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         public int score;
         protected float time = 0;
         protected float blockedTime = 0;
-        public bool isBlocked;
+        
+        private bool blocked;
+        public bool isBlocked {
+            get { return this.blocked; }
+            set { this.blocked = value; this.effect.SetValue("isBlocked", value); }
+        }
+
         public bool isPermanentBlocked;
         protected bool isMoving;
         protected bool isRotating;
@@ -46,6 +52,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Direction direction;
         protected Direction lastDirectionBeforeCrash;
         private Matrix translationMatrix;
+        
 
         public Tank(Vector3 initialPosition, Terrain.Terrain terrain, string scenePath) {
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
