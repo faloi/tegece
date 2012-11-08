@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
-using AlumnoEjemplos.RestrictedGL.Interfaces;
 using AlumnoEjemplos.RestrictedGL.Utils;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
-using TgcViewer;
-using TgcViewer.Utils.Input;
 using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
-using AlumnoEjemplos.RestrictedGL.Terrain;
 
 namespace AlumnoEjemplos.RestrictedGL.Tank {
     
@@ -50,8 +46,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Direction direction;
         protected Direction lastDirectionBeforeCrash;
         private Matrix translationMatrix;
-        public Vector3 lastRotation;
-       
+
         public Tank(Vector3 initialPosition, Terrain.Terrain terrain, string scenePath) {
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
             var scene = loader.loadSceneFromFile(scenePath);
@@ -73,9 +68,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             this.forwardVector = new Vector3(0, 0, -1);
         }
 
-        public TgcBoundingBox boundingBox {
-            get { return mesh.BoundingBox; }
-        }
 
         private List<Missile> missilesShooted { get; set; }
 
@@ -161,8 +153,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             get { return scaleMatrix*rotationMatrix*translationMatrix; }
         }
 
-        public bool AlphaBlendEnable { get; set; }
-
         #region Implementation of ITransformObject
 
         public Matrix Transform { get; set; }
@@ -187,8 +177,6 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
         public virtual void rotateY(float angle) {
             mesh.rotateY(angle);
-            this.lastRotation = mesh.Rotation;
-            //Gui.I.ThirdPersonCamera.rotateY(angle);
         }
 
         public void move(Vector3 v) {
@@ -320,20 +308,16 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         }
 
         protected void processMovement() {
-            //var camera = Gui.I.ThirdPersonCamera;
-
-            if (isMoving) {
-                moveOrientedY(Shared.ElapsedTime * speed);
-                //camera.Target = Position;
-                setTranslationMatrix(Position);
+            if (this.isMoving) {
+                this.moveOrientedY(Shared.ElapsedTime * speed);
+                this.setTranslationMatrix(Position);
                 this.colliding = this.terrain.treeFactory.isAnyCollidingWith(this.boundingSphere) || TgcCollisionUtils.testSphereSphere(this.boundingSphere, this.enemy.boundingSphere);
                 if (this.colliding) {
                     if (this.lastDirectionBeforeCrash == this.direction || terrain.isOutOfBounds(this.mesh))
                     {
                         this.stop();
-                        moveOrientedY(Shared.ElapsedTime * (-speed));
-                        //camera.Target = Position;
-                        setTranslationMatrix(Position);
+                        this.moveOrientedY(Shared.ElapsedTime * (-speed));
+                        this.setTranslationMatrix(Position);
                     }
                 }else{
                     this.lastDirectionBeforeCrash = this.direction;
@@ -341,15 +325,13 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.boundingSphere.setCenter(this.mesh.BoundingBox.calculateBoxCenter()); 
             }
 
-            if (isRotating) {
+            if (this.isRotating) {
                 var rotAngle = Geometry.DegreeToRadian(rotationSpeed * Shared.ElapsedTime);
-                //camera.rotateY(rotAngle);
-                rotateY(rotAngle);
-                forwardVector.TransformNormal(Matrix.RotationY(rotAngle));
+                this.rotateY(rotAngle);
+                this.forwardVector.TransformNormal(Matrix.RotationY(rotAngle));
                 if (terrain.isOutOfBounds(this.mesh)) {
-                    //camera.rotateY(-rotAngle);
-                    rotateY(-rotAngle);
-                    forwardVector.TransformNormal(Matrix.RotationY(-rotAngle));
+                    this.rotateY(-rotAngle);
+                    this.forwardVector.TransformNormal(Matrix.RotationY(-rotAngle));
                 }
             }
         }
