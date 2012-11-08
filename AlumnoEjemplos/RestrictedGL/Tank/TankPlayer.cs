@@ -80,6 +80,10 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
             //GuiController.Instance.ThirdPersonCamera.rotateY(Geometry.DegreeToRadian(this.turret.Rotation.Y));
         }
 
+        protected override string soundName {
+            get { return "win"; }
+        }
+
         public override void setInitMissileRotation(){
             this.initMissileRotation = this.turret.Rotation;
         }

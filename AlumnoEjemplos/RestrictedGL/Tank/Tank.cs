@@ -54,6 +54,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected Direction lastDirectionBeforeCrash;
         private Matrix translationMatrix;
         
+        protected abstract string soundName { get; }
 
         public Tank(Vector3 initialPosition, Terrain.Terrain terrain, string scenePath) {
             var loader = new TgcSceneLoader { MeshFactory = new MeshShaderFactory() };
@@ -313,6 +314,12 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         protected virtual void processSuccessfulShot() {
             this.score++;
             this.enemy.blockTank();
+
+            if (this.score == 5) {
+                var endOfGameSound = new TgcStaticSound();
+                endOfGameSound.loadSound(Shared.MediaFolder + string.Format(@"Sound\{0}.wav", soundName));
+                endOfGameSound.play(false);
+            }
         }
 
         protected void processMovement() {

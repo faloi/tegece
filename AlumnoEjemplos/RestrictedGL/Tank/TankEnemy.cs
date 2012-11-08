@@ -117,12 +117,17 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
 
                 this.isBlocked = false;
                 this.isPermanentBlocked=true;
+
                 this.score = 0;
 
                 this.enemy.isBlocked = false;
                 this.enemy.isPermanentBlocked = true;
                 this.enemy.score = 0;
             }
+        }
+
+        protected override string soundName {
+            get { return "die"; }
         }
 
         public override void setInitMissileRotation(){
