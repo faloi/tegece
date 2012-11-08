@@ -2,8 +2,6 @@
 using AlumnoEjemplos.RestrictedGL.Interfaces;
 using AlumnoEjemplos.RestrictedGL.Terrain.Trees;
 using Microsoft.DirectX;
-using TgcViewer;
-using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 using AlumnoEjemplos.RestrictedGL.GuiWrappers;
 

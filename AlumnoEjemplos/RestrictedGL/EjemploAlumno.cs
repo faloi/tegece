@@ -23,8 +23,8 @@ namespace AlumnoEjemplos.RestrictedGL
 
         private string currentCamera;
 
-        private const float SCALE_Y = 2f;
-        private const float SCALE_XZ = 50f;
+        private const float SCALE_Y = 3.5f;
+        private const float SCALE_XZ = 80f;
         
         public EjemploAlumno() {
 
