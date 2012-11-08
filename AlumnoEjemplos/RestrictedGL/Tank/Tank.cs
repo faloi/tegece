@@ -22,6 +22,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
         private const float SCALE = 3;
         private const float INTERVAL_BETWEEN_MISSILES = 2.5f;
         protected const float MAX_SPEED = 300;
+        private const int MAX_BLOCKED_TIME = 2;
 
         public TgcBoundingSphere boundingSphere;
         public readonly MeshShader mesh;
@@ -358,7 +359,7 @@ namespace AlumnoEjemplos.RestrictedGL.Tank {
                 this.moveAndRotate();
                 this.processShader();
             }
-            if(this.blockedTime>=5) {
+            if(this.blockedTime>= MAX_BLOCKED_TIME) {
                 this.isBlocked = false;
                 this.blockedTime = 0f;
             }
